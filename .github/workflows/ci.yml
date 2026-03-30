@@ -23,7 +23,7 @@ jobs:
           cache-dependency-path: api/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
         working-directory: api
 
       - name: Build TypeScript
@@ -46,7 +46,7 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
         working-directory: web
 
       - name: Build Next.js
@@ -69,7 +69,7 @@ jobs:
           cache-dependency-path: app/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
         working-directory: app
 
       - name: Lint / Typecheck

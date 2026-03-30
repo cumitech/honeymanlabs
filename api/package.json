@@ -10,6 +10,9 @@
   ],
   "license": "ISC",
   "author": "Ayeah Godlove Akoni",
+  "engines": {
+    "node": "20.18.2"
+  },
   "type": "commonjs",
   "main": "index.js",
   "scripts": {

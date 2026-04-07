@@ -5,6 +5,8 @@
     "target": "esnext",
     "types": ["node"],
     "moduleResolution": "node",
+    "rootDir": "src",
+    "outDir": "build",
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
@@ -28,5 +30,7 @@
     // Needed for sequelize-typescript decorators + reflect-metadata
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["build", "node_modules", "tests"]
 }

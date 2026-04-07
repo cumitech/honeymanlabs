@@ -1,0 +1,19 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const zod_express_middleware_1 = require("zod-express-middleware");
+const auth_middleware_1 = require("../../common/middleware/auth.middleware");
+const rate_limit_middleware_1 = require("../../common/middleware/rate-limit.middleware");
+const auth_controller_1 = require("./auth.controller");
+const auth_repository_1 = require("./auth.repository");
+const auth_service_1 = require("./auth.service");
+const auth_schema_1 = require("./auth.schema");
+const router = (0, express_1.Router)();
+const repository = new auth_repository_1.AuthRepository();
+const service = new auth_service_1.AuthService(repository);
+const controller = new auth_controller_1.AuthController(service);
+router.post("/register", (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.registerSchema }), controller.register);
+router.post("/login", rate_limit_middleware_1.loginLimiter, (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.loginSchema }), controller.login);
+router.get("/me", auth_middleware_1.authenticate, controller.me);
+exports.default = router;
+//# sourceMappingURL=auth.routes.js.map

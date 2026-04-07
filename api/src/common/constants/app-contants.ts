@@ -4,3 +4,8 @@ export enum USER_ROLES {
   BEEKEEPER = "beekeeper",
   LAB_STAFF = "lab_staff",
 }
+
+export enum CONTENT_LANGUAGES {
+  EN = "en",
+  FR = "fr",
+}

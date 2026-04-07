@@ -5,6 +5,7 @@ import {
   DataType,
   BeforeCreate,
 } from "sequelize-typescript";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
 
 @Table({
@@ -19,6 +20,13 @@ export class ArticleCategory extends Model {
     allowNull: false,
   })
   declare id: string;
+
+  @Column({
+    type: DataType.ENUM(CONTENT_LANGUAGES.EN, CONTENT_LANGUAGES.FR),
+    allowNull: false,
+    defaultValue: CONTENT_LANGUAGES.EN,
+  })
+  lang!: CONTENT_LANGUAGES;
 
   @Column({
     type: DataType.STRING(80),

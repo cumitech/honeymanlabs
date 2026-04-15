@@ -15,10 +15,6 @@ const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 const product_model_1 = require("./product.model");
 let ProductImage = class ProductImage extends sequelize_typescript_1.Model {
-    lang;
-    product_id;
-    product;
-    image_url;
     static async assignId(instance) {
         if (instance.id)
             return;

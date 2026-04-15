@@ -14,12 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 let Event = class Event extends sequelize_typescript_1.Model {
-    lang;
-    title;
-    description;
-    location;
-    event_date;
-    capacity;
     static async assignId(instance) {
         if (instance.id)
             return;

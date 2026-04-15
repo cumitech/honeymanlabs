@@ -14,9 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 let NewsletterSubscriber = class NewsletterSubscriber extends sequelize_typescript_1.Model {
-    lang;
-    email;
-    subscribed_at;
     static async assignId(instance) {
         if (instance.id)
             return;

@@ -1,0 +1,6 @@
+.env
+.env.*
+web/.env
+web/.env.*
+web/.next/
+web/tsconfig.tsbuildinfo

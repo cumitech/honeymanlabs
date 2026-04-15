@@ -1,11 +1,17 @@
 import { Router } from "express";
 import { validateRequest } from "zod-express-middleware";
+import { PERMISSIONS } from "../../common/constants/app-constants";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorizePermissions } from "../../common/middleware/role.middleware";
 import { loginLimiter } from "../../common/middleware/rate-limit.middleware";
 import { AuthController } from "./auth.controller";
 import { AuthRepository } from "./auth.repository";
 import { AuthService } from "./auth.service";
-import { loginSchema, registerSchema } from "./auth.schema";
+import {
+    forgotPasswordSchema,
+    loginSchema,
+    registerSchema,
+} from "./auth.schema";
 
 const router = Router();
 
@@ -24,8 +30,30 @@ router.post(
     validateRequest({ body: loginSchema }),
     controller.login
 );
+router.post(
+    "/forgot-password",
+    validateRequest({ body: forgotPasswordSchema }),
+    controller.forgotPassword
+);
 
-router.get("/me", authenticate, controller.me);
+router.get(
+    "/me",
+    authenticate,
+    authorizePermissions(PERMISSIONS.READ),
+    controller.me
+);
+router.get(
+    "/capabilities/admin",
+    authenticate,
+    authorizePermissions(PERMISSIONS.MANAGE_USERS, PERMISSIONS.MANAGE_CONTENT),
+    controller.adminCapabilities
+);
+router.get(
+    "/capabilities/content-write",
+    authenticate,
+    authorizePermissions(PERMISSIONS.WRITE),
+    controller.contentWriteCapabilities
+);
 
 export default router;
 

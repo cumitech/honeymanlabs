@@ -14,14 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 let BeekeeperApplication = class BeekeeperApplication extends sequelize_typescript_1.Model {
-    lang;
-    name;
-    region;
-    phone;
-    experience;
-    number_of_hives;
-    status;
-    submitted_at;
     static async assignId(instance) {
         if (instance.id)
             return;

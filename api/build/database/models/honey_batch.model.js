@@ -17,18 +17,6 @@ const beekeeper_model_1 = require("./beekeeper.model");
 const apiary_model_1 = require("./apiary.model");
 const lab_test_model_1 = require("./lab_test.model");
 let HoneyBatch = class HoneyBatch extends sequelize_typescript_1.Model {
-    lang;
-    batch_code;
-    beekeeper_id;
-    beekeeper;
-    apiary_id;
-    apiary;
-    region;
-    harvest_date;
-    floral_source;
-    moisture_content;
-    certification_status;
-    lab_tests;
     static async assignId(instance) {
         if (instance.id)
             return;

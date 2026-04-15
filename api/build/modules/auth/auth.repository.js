@@ -9,6 +9,9 @@ class AuthRepository {
     async createUser(data) {
         return user_model_1.User.create(data);
     }
+    async findById(id) {
+        return user_model_1.User.findByPk(id);
+    }
 }
 exports.AuthRepository = AuthRepository;
 //# sourceMappingURL=auth.repository.js.map

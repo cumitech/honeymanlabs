@@ -15,16 +15,6 @@ const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 const beekeeper_model_1 = require("./beekeeper.model");
 let Apiary = class Apiary extends sequelize_typescript_1.Model {
-    lang;
-    beekeeper_id;
-    beekeeper;
-    name;
-    latitude;
-    longitude;
-    region;
-    number_of_hives;
-    // Lazy require to avoid TS/IDE resolution quirks.
-    honey_batches;
     static async assignId(instance) {
         if (instance.id)
             return;

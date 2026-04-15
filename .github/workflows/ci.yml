@@ -1,4 +1,4 @@
-﻿name: HoneymanLabs CI
+﻿name: Honeyman CI
 
 on:
   push:

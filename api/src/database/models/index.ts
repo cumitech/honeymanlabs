@@ -1,5 +1,6 @@
 export { User } from "./user.model";
 export { Event } from "./event.model";
+export { Article } from "./article.model";
 export { ArticleCategory } from "./article_category.model";
 export { NewsletterSubscriber } from "./newsletter_subscriber.model";
 export { BeekeeperApplication } from "./beekeeper_application.model";

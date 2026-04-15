@@ -2,6 +2,8 @@
 
 export type FeaturedProduct = {
   id: string;
+  /** Public product detail URL: `/products/[slug]` */
+  slug: string;
   name: string;
   meta: string;
   price: string;
@@ -22,6 +24,7 @@ export type ResourceArticle = {
 export const featuredProducts: FeaturedProduct[] = [
   {
     id: "wild-highland-honey",
+    slug: "wild-highland-honey",
     name: "Wild Highland Honey",
     meta: "Adamaoua Region | 500g",
     price: "$24.00",
@@ -30,6 +33,7 @@ export const featuredProducts: FeaturedProduct[] = [
   },
   {
     id: "forest-white-honey",
+    slug: "forest-white-honey",
     name: "Forest White Honey",
     meta: "Oku Highlands | 250g",
     price: "$18.00",
@@ -38,6 +42,7 @@ export const featuredProducts: FeaturedProduct[] = [
   },
   {
     id: "raw-beeswax-candles",
+    slug: "raw-beeswax-candles",
     name: "Raw Beeswax Candles",
     meta: "Handcrafted | Set of 2",
     price: "$32.00",

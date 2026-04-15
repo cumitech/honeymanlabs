@@ -13,6 +13,18 @@ const EnvSchema = z.object({
 
   JWT_SECRET: z.string().min(1),
 
+  // Auth0 configuration (kept in sync with frontend env for auth integrations)
+  AUTH0_ISSUER_BASE_URL: z.string().url().optional(),
+  AUTH0_CLIENT_ID: z.string().optional(),
+  AUTH0_CLIENT_SECRET: z.string().optional(),
+  AUTH0_SCOPE: z.string().optional(),
+  AUTH0_SECRET: z.string().optional(),
+  NEXTAUTH_URL: z.string().url().optional(),
+  AUTH0_BASE_URL: z.string().url().optional(),
+  APP_BASE_URL: z.string().url().optional(),
+  CALLBACK_URL: z.string().url().optional(),
+  LOGOUT_URL: z.string().url().optional(),
+
   //sync database models on startup
   DB_SYNC: z.coerce.boolean().optional().default(false),
 

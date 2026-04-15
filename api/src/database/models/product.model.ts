@@ -8,7 +8,8 @@ import {
   BelongsTo,
   HasMany,
 } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { DEFAULT_PRODUCT_TYPE } from "../../common/constants/product-types";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
 import { ArticleCategory } from "./article_category.model";
 import { ProductImage } from "./product_image.model";
@@ -88,6 +89,39 @@ export class Product extends Model {
     field: "featured_image"
   })
   featured_image!: string;
+
+  /** HONEY | HONEY_PRODUCTS | FARM_PRODUCTS | LAB_SUPPLIES | OTHER */
+  @Column({
+    type: DataType.STRING(32),
+    allowNull: false,
+    defaultValue: DEFAULT_PRODUCT_TYPE,
+    field: "product_type",
+  })
+  product_type!: string;
+
+  /** Net contents — jars, packs (grams). */
+  @Column({
+    type: DataType.DECIMAL(12, 2),
+    allowNull: true,
+    field: "weight_grams",
+  })
+  weight_grams!: string | null;
+
+  /** Liquid honey volume (liters). */
+  @Column({
+    type: DataType.DECIMAL(12, 4),
+    allowNull: true,
+    field: "liters",
+  })
+  liters!: string | null;
+
+  /** For FARM_PRODUCTS apparel / wearables: S–XXL. */
+  @Column({
+    type: DataType.STRING(8),
+    allowNull: true,
+    field: "apparel_size",
+  })
+  apparel_size!: string | null;
 
   @HasMany(() => ProductImage)
   images!: ProductImage[];

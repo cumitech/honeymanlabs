@@ -6,8 +6,13 @@ const authenticate = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token)
         return res.status(401).send("Unauthorized");
-    const decoded = (0, jwt_1.verifyToken)(token);
-    req.user = decoded;
+    try {
+        const decoded = (0, jwt_1.verifyToken)(token);
+        req.user = decoded;
+    }
+    catch {
+        return res.status(401).send("Unauthorized");
+    }
     next();
 };
 exports.authenticate = authenticate;

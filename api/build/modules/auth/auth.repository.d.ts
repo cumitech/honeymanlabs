@@ -1,4 +1,5 @@
 import { User } from "../../database/models/user.model";
+import { USER_ROLES } from "../../common/constants/app-contants";
 /**
  * Registration payload — field names match `User` model columns.
  * `password` is plaintext here; persist as `password_hash` via `CreateUserData`.
@@ -10,7 +11,7 @@ export type RegisterData = {
     password: string;
     phone: string;
     /** Optional on signup; defaults to `USER_ROLES.CUSTOMER` on the model if omitted */
-    role?: string | undefined;
+    role?: USER_ROLES | undefined;
     location?: string | undefined;
     avatar_url?: string | undefined;
 };
@@ -20,5 +21,6 @@ export type CreateUserData = Omit<RegisterData, "password"> & {
 export declare class AuthRepository {
     findByEmail(email: string): Promise<User | null>;
     createUser(data: CreateUserData): Promise<User>;
+    findById(id: string): Promise<User | null>;
 }
 //# sourceMappingURL=auth.repository.d.ts.map

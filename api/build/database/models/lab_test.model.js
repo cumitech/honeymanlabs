@@ -17,18 +17,6 @@ const honey_batch_model_1 = require("./honey_batch.model");
 const user_model_1 = require("./user.model");
 const lab_result_model_1 = require("./lab_result.model");
 let LabTest = class LabTest extends sequelize_typescript_1.Model {
-    lang;
-    sample_code;
-    batch_id;
-    batch;
-    requested_by;
-    requestedBy;
-    test_type;
-    status;
-    submitted_at;
-    completed_at;
-    report_url;
-    lab_results;
     static async assignId(instance) {
         if (instance.id)
             return;

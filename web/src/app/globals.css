@@ -165,4 +165,49 @@
       #ff9a1a 100%
     );
   }
+
+  /** Inline word highlight (About editorial hero, etc.). */
+  .honey-gradient-text {
+    background: linear-gradient(
+      125deg,
+      #ffd24a 0%,
+      #ffb800 32%,
+      #ff7a1a 68%,
+      #c23a00 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /** Subtle hex / dot mesh for about story band. */
+  .hex-pattern {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(129, 81, 0, 0.14) 1px,
+      transparent 0
+    );
+    background-size: 22px 22px;
+  }
+
+  /** Landing hero bee motif — minimal vertical drift, respects reduced motion. */
+  @keyframes hero-bee-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .animate-hero-bee-float {
+    animation: hero-bee-float 5s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-hero-bee-float {
+      animation: none;
+    }
+  }
 }

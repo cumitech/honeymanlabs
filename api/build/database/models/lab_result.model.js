@@ -15,12 +15,6 @@ const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 const lab_test_model_1 = require("./lab_test.model");
 let LabResult = class LabResult extends sequelize_typescript_1.Model {
-    lang;
-    lab_test_id;
-    lab_test;
-    parameter;
-    value;
-    unit;
     static async assignId(instance) {
         if (instance.id)
             return;

@@ -3,9 +3,9 @@ import {
   Column,
   Model,
   DataType,
-  BeforeCreate,
+  BeforeValidate,
 } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
 
 @Table({
@@ -26,15 +26,15 @@ export class ArticleCategory extends Model {
     allowNull: false,
     defaultValue: CONTENT_LANGUAGES.EN,
   })
-  lang!: CONTENT_LANGUAGES;
+  declare lang: CONTENT_LANGUAGES;
 
   @Column({
     type: DataType.STRING(80),
     allowNull: false, unique: true
   })
-  name!: string;
+  declare name: string;
 
-  @BeforeCreate
+  @BeforeValidate
   static async assignId(instance: ArticleCategory) {
     if (instance.id) return;
     instance.id = await generateCustomIdForModel(this);

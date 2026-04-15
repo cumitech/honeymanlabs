@@ -14,8 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 let ArticleCategory = class ArticleCategory extends sequelize_typescript_1.Model {
-    lang;
-    name;
     static async assignId(instance) {
         if (instance.id)
             return;
@@ -47,7 +45,7 @@ __decorate([
     __metadata("design:type", String)
 ], ArticleCategory.prototype, "name", void 0);
 __decorate([
-    sequelize_typescript_1.BeforeCreate,
+    sequelize_typescript_1.BeforeValidate,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [ArticleCategory]),
     __metadata("design:returntype", Promise)

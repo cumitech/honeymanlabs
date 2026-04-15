@@ -20,20 +20,21 @@ function toInitials(tableName) {
 }
 async function generateCustomIdForModel(modelClass) {
     const now = new Date();
-    const year = now.getFullYear().toString();
+    const year = (now.getFullYear() % 100).toString().padStart(2, "0");
     const dayOfYear = getDayOfYear(now).toString().padStart(3, "0");
     const tableName = modelClass.getTableName?.() ?? modelClass.tableName ?? modelClass.name;
     const tableNameStr = typeof tableName === "object" && tableName ? tableName.tableName : String(tableName);
     const initials = toInitials(tableNameStr);
-    const prefix = `${initials}${year}${dayOfYear}`;
+    const idPrefix = `${initials}-${year}${dayOfYear}`;
     const last = await modelClass.findOne({
         where: {
-            id: { [sequelize_1.Op.like]: `${prefix}%` },
+            id: { [sequelize_1.Op.like]: `${idPrefix}-%` },
         },
         order: [["id", "DESC"]],
     });
-    const lastSuffix = last?.id ? parseInt(String(last.id).slice(prefix.length), 10) : 0;
+    const lastSuffixMatch = String(last?.id ?? "").match(/-(\d{4})$/);
+    const lastSuffix = lastSuffixMatch ? parseInt(lastSuffixMatch[1], 10) : 0;
     const next = lastSuffix + 1;
-    return `${prefix}${next.toString().padStart(4, "0")}`;
+    return `${idPrefix}-${next.toString().padStart(4, "0")}`;
 }
 //# sourceMappingURL=custom-id.js.map

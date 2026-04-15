@@ -16,18 +16,6 @@ const custom_id_1 = require("../../common/utils/custom-id");
 const article_category_model_1 = require("./article_category.model");
 const product_image_model_1 = require("./product_image.model");
 let Product = class Product extends sequelize_typescript_1.Model {
-    lang;
-    name;
-    slug;
-    description;
-    price;
-    // relationships
-    category;
-    categoryModel;
-    stock_quantity;
-    origin_region;
-    featured_image;
-    images;
     static async assignId(instance) {
         if (instance.id)
             return;

@@ -9,8 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const STORAGE_KEY = "honeyman-locale";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_STORAGE_KEY,
+  setLanguageOnClient,
+} from "@/lib/i18n/language";
 
 const locales = [
   { value: "en", label: "English" },
@@ -25,11 +28,11 @@ export function LanguageSwitcher() {
     setMounted(true);
     const stored =
       typeof window !== "undefined"
-        ? window.localStorage.getItem(STORAGE_KEY)
+        ? window.localStorage.getItem(LANGUAGE_STORAGE_KEY)
         : null;
     const initial = stored && locales.some((l) => l.value === stored)
       ? stored
-      : "en";
+      : DEFAULT_LANGUAGE;
     setLocale(initial);
     if (typeof document !== "undefined") {
       document.documentElement.lang = initial;
@@ -38,15 +41,7 @@ export function LanguageSwitcher() {
 
   const handleChange = (value: string) => {
     setLocale(value);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(STORAGE_KEY, value);
-    }
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = value;
-    }
-    window.dispatchEvent(
-      new CustomEvent("honeyman-locale-change", { detail: { locale: value } })
-    );
+    setLanguageOnClient(value as "en" | "fr");
   };
 
   if (!mounted) {

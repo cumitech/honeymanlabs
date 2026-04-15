@@ -8,7 +8,7 @@ import {
   BelongsTo,
   HasMany,
 } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
 import { HoneyBatch } from "./honey_batch.model";
 import { User } from "./user.model";

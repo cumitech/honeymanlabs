@@ -20,19 +20,57 @@ import {
   SidebarTrigger as ShadcnSidebarTrigger,
   useSidebar as useShadcnSidebar,
 } from "@/components/ui/sidebar";
+import { BRAND_LOGO_PX } from "@/config/brand-logo";
 import { cn } from "@/lib/utils";
+import { Permission, type AuthUser, UserRole, hasPermission } from "@/lib/auth/access-control";
 import {
+  useGetIdentity,
   useLink,
   useMenu,
-  useRefineOptions,
   type TreeMenuItem,
 } from "@refinedev/core";
 import { ChevronRight, ListIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import React from "react";
+
+function useCloseMobileSidebarOnNavigate() {
+  const { isMobile, setOpenMobile } = useShadcnSidebar();
+  return React.useCallback(() => {
+    if (isMobile) setOpenMobile(false);
+  }, [isMobile, setOpenMobile]);
+}
 
 export function Sidebar() {
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
+  const { data: user } = useGetIdentity<AuthUser>();
+
+  const visibleMenuItems = menuItems.filter((item) => {
+    if ((item.meta as { hideFromMenu?: boolean } | undefined)?.hideFromMenu) {
+      return false;
+    }
+    const route = item.route ?? "";
+    const meta = item.meta as {
+      allowedRoles?: UserRole[];
+      requiredPermissions?: Permission[];
+    } | null;
+
+    const allowedRoles = meta?.allowedRoles ?? [];
+    const requiredPermissions = meta?.requiredPermissions ?? [Permission.READ];
+
+    const roleAllowed = allowedRoles.length === 0 || (!!user && allowedRoles.includes(user.role));
+    const permissionsAllowed = requiredPermissions.every((permission) =>
+      hasPermission(user, permission),
+    );
+
+    // Keep non-dashboard routes visible by default if they pass permission check.
+    if (!route.startsWith("/dashboard")) {
+      return permissionsAllowed;
+    }
+
+    return roleAllowed && permissionsAllowed;
+  });
 
   return (
     <ShadcnSidebar collapsible="icon" className={cn("border-none")}>
@@ -55,7 +93,7 @@ export function Sidebar() {
           }
         )}
       >
-        {menuItems.map((item: TreeMenuItem) => (
+        {visibleMenuItems.map((item: TreeMenuItem) => (
           <SidebarItem
             key={item.key || item.name}
             item={item}
@@ -73,14 +111,15 @@ type MenuItemProps = {
 };
 
 function SidebarItem({ item, selectedKey }: MenuItemProps) {
-  const { open } = useShadcnSidebar();
+  const { open, isMobile } = useShadcnSidebar();
 
   if (item.meta?.group) {
     return <SidebarItemGroup item={item} selectedKey={selectedKey} />;
   }
 
   if (item.children && item.children.length > 0) {
-    if (open) {
+    // Mobile sheet: always use collapsible sections (dropdowns are unreliable on small touch UIs).
+    if (open || isMobile) {
       return <SidebarItemCollapsible item={item} selectedKey={selectedKey} />;
     }
     return <SidebarItemDropdown item={item} selectedKey={selectedKey} />;
@@ -91,7 +130,8 @@ function SidebarItem({ item, selectedKey }: MenuItemProps) {
 
 function SidebarItemGroup({ item, selectedKey }: MenuItemProps) {
   const { children } = item;
-  const { open } = useShadcnSidebar();
+  const { open, isMobile } = useShadcnSidebar();
+  const showGroupChrome = open || isMobile;
 
   return (
     <div className={cn("border-t", "border-sidebar-border", "pt-4")}>
@@ -106,12 +146,12 @@ function SidebarItemGroup({ item, selectedKey }: MenuItemProps) {
           "transition-all",
           "duration-200",
           {
-            "h-8": open,
-            "h-0": !open,
-            "opacity-0": !open,
-            "opacity-100": open,
-            "pointer-events-none": !open,
-            "pointer-events-auto": open,
+            "h-8": showGroupChrome,
+            "h-0": !showGroupChrome,
+            "opacity-0": !showGroupChrome,
+            "opacity-100": showGroupChrome,
+            "pointer-events-none": !showGroupChrome,
+            "pointer-events-auto": showGroupChrome,
           }
         )}
       >
@@ -170,6 +210,7 @@ function SidebarItemCollapsible({ item, selectedKey }: MenuItemProps) {
 function SidebarItemDropdown({ item, selectedKey }: MenuItemProps) {
   const { children } = item;
   const Link = useLink();
+  const closeMobile = useCloseMobileSidebarOnNavigate();
 
   return (
     <DropdownMenu>
@@ -188,6 +229,7 @@ function SidebarItemDropdown({ item, selectedKey }: MenuItemProps) {
                 className={cn("flex w-full items-center gap-2", {
                   "bg-accent text-accent-foreground": isSelected,
                 })}
+                onClick={closeMobile}
               >
                 <ItemIcon
                   icon={child.meta?.icon ?? child.icon}
@@ -205,13 +247,22 @@ function SidebarItemDropdown({ item, selectedKey }: MenuItemProps) {
 
 function SidebarItemLink({ item, selectedKey }: MenuItemProps) {
   const isSelected = item.key === selectedKey;
+  const closeMobile = useCloseMobileSidebarOnNavigate();
 
-  return <SidebarButton item={item} isSelected={isSelected} asLink={true} />;
+  return (
+    <SidebarButton
+      item={item}
+      isSelected={isSelected}
+      asLink={true}
+      onClick={closeMobile}
+    />
+  );
 }
 
 function SidebarHeader() {
-  const { title } = useRefineOptions();
   const { open, isMobile } = useShadcnSidebar();
+  const closeMobile = useCloseMobileSidebarOnNavigate();
+  const showExpandedChrome = open || isMobile;
 
   return (
     <ShadcnSidebarHeader
@@ -243,30 +294,42 @@ function SidebarHeader() {
           }
         )}
       >
-        <div>{title.icon}</div>
-        <h2
-          className={cn(
-            "text-sm",
-            "font-bold",
-            "transition-opacity",
-            "duration-200",
-            {
-              "opacity-0": !open,
-              "opacity-100": open,
-            }
-          )}
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2"
+          onClick={closeMobile}
         >
-          {title.text}
-        </h2>
+          <Image src="/logo.svg" alt="Honeyman" width={BRAND_LOGO_PX} height={BRAND_LOGO_PX} />
+          <h2
+            className={cn(
+              "text-sm",
+              "font-bold",
+              "transition-opacity",
+              "duration-200",
+              {
+                "opacity-0": !showExpandedChrome,
+                "opacity-100": showExpandedChrome,
+              }
+            )}
+          >
+            Honeyman
+          </h2>
+        </Link>
       </div>
 
       <ShadcnSidebarTrigger
-        className={cn("text-muted-foreground", "mr-1.5", {
-          "opacity-0": !open,
-          "opacity-100": open || isMobile,
-          "pointer-events-auto": open || isMobile,
-          "pointer-events-none": !open && !isMobile,
-        })}
+        className={cn(
+          "text-muted-foreground",
+          "mr-1.5",
+          "size-9 touch-manipulation",
+          {
+            "opacity-0": !showExpandedChrome,
+            "opacity-100": showExpandedChrome,
+            "pointer-events-auto": showExpandedChrome,
+            "pointer-events-none": !showExpandedChrome,
+          },
+        )}
+        aria-label="Close navigation menu"
       />
     </ShadcnSidebarHeader>
   );

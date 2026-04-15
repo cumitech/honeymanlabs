@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { signToken } from "../../common/utils/jwt";
+import { ROLE_PERMISSIONS } from "../../common/constants/app-constants";
+import { type AuthTokenPayload, signToken } from "../../common/utils/jwt";
 import { AuthRepository, type RegisterData } from "./auth.repository";
 
 export type LoginData = {
@@ -21,6 +22,7 @@ export class AuthService {
     const token = signToken({
       userId: user.id,
       role: user.role,
+      permissions: ROLE_PERMISSIONS[user.role],
     });
 
     return { token };
@@ -40,9 +42,32 @@ export class AuthService {
     const token = signToken({
       userId: user.id,
       role: user.role,
+      permissions: ROLE_PERMISSIONS[user.role],
     });
 
     return { token };
+  }
+
+  async getProfile(auth: AuthTokenPayload) {
+    const user = await this.repo.findById(auth.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {
+      userId: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      avatar_url: user.avatar_url,
+      role: user.role,
+      permissions: auth.permissions,
+    };
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    // Intentionally return success regardless of user existence to avoid email enumeration.
+    await this.repo.findByEmail(email);
   }
 }
 

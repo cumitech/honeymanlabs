@@ -14,15 +14,6 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 let User = class User extends sequelize_typescript_1.Model {
-    lang;
-    firstname;
-    lastname;
-    email;
-    password_hash;
-    role;
-    phone;
-    location;
-    avatar_url;
     static async assignId(instance) {
         if (instance.id)
             return;
@@ -95,17 +86,17 @@ __decorate([
         type: sequelize_typescript_1.DataType.STRING,
         allowNull: true,
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "location", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
         allowNull: true,
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "avatar_url", void 0);
 __decorate([
-    sequelize_typescript_1.BeforeCreate,
+    sequelize_typescript_1.BeforeValidate,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [User]),
     __metadata("design:returntype", Promise)

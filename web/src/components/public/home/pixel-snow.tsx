@@ -319,7 +319,21 @@ export default function PixelSnow({
       rendererRef.current = null;
       materialRef.current = null;
     };
-  }, [handleResize]);
+  }, [
+    handleResize,
+    flakeSize,
+    minFlakeSize,
+    pixelResolution,
+    speed,
+    depthFade,
+    farPlane,
+    colorVector,
+    brightness,
+    gamma,
+    density,
+    variantValue,
+    direction,
+  ]);
 
   useEffect(() => {
     const material = materialRef.current;

@@ -1,5 +1,5 @@
 import { Model } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES, USER_ROLES } from "../../common/constants/app-contants";
 export declare class User extends Model {
     id: string;
     lang: CONTENT_LANGUAGES;
@@ -7,10 +7,10 @@ export declare class User extends Model {
     lastname: string;
     email: string;
     password_hash: string;
-    role: string;
+    role: USER_ROLES;
     phone: string;
-    location: string;
-    avatar_url: string;
+    location: string | null;
+    avatar_url: string | null;
     static assignId(instance: User): Promise<void>;
 }
 //# sourceMappingURL=user.model.d.ts.map

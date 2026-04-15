@@ -23,6 +23,7 @@ exports.sequelize = new sequelize_typescript_1.Sequelize({
     models: [
         models_1.User,
         models_1.Event,
+        models_1.Article,
         models_1.ArticleCategory,
         models_1.NewsletterSubscriber,
         models_1.BeekeeperApplication,

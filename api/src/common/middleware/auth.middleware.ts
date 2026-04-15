@@ -12,9 +12,12 @@ export const authenticate = (
 
     if (!token) return res.status(401).send("Unauthorized")
 
-    const decoded = verifyToken(token)
-
-    req.user = decoded
+    try {
+        const decoded = verifyToken(token)
+        req.user = decoded
+    } catch {
+        return res.status(401).send("Unauthorized")
+    }
 
     next()
 }

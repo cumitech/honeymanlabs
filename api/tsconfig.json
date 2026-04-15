@@ -26,6 +26,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
 
     // Needed for sequelize-typescript decorators + reflect-metadata
     "experimentalDecorators": true,

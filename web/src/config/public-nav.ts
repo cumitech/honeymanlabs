@@ -4,7 +4,7 @@
 export const publicNavItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/products", label: "Products" },
+  { href: "/shop", label: "Shop" },
   // { href: "/beekeeping-tools", label: "Beekeeping Tools" },
   { href: "/honey-testing-lab", label: "Testing Lab" },
   { href: "/education", label: "Education" },

@@ -1,4 +1,5 @@
 import { User } from "../../database/models/user.model";
+import { USER_ROLES } from "../../common/constants/app-constants";
 
 /**
  * Registration payload — field names match `User` model columns.
@@ -11,7 +12,7 @@ export type RegisterData = {
   password: string;
   phone: string;
   /** Optional on signup; defaults to `USER_ROLES.CUSTOMER` on the model if omitted */
-  role?: string | undefined;
+  role?: USER_ROLES | undefined;
   location?: string | undefined;
   avatar_url?: string | undefined;
 };
@@ -27,6 +28,10 @@ export class AuthRepository {
 
   async createUser(data: CreateUserData): Promise<User> {
     return User.create(data);
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return User.findByPk(id);
   }
 }
 

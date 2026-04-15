@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const zod_express_middleware_1 = require("zod-express-middleware");
+const app_contants_1 = require("../../common/constants/app-contants");
 const auth_middleware_1 = require("../../common/middleware/auth.middleware");
+const role_middleware_1 = require("../../common/middleware/role.middleware");
 const rate_limit_middleware_1 = require("../../common/middleware/rate-limit.middleware");
 const auth_controller_1 = require("./auth.controller");
 const auth_repository_1 = require("./auth.repository");
@@ -14,6 +16,9 @@ const service = new auth_service_1.AuthService(repository);
 const controller = new auth_controller_1.AuthController(service);
 router.post("/register", (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.registerSchema }), controller.register);
 router.post("/login", rate_limit_middleware_1.loginLimiter, (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.loginSchema }), controller.login);
-router.get("/me", auth_middleware_1.authenticate, controller.me);
+router.post("/forgot-password", (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.forgotPasswordSchema }), controller.forgotPassword);
+router.get("/me", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.READ), controller.me);
+router.get("/capabilities/admin", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.MANAGE_USERS, app_contants_1.PERMISSIONS.MANAGE_CONTENT), controller.adminCapabilities);
+router.get("/capabilities/content-write", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.WRITE), controller.contentWriteCapabilities);
 exports.default = router;
 //# sourceMappingURL=auth.routes.js.map

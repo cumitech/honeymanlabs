@@ -1,3 +1,4 @@
+import { BRAND_LOGO_PX } from "@/config/brand-logo";
 import { UserAvatar } from "@/components/refine-ui/layout/user-avatar";
 import { ThemeToggle } from "@/components/refine-ui/theme/theme-toggle";
 import {
@@ -11,9 +12,11 @@ import { cn } from "@/lib/utils";
 import {
   useActiveAuthProvider,
   useLogout,
-  useRefineOptions,
 } from "@refinedev/core";
+import { useAppTranslation } from "@/lib/i18n/translations";
 import { LogOutIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export const Header = () => {
   const { isMobile } = useSidebar();
@@ -47,78 +50,56 @@ function DesktopHeader() {
 }
 
 function MobileHeader() {
-  const { open, isMobile } = useSidebar();
-
-  const { title } = useRefineOptions();
-
   return (
     <header
       className={cn(
         "sticky",
         "top-0",
         "flex",
-        "h-12",
+        "h-14",
         "shrink-0",
         "items-center",
         "gap-2",
         "border-b",
         "border-border",
         "bg-sidebar",
+        "px-2",
         "pr-3",
         "justify-between",
-        "z-40"
+        "z-40",
       )}
     >
       <SidebarTrigger
-        className={cn("text-muted-foreground", "rotate-180", "ml-1", {
-          "opacity-0": open,
-          "opacity-100": !open || isMobile,
-          "pointer-events-auto": !open || isMobile,
-          "pointer-events-none": open && !isMobile,
-        })}
+        className={cn(
+          "text-muted-foreground",
+          "ml-0.5",
+          "size-10 shrink-0 touch-manipulation",
+        )}
+        aria-label="Open navigation menu"
       />
 
       <div
         className={cn(
-          "whitespace-nowrap",
-          "flex",
-          "flex-row",
-          "h-full",
-          "items-center",
-          "justify-start",
-          "gap-2",
-          "transition-discrete",
-          "duration-200",
-          {
-            "pl-3": !open,
-            "pl-5": open,
-          }
+          "flex min-w-0 flex-1 flex-row items-center justify-center gap-2 px-2",
         )}
       >
-        <div>{title.icon}</div>
-        <h2
-          className={cn(
-            "text-sm",
-            "font-bold",
-            "transition-opacity",
-            "duration-200",
-            {
-              "opacity-0": !open,
-              "opacity-100": open,
-            }
-          )}
+        <Link
+          href="/dashboard"
+          className="flex min-w-0 max-w-full items-center justify-center gap-2"
         >
-          {title.text}
-        </h2>
+          <Image src="/logo.svg" alt="Honeyman" width={BRAND_LOGO_PX} height={BRAND_LOGO_PX} />
+          <h2 className="truncate text-sm font-bold">Honeyman</h2>
+        </Link>
       </div>
 
-      <ThemeToggle className={cn("h-8", "w-8")} />
+      <ThemeToggle className={cn("h-9", "w-9", "shrink-0")} />
     </header>
   );
 }
 
 const UserDropdown = () => {
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { t } = useAppTranslation();
 
   const authProvider = useActiveAuthProvider();
 
@@ -141,7 +122,7 @@ const UserDropdown = () => {
             className={cn("text-destructive", "hover:text-destructive")}
           />
           <span className={cn("text-destructive", "hover:text-destructive")}>
-            {isLoggingOut ? "Logging out..." : "Logout"}
+            {isLoggingOut ? t.loggingOut : t.logout}
           </span>
         </DropdownMenuItem>
       </DropdownMenuContent>

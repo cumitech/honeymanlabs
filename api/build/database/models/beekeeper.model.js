@@ -17,18 +17,6 @@ const user_model_1 = require("./user.model");
 const apiary_model_1 = require("./apiary.model");
 const honey_batch_model_1 = require("./honey_batch.model");
 let Beekeeper = class Beekeeper extends sequelize_typescript_1.Model {
-    lang;
-    user_id;
-    user;
-    name;
-    region;
-    farm_location;
-    years_experience;
-    certification_status;
-    bio;
-    created_at;
-    apiaries;
-    honey_batches;
     static async assignId(instance) {
         if (instance.id)
             return;

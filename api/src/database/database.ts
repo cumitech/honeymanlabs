@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
 import {
   Apiary,
+  Article,
   ArticleCategory,
   Beekeeper,
   BeekeeperApplication,
@@ -35,6 +36,7 @@ export const sequelize = new Sequelize({
   models: [
     User,
     Event,
+    Article,
     ArticleCategory,
     NewsletterSubscriber,
     BeekeeperApplication,

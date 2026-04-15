@@ -15,11 +15,6 @@ const app_contants_1 = require("../../common/constants/app-contants");
 const custom_id_1 = require("../../common/utils/custom-id");
 const user_model_1 = require("./user.model");
 let Session = class Session extends sequelize_typescript_1.Model {
-    lang;
-    user_id;
-    user;
-    refresh_token;
-    expires_at;
     static async assignId(instance) {
         if (instance.id)
             return;

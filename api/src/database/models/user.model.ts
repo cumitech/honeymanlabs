@@ -3,9 +3,9 @@ import {
   Column,
   Model,
   DataType,
-  BeforeCreate,
+  BeforeValidate,
 } from "sequelize-typescript";
-import { CONTENT_LANGUAGES, USER_ROLES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES, USER_ROLES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
 
 @Table({
@@ -26,19 +26,19 @@ export class User extends Model {
     allowNull: false,
     defaultValue: CONTENT_LANGUAGES.EN,
   })
-  lang!: CONTENT_LANGUAGES;
+  declare lang: CONTENT_LANGUAGES;
 
   @Column({
     type: DataType.STRING(50),
     allowNull: false,
   })
-  firstname!: string;
+  declare firstname: string;
 
   @Column({
     type: DataType.STRING(50),
     allowNull: false,
   })
-  lastname!: string;
+  declare lastname: string;
 
 
   @Column({
@@ -46,13 +46,13 @@ export class User extends Model {
     allowNull: false,
     unique: true,
   })
-  email!: string;
+  declare email: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  password_hash!: string;
+  declare password_hash: string;
 
   @Column({
     type: DataType.ENUM(
@@ -64,27 +64,27 @@ export class User extends Model {
     defaultValue: USER_ROLES.CUSTOMER,
     allowNull: false,
   })
-  role!: string;
+  declare role: USER_ROLES;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  phone!: string;
+  declare phone: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  location!: string;
+  declare location: string | null;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  avatar_url!: string;
+  declare avatar_url: string | null;
 
-  @BeforeCreate
+  @BeforeValidate
   static async assignId(instance: User) {
     if (instance.id) return;
     instance.id = await generateCustomIdForModel(this);

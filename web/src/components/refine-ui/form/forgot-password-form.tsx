@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -8,11 +7,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { brandLogoBoxClassName } from "@/config/brand-logo";
 import { cn } from "@/lib/utils";
 import { useForgotPassword, useLink, useRefineOptions } from "@refinedev/core";
 
@@ -20,17 +22,12 @@ export const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
 
   const Link = useLink();
-
   const { title } = useRefineOptions();
+  const { mutate: forgotPassword, isPending } = useForgotPassword();
 
-  const { mutate: forgotPassword } = useForgotPassword();
-
-  const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    forgotPassword({
-      email,
-    });
+    forgotPassword({ email });
   };
 
   return (
@@ -42,13 +39,17 @@ export const ForgotPasswordForm = () => {
         "justify-center",
         "px-6",
         "py-8",
-        "min-h-svh"
+        "min-h-svh",
       )}
     >
-      <div className={cn("flex", "items-center", "justify-center", "gap-2")}>
+      <div className={cn("flex", "items-center", "justify-center")}>
         {title.icon && (
           <div
-            className={cn("text-foreground", "[&>svg]:w-12", "[&>svg]:h-12")}
+            className={cn(
+              "flex items-center justify-center text-foreground",
+              brandLogoBoxClassName,
+              "[&>svg]:size-full",
+            )}
           >
             {title.icon}
           </div>
@@ -57,70 +58,52 @@ export const ForgotPasswordForm = () => {
 
       <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
         <CardHeader className={cn("px-0")}>
-          <CardTitle
-            className={cn(
-              "text-blue-600",
-              "dark:text-blue-400",
-              "text-3xl",
-              "font-semibold"
-            )}
-          >
+          <CardTitle className={cn("text-3xl", "font-semibold")}>
             Forgot password
           </CardTitle>
-          <CardDescription
-            className={cn("text-muted-foreground", "font-medium")}
-          >
-            Enter your email to change your password.
+          <CardDescription className={cn("text-muted-foreground", "font-medium")}>
+            Enter your email and we will send reset instructions.
           </CardDescription>
         </CardHeader>
 
+        <Separator />
+
         <CardContent className={cn("px-0")}>
-          <form onSubmit={handleForgotPassword}>
+          <form onSubmit={onSubmit}>
             <div className={cn("flex", "flex-col", "gap-2")}>
               <Label htmlFor="email">Email</Label>
-              <div className={cn("flex", "gap-2")}>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder=""
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={cn("flex-1")}
-                />
-                <Button
-                  type="submit"
-                  className={cn(
-                    "bg-blue-600",
-                    "hover:bg-blue-700",
-                    "text-white",
-                    "px-6"
-                  )}
-                >
-                  Send
-                </Button>
-              </div>
+              <Input
+                id="email"
+                type="email"
+                required
+                disabled={isPending}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
-          </form>
-
-          <div className={cn("mt-8")}>
-            <Link
-              to="/login"
-              className={cn(
-                "inline-flex",
-                "items-center",
-                "gap-2",
-                "text-sm",
-                "text-muted-foreground",
-                "hover:text-foreground",
-                "transition-colors"
-              )}
+            <Button
+              type="submit"
+              size="lg"
+              className={cn("w-full", "mt-6")}
+              disabled={isPending}
             >
-              <ArrowLeft className={cn("w-4", "h-4")} />
-              <span>Back</span>
+              {isPending ? "Submitting..." : "Send reset link"}
+            </Button>
+          </form>
+        </CardContent>
+
+        <Separator />
+
+        <CardFooter>
+          <div className={cn("w-full", "text-center text-sm")}>
+            <span className={cn("text-sm", "text-muted-foreground")}>
+              Remembered your password?{" "}
+            </span>
+            <Link to="/login" className={cn("font-semibold", "underline")}>
+              Sign in
             </Link>
           </div>
-        </CardContent>
+        </CardFooter>
       </Card>
     </div>
   );

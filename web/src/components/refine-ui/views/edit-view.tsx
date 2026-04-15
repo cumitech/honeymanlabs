@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import {
   useBack,
   useResourceParams,
@@ -39,6 +40,7 @@ export const EditViewHeader = ({
   headerClassName,
 }: EditViewHeaderProps) => {
   const back = useBack();
+  const router = useRouter();
 
   const getUserFriendlyName = useUserFriendlyName();
 
@@ -48,6 +50,7 @@ export const EditViewHeader = ({
   const { id: recordItemId } = useResourceParams();
 
   const resourceName = resource?.name ?? identifier;
+  const listPath = typeof resource?.list === "string" ? resource.list : undefined;
 
   const title =
     titleFromProps ??
@@ -75,7 +78,17 @@ export const EditViewHeader = ({
         )}
       >
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={back}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (listPath) {
+                router.push(listPath);
+                return;
+              }
+              back();
+            }}
+          >
             <ArrowLeftIcon className="h-4 w-4" />
           </Button>
           <h2 className="text-2xl font-bold">{title}</h2>

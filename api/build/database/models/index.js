@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = exports.ProductImage = exports.Product = exports.Order = exports.LabResult = exports.LabTest = exports.HoneyBatch = exports.Apiary = exports.Beekeeper = exports.BeekeeperApplication = exports.NewsletterSubscriber = exports.ArticleCategory = exports.Event = exports.User = void 0;
+exports.Session = exports.ProductImage = exports.Product = exports.Order = exports.LabResult = exports.LabTest = exports.HoneyBatch = exports.Apiary = exports.Beekeeper = exports.BeekeeperApplication = exports.NewsletterSubscriber = exports.ArticleCategory = exports.Article = exports.Event = exports.User = void 0;
 var user_model_1 = require("./user.model");
 Object.defineProperty(exports, "User", { enumerable: true, get: function () { return user_model_1.User; } });
 var event_model_1 = require("./event.model");
 Object.defineProperty(exports, "Event", { enumerable: true, get: function () { return event_model_1.Event; } });
+var article_model_1 = require("./article.model");
+Object.defineProperty(exports, "Article", { enumerable: true, get: function () { return article_model_1.Article; } });
 var article_category_model_1 = require("./article_category.model");
 Object.defineProperty(exports, "ArticleCategory", { enumerable: true, get: function () { return article_category_model_1.ArticleCategory; } });
 var newsletter_subscriber_model_1 = require("./newsletter_subscriber.model");

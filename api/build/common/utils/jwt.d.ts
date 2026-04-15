@@ -1,4 +1,4 @@
-import { PERMISSIONS, USER_ROLES } from "../constants/app-contants";
+import { PERMISSIONS, USER_ROLES } from "../constants/app-constants";
 export type AuthTokenPayload = {
     userId: string;
     role: USER_ROLES;

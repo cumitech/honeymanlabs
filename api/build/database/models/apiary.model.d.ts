@@ -1,5 +1,5 @@
 import { Model } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { Beekeeper } from "./beekeeper.model";
 export declare class Apiary extends Model {
     id: string;

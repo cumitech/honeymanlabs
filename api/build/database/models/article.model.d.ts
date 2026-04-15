@@ -1,5 +1,5 @@
 import { Model } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { ArticleCategory } from "./article_category.model";
 import { User } from "./user.model";
 export declare class Article extends Model {

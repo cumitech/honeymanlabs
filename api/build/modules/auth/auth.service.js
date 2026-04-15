@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const app_contants_1 = require("../../common/constants/app-contants");
+const app_constants_1 = require("../../common/constants/app-constants");
 const jwt_1 = require("../../common/utils/jwt");
 class AuthService {
     constructor(repo) {
@@ -21,7 +21,7 @@ class AuthService {
         const token = (0, jwt_1.signToken)({
             userId: user.id,
             role: user.role,
-            permissions: app_contants_1.ROLE_PERMISSIONS[user.role],
+            permissions: app_constants_1.ROLE_PERMISSIONS[user.role],
         });
         return { token };
     }
@@ -37,7 +37,7 @@ class AuthService {
         const token = (0, jwt_1.signToken)({
             userId: user.id,
             role: user.role,
-            permissions: app_contants_1.ROLE_PERMISSIONS[user.role],
+            permissions: app_constants_1.ROLE_PERMISSIONS[user.role],
         });
         return { token };
     }

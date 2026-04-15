@@ -1,5 +1,5 @@
 import { Model } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 export declare class NewsletterSubscriber extends Model {
     id: string;
     lang: CONTENT_LANGUAGES;

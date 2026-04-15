@@ -1,4 +1,7 @@
 {
-  "name": "HoneymanApp",
-  "displayName": "Honeyman"
+  "expo": {
+    "name": "Honeyman",
+    "slug": "honeyman",
+    "version": "1.0.0"
+  }
 }

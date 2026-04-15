@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const app_contants_1 = require("../../common/constants/app-contants");
+const app_constants_1 = require("../../common/constants/app-constants");
 const custom_id_1 = require("../../common/utils/custom-id");
 let User = class User extends sequelize_typescript_1.Model {
     static async assignId(instance) {
@@ -31,9 +31,9 @@ __decorate([
 ], User.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.ENUM(app_contants_1.CONTENT_LANGUAGES.EN, app_contants_1.CONTENT_LANGUAGES.FR),
+        type: sequelize_typescript_1.DataType.ENUM(app_constants_1.CONTENT_LANGUAGES.EN, app_constants_1.CONTENT_LANGUAGES.FR),
         allowNull: false,
-        defaultValue: app_contants_1.CONTENT_LANGUAGES.EN,
+        defaultValue: app_constants_1.CONTENT_LANGUAGES.EN,
     }),
     __metadata("design:type", String)
 ], User.prototype, "lang", void 0);
@@ -68,8 +68,8 @@ __decorate([
 ], User.prototype, "password_hash", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.ENUM(app_contants_1.USER_ROLES.ADMIN, app_contants_1.USER_ROLES.CUSTOMER, app_contants_1.USER_ROLES.BEEKEEPER, app_contants_1.USER_ROLES.LAB_STAFF),
-        defaultValue: app_contants_1.USER_ROLES.CUSTOMER,
+        type: sequelize_typescript_1.DataType.ENUM(app_constants_1.USER_ROLES.ADMIN, app_constants_1.USER_ROLES.CUSTOMER, app_constants_1.USER_ROLES.BEEKEEPER, app_constants_1.USER_ROLES.LAB_STAFF),
+        defaultValue: app_constants_1.USER_ROLES.CUSTOMER,
         allowNull: false,
     }),
     __metadata("design:type", String)

@@ -19,8 +19,8 @@ export declare class AuthService {
         lastname: string;
         email: string;
         avatar_url: string | null;
-        role: import("../../common/constants/app-contants").USER_ROLES;
-        permissions: import("../../common/constants/app-contants").PERMISSIONS[];
+        role: import("../../common/constants/app-constants").USER_ROLES;
+        permissions: import("../../common/constants/app-constants").PERMISSIONS[];
     }>;
     forgotPassword(email: string): Promise<void>;
 }

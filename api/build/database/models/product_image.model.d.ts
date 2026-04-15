@@ -1,5 +1,5 @@
 import { Model } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { Product } from "./product.model";
 export declare class ProductImage extends Model {
     id: string;

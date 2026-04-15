@@ -11,7 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const app_contants_1 = require("../../common/constants/app-contants");
+const product_types_1 = require("../../common/constants/product-types");
+const app_constants_1 = require("../../common/constants/app-constants");
 const custom_id_1 = require("../../common/utils/custom-id");
 const article_category_model_1 = require("./article_category.model");
 const product_image_model_1 = require("./product_image.model");
@@ -33,9 +34,9 @@ __decorate([
 ], Product.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.ENUM(app_contants_1.CONTENT_LANGUAGES.EN, app_contants_1.CONTENT_LANGUAGES.FR),
+        type: sequelize_typescript_1.DataType.ENUM(app_constants_1.CONTENT_LANGUAGES.EN, app_constants_1.CONTENT_LANGUAGES.FR),
         allowNull: false,
-        defaultValue: app_contants_1.CONTENT_LANGUAGES.EN,
+        defaultValue: app_constants_1.CONTENT_LANGUAGES.EN,
     }),
     __metadata("design:type", String)
 ], Product.prototype, "lang", void 0);
@@ -103,6 +104,39 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], Product.prototype, "featured_image", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(32),
+        allowNull: false,
+        defaultValue: product_types_1.DEFAULT_PRODUCT_TYPE,
+        field: "product_type",
+    }),
+    __metadata("design:type", String)
+], Product.prototype, "product_type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.DECIMAL(12, 2),
+        allowNull: true,
+        field: "weight_grams",
+    }),
+    __metadata("design:type", Object)
+], Product.prototype, "weight_grams", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.DECIMAL(12, 4),
+        allowNull: true,
+        field: "liters",
+    }),
+    __metadata("design:type", Object)
+], Product.prototype, "liters", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(8),
+        allowNull: true,
+        field: "apparel_size",
+    }),
+    __metadata("design:type", Object)
+], Product.prototype, "apparel_size", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => product_image_model_1.ProductImage),
     __metadata("design:type", Array)

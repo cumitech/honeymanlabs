@@ -1,5 +1,5 @@
 import { User } from "../../database/models/user.model";
-import { USER_ROLES } from "../../common/constants/app-contants";
+import { USER_ROLES } from "../../common/constants/app-constants";
 /**
  * Registration payload — field names match `User` model columns.
  * `password` is plaintext here; persist as `password_hash` via `CreateUserData`.

@@ -1,5 +1,5 @@
 import { Model } from "sequelize-typescript";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { User } from "./user.model";
 import { Apiary } from "./apiary.model";
 import { HoneyBatch } from "./honey_batch.model";

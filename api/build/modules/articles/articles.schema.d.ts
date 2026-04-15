@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CONTENT_LANGUAGES } from "../../common/constants/app-contants";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 export declare const createArticleSchema: z.ZodObject<{
     lang: z.ZodOptional<z.ZodEnum<typeof CONTENT_LANGUAGES>>;
     title: z.ZodString;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { USER_ROLES } from "../../common/constants/app-contants";
+import { USER_ROLES } from "../../common/constants/app-constants";
 /** Auth register body — aligns with `User` (`firstname`, `lastname`, …) */
 export declare const registerSchema: z.ZodObject<{
     firstname: z.ZodString;

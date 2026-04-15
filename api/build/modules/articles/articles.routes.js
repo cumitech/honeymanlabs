@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const zod_express_middleware_1 = require("zod-express-middleware");
-const app_contants_1 = require("../../common/constants/app-contants");
+const app_constants_1 = require("../../common/constants/app-constants");
 const auth_middleware_1 = require("../../common/middleware/auth.middleware");
 const role_middleware_1 = require("../../common/middleware/role.middleware");
 const articles_controller_1 = require("./articles.controller");
@@ -13,10 +13,10 @@ const router = (0, express_1.Router)();
 const repository = new articles_repository_1.ArticlesRepository();
 const service = new articles_service_1.ArticlesService(repository);
 const controller = new articles_controller_1.ArticlesController(service);
-router.get("/", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.READ), controller.list);
-router.get("/:id", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.READ), controller.getById);
-router.post("/", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.MANAGE_CONTENT, app_contants_1.PERMISSIONS.WRITE), (0, zod_express_middleware_1.validateRequest)({ body: articles_schema_1.createArticleSchema }), controller.create);
-router.put("/:id", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.MANAGE_CONTENT, app_contants_1.PERMISSIONS.WRITE), (0, zod_express_middleware_1.validateRequest)({ body: articles_schema_1.updateArticleSchema }), controller.update);
-router.delete("/:id", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_contants_1.PERMISSIONS.MANAGE_CONTENT, app_contants_1.PERMISSIONS.DELETE), controller.remove);
+router.get("/", controller.list);
+router.get("/:id", controller.getById);
+router.post("/", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_constants_1.PERMISSIONS.MANAGE_CONTENT, app_constants_1.PERMISSIONS.WRITE), (0, zod_express_middleware_1.validateRequest)({ body: articles_schema_1.createArticleSchema }), controller.create);
+router.put("/:id", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_constants_1.PERMISSIONS.MANAGE_CONTENT, app_constants_1.PERMISSIONS.WRITE), (0, zod_express_middleware_1.validateRequest)({ body: articles_schema_1.updateArticleSchema }), controller.update);
+router.delete("/:id", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_constants_1.PERMISSIONS.MANAGE_CONTENT, app_constants_1.PERMISSIONS.DELETE), controller.remove);
 exports.default = router;
 //# sourceMappingURL=articles.routes.js.map

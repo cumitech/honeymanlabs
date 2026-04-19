@@ -1,6 +1,5 @@
 import React from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native'
@@ -15,7 +14,7 @@ import { LabFlavorRadar } from './LabFlavorRadar'
 import { LabMetricRow } from './LabMetricRow'
 
 export function LabBatchDetailScreen() {
-  const { theme, mode } = useTheme()
+  const { theme } = useTheme()
   const navigation = useNavigation<NativeStackNavigationProp<LabStackParamList>>()
   const route = useRoute<RouteProp<LabStackParamList, 'LabBatchDetail'>>()
   const { batchId } = route.params
@@ -131,21 +130,12 @@ export function LabBatchDetailScreen() {
             accessibilityRole="button"
             accessibilityLabel="Download full PDF report"
           >
-            <LinearGradient
-              colors={
-                mode === 'dark'
-                  ? [theme.palette.primary, theme.palette.secondary]
-                  : [theme.palette.surfaceContainer, theme.palette.primary]
-              }
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={styles.downloadBtn}
-            >
+            <View style={[styles.downloadBtn, { backgroundColor: theme.palette.primary }]}>
               <MaterialCommunityIcons name="download" size={22} color={theme.text.onPrimary} />
               <Text style={[styles.downloadText, { color: theme.text.onPrimary }]}>
                 Download Full PDF Report
               </Text>
-            </LinearGradient>
+            </View>
           </Pressable>
         </FadeInMount>
       </ScrollView>
@@ -157,7 +147,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: 18,
-    paddingTop: 12,
+    paddingTop: 0,
     paddingBottom: 36,
   },
   searchBar: {
@@ -180,11 +170,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: StyleSheet.hairlineWidth,
     padding: 18,
-    shadowColor: 'rgba(27, 18, 0, 0.35)',
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 3,
+    shadowColor: '#1B1200',
+    shadowOpacity: 0.045,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   cardTitle: {
     fontFamily: fontFamily.sansBold,

@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native'
+import { AppButton } from '../components/shared'
 import { fontFamily, useTheme } from '../theme'
 
 export type OnboardingScreenProps = {
@@ -102,17 +103,7 @@ export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
             ]}
           >
             <Text style={[styles.overline, { color: theme.palette.accent }]}>{panel.overline}</Text>
-            <Text
-              style={[
-                styles.title,
-                {
-                  color: theme.text.primary,
-                  textShadowColor: 'rgba(253, 246, 234, 0.75)',
-                  textShadowOffset: { width: 0, height: 0 },
-                  textShadowRadius: 10,
-                },
-              ]}
-            >
+            <Text style={[styles.title, { color: theme.text.primary }]}>
               {panel.title}
             </Text>
             {index === 1 ? (
@@ -164,27 +155,13 @@ export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
         </View>
 
         {!isFinal ? (
-          <Pressable
-            style={[
-              styles.cta,
-              styles.primary,
-              { backgroundColor: theme.palette.primary, borderColor: theme.border },
-            ]}
+          <AppButton
+            variant="onboarding"
+            label="Next"
             onPress={() => moveToPanel(Math.min(index + 1, PANELS.length - 1))}
-          >
-            <Text style={[styles.primaryText, { color: theme.text.onPrimary }]}>Next</Text>
-          </Pressable>
+          />
         ) : (
-          <Pressable
-            style={[
-              styles.cta,
-              styles.primary,
-              { backgroundColor: theme.palette.primary, borderColor: theme.border },
-            ]}
-            onPress={onGetStarted}
-          >
-            <Text style={[styles.primaryText, { color: theme.text.onPrimary }]}>Get started</Text>
-          </Pressable>
+          <AppButton variant="onboarding" label="Get started" onPress={onGetStarted} />
         )}
       </Animated.View>
     </View>
@@ -294,26 +271,5 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     width: 20,
-  },
-  cta: {
-    minHeight: 54,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 14,
-  },
-  primary: {
-    borderWidth: StyleSheet.hairlineWidth,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  primaryText: {
-    fontFamily: fontFamily.sansBold,
-    fontSize: 18,
-    letterSpacing: 0.2,
-    textTransform: 'capitalize',
   },
 })

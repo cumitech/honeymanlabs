@@ -56,6 +56,7 @@ export function TraceabilityScreen() {
     <ScreenShell
       scroll={false}
       padded={false}
+      safeAreaEdges={['left', 'right', 'bottom']}
       pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
       pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
       pageHoneycombCenterStyle={tabScreenHoneycomb.center}
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 16,
+    paddingTop: 0,
     paddingBottom: 44,
   },
   historySearch: {

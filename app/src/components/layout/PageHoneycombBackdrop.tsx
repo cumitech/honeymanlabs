@@ -25,9 +25,9 @@ export function PageHoneycombBackdrop({
   omitCenter = false,
 }: PageHoneycombBackdropProps) {
   const { theme } = useTheme()
-  const cornerOpacity = theme.mode === 'dark' ? 0.11 : 0.15
-  const cornerSecondaryOpacity = theme.mode === 'dark' ? 0.09 : 0.12
-  const centerOpacity = theme.mode === 'dark' ? 0.06 : 0.09
+  const cornerOpacity = theme.mode === 'dark' ? 0.055 : 0.075
+  const cornerSecondaryOpacity = theme.mode === 'dark' ? 0.050 : 0.065
+  const centerOpacity = theme.mode === 'dark' ? 0.035 : 0.050
 
   return (
     <View pointerEvents="none" style={styles.clip}>

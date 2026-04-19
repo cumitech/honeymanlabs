@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native'
 import type { LabFeedHeroVariant, LabRecentTest } from '../../data/lab-batches'
 import type { LabStackParamList } from '../../types'
 import { fontFamily, useTheme, type SemanticTheme } from '../../theme'
-import { tokens } from '../../theme/tokens'
 import { fireLightImpact } from '../../utils/safe-haptics'
 
 type LabRecentTestCardProps = { test: LabRecentTest }
@@ -53,7 +52,7 @@ export function LabRecentTestCard({ test }: LabRecentTestCardProps) {
       onPress={viewResults}
       accessibilityRole="button"
       accessibilityLabel={`Open lab results for batch ${test.batchCode}`}
-      style={[styles.cardWrap, tokens.shadow.md]}
+      style={styles.cardWrap}
     >
       <View style={[styles.card, { backgroundColor: theme.bg.card, borderColor: theme.border }]}>
         <View style={styles.heroClip}>
@@ -194,9 +193,6 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.displayBold,
     fontSize: 22,
     lineHeight: 28,
-    textShadowColor: 'rgba(27, 18, 0, 0.45)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
   },
   heroTags: {
     fontFamily: fontFamily.sansMedium,

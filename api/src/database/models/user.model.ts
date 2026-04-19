@@ -50,9 +50,23 @@ export class User extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  declare password_hash: string;
+  declare password_hash: string | null;
+
+  @Column({
+    type: DataType.STRING(128),
+    allowNull: true,
+    unique: true,
+  })
+  declare google_sub: string | null;
+
+  @Column({
+    type: DataType.STRING(64),
+    allowNull: true,
+    unique: true,
+  })
+  declare facebook_id: string | null;
 
   @Column({
     type: DataType.ENUM(
@@ -68,9 +82,9 @@ export class User extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  declare phone: string;
+  declare phone: string | null;
 
   @Column({
     type: DataType.STRING,
@@ -83,6 +97,49 @@ export class User extends Model {
     allowNull: true,
   })
   declare avatar_url: string | null;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  declare last_sign_in_at: Date | null;
+
+  @Column({
+    type: DataType.STRING(32),
+    allowNull: true,
+  })
+  declare last_sign_in_method: string | null;
+
+  @Column({
+    type: DataType.STRING(16),
+    allowNull: true,
+  })
+  declare last_sign_in_client: string | null;
+
+  @Column({
+    type: DataType.STRING(255),
+    allowNull: true,
+  })
+  declare last_sign_in_device_label: string | null;
+
+  @Column({
+    type: DataType.STRING(512),
+    allowNull: true,
+  })
+  declare last_sign_in_user_agent: string | null;
+
+  @Column({
+    type: DataType.STRING(64),
+    allowNull: true,
+  })
+  declare last_sign_in_ip: string | null;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  declare sign_in_count: number;
 
   @BeforeValidate
   static async assignId(instance: User) {

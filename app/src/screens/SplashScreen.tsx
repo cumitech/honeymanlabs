@@ -99,7 +99,7 @@ export function SplashScreen() {
           source={require('../assets/honycomb-layout-right-top.png')}
           style={[
             styles.topRightHoneycomb,
-            { opacity: mode === 'dark' ? 0.78 : 0.98 },
+            { opacity: mode === 'dark' ? 0.38 : 0.48 },
           ]}
           resizeMode="contain"
         />
@@ -107,7 +107,7 @@ export function SplashScreen() {
           source={require('../assets/honycomb-layout-left-bottom.png')}
           style={[
             styles.bottomLeftHoneycomb,
-            { opacity: mode === 'dark' ? 0.76 : 0.98 },
+            { opacity: mode === 'dark' ? 0.36 : 0.46 },
           ]}
           resizeMode="contain"
         />

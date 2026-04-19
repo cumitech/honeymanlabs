@@ -41,15 +41,11 @@ export function ApiariesMapBlock({ items, mapRef, onRegionSnapshot }: ApiariesMa
     typeof process !== 'undefined' && Boolean(process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY)
 
   if (Platform.OS === 'web') {
-    return (
-      <MapUnavailableNotice message="Open the iOS or Android app for the live Google Map with apiary pins." />
-    )
+    return <MapUnavailableNotice message="Map view is only available in the mobile app." />
   }
 
   if (!canUseReactNativeMaps(useGoogleMaps)) {
-    return (
-      <MapUnavailableNotice message="Map native module is missing. Run a dev build after installing maps: npx expo prebuild --clean, then npx expo run:android (or run:ios)." />
-    )
+    return <MapUnavailableNotice message="Map is unavailable right now." />
   }
 
   const {

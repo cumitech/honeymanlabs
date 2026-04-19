@@ -6,12 +6,25 @@ import { fontFamily, useTheme } from '../../theme'
 import { fireLightImpact } from '../../utils/safe-haptics'
 import { AppScreenTopBar } from '../layout/AppScreenTopBar'
 
-export function LabDiscoveryHeader() {
+export type DrawerSearchHeaderProps = {
+  /** Placeholder copy inside the decorative search pill. */
+  searchPlaceholder: string
+  /**
+   * When true (default), a light haptic runs before the drawer opens.
+   * Set false to match older screens that opened the menu without haptics.
+   */
+  hapticOnMenuPress?: boolean
+}
+
+export function DrawerSearchHeader({
+  searchPlaceholder,
+  hapticOnMenuPress = true,
+}: DrawerSearchHeaderProps) {
   const { theme } = useTheme()
   const navigation = useNavigation()
 
   const openDrawer = () => {
-    fireLightImpact()
+    if (hapticOnMenuPress) fireLightImpact()
     navigation.dispatch(DrawerActions.openDrawer())
   }
 
@@ -19,9 +32,7 @@ export function LabDiscoveryHeader() {
     <View
       style={[styles.searchPill, { backgroundColor: theme.bg.muted, borderColor: theme.border }]}
     >
-      <Text style={[styles.searchPlaceholder, { color: theme.text.muted }]}>
-        Search batches, codes…
-      </Text>
+      <Text style={[styles.searchPlaceholder, { color: theme.text.muted }]}>{searchPlaceholder}</Text>
       <MaterialCommunityIcons name="magnify" size={22} color={theme.text.muted} />
     </View>
   )

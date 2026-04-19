@@ -6,6 +6,49 @@ import { fireLightImpact, fireWarningNotification } from '../../utils/safe-hapti
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name']
 
+export function MenuFooterActionRow({
+  icon,
+  label,
+  iconColor,
+  labelColor,
+  onPress,
+  useWarningHaptic = false,
+  iconWellBackgroundColor,
+}: {
+  icon: IconName
+  label: string
+  iconColor: string
+  labelColor: string
+  onPress: () => void | Promise<void>
+  useWarningHaptic?: boolean
+  iconWellBackgroundColor?: string
+}) {
+  const iconNode = <MaterialCommunityIcons name={icon} size={22} color={iconColor} />
+  return (
+    <Pressable
+      onPress={() => {
+        if (useWarningHaptic) fireWarningNotification()
+        else fireLightImpact()
+        void Promise.resolve(onPress())
+      }}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => [styles.signOutPressable, pressed && { opacity: 0.88 }]}
+    >
+      <View style={styles.signOutRow}>
+        {iconWellBackgroundColor != null ? (
+          <View style={[styles.signOutIconWell, { backgroundColor: iconWellBackgroundColor }]}>{iconNode}</View>
+        ) : (
+          <View style={styles.signOutIconSlot}>{iconNode}</View>
+        )}
+        <Text style={[styles.signOutLabel, { color: labelColor }]} numberOfLines={1}>
+          {label}
+        </Text>
+      </View>
+    </Pressable>
+  )
+}
+
 export function MenuChevronRow({
   icon,
   label,
@@ -40,34 +83,24 @@ export function MenuChevronRow({
 export function MenuSignOutRow({
   label,
   onPress,
+  iconWellBackgroundColor,
 }: {
   label?: string
   onPress: () => void | Promise<void>
+  iconWellBackgroundColor?: string
 }) {
   const { theme } = useTheme()
   const destructive = theme.status.error
   return (
-    <Pressable
-      onPress={() => {
-        fireWarningNotification()
-        void Promise.resolve(onPress())
-      }}
-      accessibilityRole="button"
-      accessibilityLabel={label ?? 'Sign out'}
-      style={({ pressed }) => [styles.signOutPressable, pressed && { opacity: 0.88 }]}
-    >
-      <View style={styles.signOutRow}>
-        <View style={styles.signOutIconSlot}>
-          <MaterialCommunityIcons name="logout-variant" size={22} color={destructive} />
-        </View>
-        <Text
-          style={[styles.signOutLabel, { color: destructive }]}
-          numberOfLines={1}
-        >
-          {label ?? 'Sign out'}
-        </Text>
-      </View>
-    </Pressable>
+    <MenuFooterActionRow
+      icon="logout-variant"
+      label={label ?? 'Sign out'}
+      iconColor={destructive}
+      labelColor={destructive}
+      onPress={onPress}
+      useWarningHaptic
+      iconWellBackgroundColor={iconWellBackgroundColor}
+    />
   )
 }
 
@@ -124,10 +157,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  signOutIconWell: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    marginRight: 12,
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   signOutLabel: {
     flex: 1,
     flexShrink: 1,
-    fontFamily: fontFamily.sansBold,
+    fontFamily: fontFamily.sansRegular,
     fontSize: 16,
   },
   row: {

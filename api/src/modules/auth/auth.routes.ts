@@ -12,6 +12,8 @@ import {
     loginSchema,
     refreshSchema,
     registerSchema,
+    socialFacebookSchema,
+    socialGoogleSchema,
     updateMeSchema,
 } from "./auth.schema";
 
@@ -31,6 +33,18 @@ router.post(
     loginLimiter,
     validateRequest({ body: loginSchema }),
     controller.login
+);
+router.post(
+    "/social/google",
+    loginLimiter,
+    validateRequest({ body: socialGoogleSchema }),
+    controller.socialGoogle
+);
+router.post(
+    "/social/facebook",
+    loginLimiter,
+    validateRequest({ body: socialFacebookSchema }),
+    controller.socialFacebook
 );
 router.post(
     "/refresh",

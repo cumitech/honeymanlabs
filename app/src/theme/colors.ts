@@ -13,8 +13,8 @@ export const lightTheme = {
   accent: '#815100',
   accentForeground: '#FDF6EA',
   destructive: '#E63000',
-  border: 'rgba(26, 16, 0, 0.12)',
-  input: 'rgba(26, 16, 0, 0.08)',
+  border: 'rgba(26, 16, 0, 0.08)',
+  input: 'rgba(26, 16, 0, 0.06)',
   ring: 'rgba(255, 165, 0, 0.35)',
 } as const
 
@@ -33,8 +33,8 @@ export const darkTheme = {
   accent: '#FFB800',
   accentForeground: '#0B0B0A',
   destructive: '#E63000',
-  border: 'rgba(253, 246, 234, 0.12)',
-  input: 'rgba(253, 246, 234, 0.10)',
+  border: 'rgba(253, 246, 234, 0.08)',
+  input: 'rgba(253, 246, 234, 0.08)',
   ring: 'rgba(255, 180, 0, 0.35)',
 } as const
 

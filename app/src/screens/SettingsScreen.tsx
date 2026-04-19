@@ -1,9 +1,20 @@
 import React from 'react'
-import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from 'react-native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
+import { useAuthLauncher } from '../context/AuthLauncherContext'
 import { setThemePreference } from '../store/slices/ui-slice'
-import { useAppDispatch } from '../store/hooks'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import type { RootDrawerParamList } from '../types'
 import { fontFamily, useTheme } from '../theme'
 import { fireLightImpact } from '../utils/safe-haptics'
@@ -15,17 +26,131 @@ import {
   AppScreenTopBarProfileAvatar,
 } from '../components/layout/AppScreenTopBar'
 import { signOut } from '../utils/sign-out'
-import { MenuChevronRow, MenuSignOutRow, MenuSwitchRow } from '../components/settings/MenuRows'
-import { SettingsMenuCard, SettingsMenuDivider } from '../components/settings/SettingsMenuCard'
 
 type DrawerNav = DrawerNavigationProp<RootDrawerParamList>
 
 const AVATAR = require('../assets/avatars/avatar.png')
 
+interface ChevronRowProps {
+  icon: string
+  label: string
+  iconColor: string
+  labelColor: string
+  onPress: () => void
+}
+
+function ChevronRow({ icon, label, iconColor, labelColor, onPress }: ChevronRowProps) {
+  const { theme } = useTheme()
+  return (
+    <Pressable
+      onPressIn={fireLightImpact}
+      onPress={onPress}
+      style={({ pressed }) => [rowStyles.row, { opacity: pressed ? 0.6 : 1 }]}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
+      <View style={rowStyles.iconWrap}>
+        <MaterialCommunityIcons name={icon as never} size={20} color={iconColor} />
+      </View>
+      <Text style={[rowStyles.label, { color: labelColor }]}>{label}</Text>
+      <MaterialCommunityIcons
+        name="chevron-right"
+        size={20}
+        color={theme.text.muted}
+        style={rowStyles.chevron}
+      />
+    </Pressable>
+  )
+}
+
+interface SwitchRowProps {
+  icon: string
+  label: string
+  iconColor: string
+  labelColor: string
+  value: boolean
+  onValueChange: (v: boolean) => void
+  trackColorOn?: string
+}
+
+function SwitchRow({
+  icon,
+  label,
+  iconColor,
+  labelColor,
+  value,
+  onValueChange,
+  trackColorOn,
+}: SwitchRowProps) {
+  return (
+    <View style={rowStyles.row} accessibilityRole="none">
+      <View style={rowStyles.iconWrap}>
+        <MaterialCommunityIcons name={icon as never} size={20} color={iconColor} />
+      </View>
+      <Text style={[rowStyles.label, { color: labelColor }]}>{label}</Text>
+      <Switch
+        value={value}
+        onValueChange={onValueChange}
+        trackColor={{ false: '#D1D1D6', true: trackColorOn ?? iconColor }}
+        thumbColor="#fff"
+        style={rowStyles.switch}
+      />
+    </View>
+  )
+}
+
+function SignOutRow({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable
+      onPressIn={fireLightImpact}
+      onPress={onPress}
+      style={({ pressed }) => [rowStyles.row, { opacity: pressed ? 0.6 : 1 }]}
+      accessibilityRole="button"
+      accessibilityLabel="Sign out"
+    >
+      <View style={rowStyles.iconWrap}>
+        <MaterialCommunityIcons name="logout" size={20} color="#E53935" />
+      </View>
+      <Text style={[rowStyles.label, { color: '#E53935' }]}>Sign out</Text>
+    </Pressable>
+  )
+}
+
+function MenuCard({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme()
+  return (
+    <View
+      style={[
+        cardStyles.card,
+        {
+          backgroundColor: theme.bg.surface,
+          borderColor: theme.border,
+        },
+      ]}
+    >
+      {children}
+    </View>
+  )
+}
+
+function Divider() {
+  const { theme } = useTheme()
+  return (
+    <View
+      style={[
+        cardStyles.divider,
+        { backgroundColor: theme.border },
+      ]}
+    />
+  )
+}
+
 export function SettingsScreen() {
   const { theme, mode } = useTheme()
   const navigation = useNavigation<DrawerNav>()
   const dispatch = useAppDispatch()
+  const accessToken = useAppSelector(s => s.session.accessToken)
+  const { openSignIn } = useAuthLauncher()
   const [notificationsOn, setNotificationsOn] = React.useState(true)
 
   const accent = theme.palette.primary
@@ -42,6 +167,7 @@ export function SettingsScreen() {
     <ScreenShell
       scroll={false}
       padded={false}
+      safeAreaEdges={['left', 'right', 'bottom']}
       pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
       pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
       pageHoneycombCenterStyle={tabScreenHoneycomb.center}
@@ -66,6 +192,7 @@ export function SettingsScreen() {
         bounces={Platform.OS === 'ios'}
       >
         <FadeInMount>
+          {/* Profile block — untouched as requested */}
           <View
             style={[
               styles.profileBlock,
@@ -90,88 +217,104 @@ export function SettingsScreen() {
           </View>
 
           <View style={styles.listPad}>
-            <SettingsMenuCard>
-              <MenuChevronRow
+
+            <MenuCard>
+              <ChevronRow
                 icon="account-outline"
                 label="Account"
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 onPress={() => navigation.navigate('Account')}
               />
-              <SettingsMenuDivider />
-              <MenuSwitchRow
+              <Divider />
+              <SwitchRow
                 icon="weather-night"
                 label="Dark mode"
-                value={darkOn}
-                onValueChange={setDark}
                 iconColor={accent}
                 labelColor={theme.text.primary}
+                value={darkOn}
+                onValueChange={setDark}
+                trackColorOn={accent}
               />
-            </SettingsMenuCard>
+            </MenuCard>
 
-            <SettingsMenuCard>
-              <MenuChevronRow
+            <MenuCard>
+              <ChevronRow
                 icon="palette-outline"
                 label="Preferences"
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 onPress={noop}
               />
-              <SettingsMenuDivider />
-              <MenuChevronRow
+              <Divider />
+              <ChevronRow
                 icon="cog-outline"
                 label="General"
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 onPress={noop}
               />
-            </SettingsMenuCard>
+            </MenuCard>
 
-            <SettingsMenuCard>
-              <MenuChevronRow
+            <MenuCard>
+              <ChevronRow
                 icon="shield-outline"
                 label="Security"
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 onPress={noop}
               />
-              <SettingsMenuDivider />
-              <MenuChevronRow
+              <Divider />
+              <ChevronRow
                 icon="lock-outline"
                 label="Privacy"
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 onPress={noop}
               />
-            </SettingsMenuCard>
+            </MenuCard>
 
-            <SettingsMenuCard>
-              <MenuSwitchRow
+            <MenuCard>
+              <SwitchRow
                 icon="bell-outline"
                 label="Notifications"
+                iconColor={accent}
+                labelColor={theme.text.primary}
                 value={notificationsOn}
                 onValueChange={v => {
                   fireLightImpact()
                   setNotificationsOn(v)
                 }}
-                iconColor={accent}
-                labelColor={theme.text.primary}
+                trackColorOn={accent}
               />
-            </SettingsMenuCard>
+            </MenuCard>
 
-            <SettingsMenuCard>
-              <MenuChevronRow
+            <MenuCard>
+              <ChevronRow
                 icon="gavel"
                 label="Legal"
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 onPress={noop}
               />
-            </SettingsMenuCard>
+            </MenuCard>
 
-            <SettingsMenuCard>
-              <MenuSignOutRow onPress={() => signOut()} />
-            </SettingsMenuCard>
+            <MenuCard>
+              {accessToken ? (
+                <SignOutRow onPress={() => signOut()} />
+              ) : (
+                <ChevronRow
+                  icon="login"
+                  label="Sign in"
+                  iconColor={accent}
+                  labelColor={theme.text.primary}
+                  onPress={() => {
+                    fireLightImpact()
+                    openSignIn()
+                  }}
+                />
+              )}
+            </MenuCard>
 
             <Text style={[styles.footerNote, { color: theme.text.muted }]}>
               Units, locales, and integrations will appear here as we expand HoneyMan.
@@ -183,13 +326,60 @@ export function SettingsScreen() {
   )
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
+const rowStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    minHeight: 52,
+  },
+  iconWrap: {
+    width: 32,
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  label: {
+    flex: 1,
+    fontFamily: fontFamily.sansMedium,
+    fontSize: 15,
+    letterSpacing: 0.1,
+  },
+  chevron: {
+    marginLeft: 8,
+  },
+  switch: {
+    marginLeft: 8,
+  },
+})
+
+const cardStyles = StyleSheet.create({
+  card: {
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+    marginBottom: 12,
+    shadowColor: '#1B1200',
+    shadowOpacity: 0.035,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: 60, // aligns with the label, not the icon
+  },
+})
+
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 40 },
   profileBlock: {
     alignItems: 'center',
     marginHorizontal: 18,
-    marginTop: 6,
+    marginTop: 0,
     borderRadius: 18,
     borderWidth: StyleSheet.hairlineWidth,
     paddingTop: 20,

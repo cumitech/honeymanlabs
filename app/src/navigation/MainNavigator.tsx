@@ -52,10 +52,10 @@ function MainTabs() {
           elevation: 0,
           ...(Platform.OS === 'ios'
             ? {
-                shadowColor: 'rgba(27, 18, 0, 0.35)',
+                shadowColor: '#1B1200',
                 shadowOffset: { width: 0, height: -1 },
-                shadowOpacity: 0.06,
-                shadowRadius: 4,
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
               }
             : {}),
         },

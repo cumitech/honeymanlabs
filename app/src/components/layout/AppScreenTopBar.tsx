@@ -3,6 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View, type ImageSourcePropType } fr
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ASSET_BEE_LOGO } from '../../constants'
+import { APP_HEADER_TO_BODY_GAP } from '../../constants/layout'
 import { fontFamily, useTheme } from '../../theme'
 import { fireLightImpact } from '../../utils/safe-haptics'
 
@@ -124,7 +125,7 @@ export function AppScreenTopBarProfileAvatar({ source, onPress }: AppScreenTopBa
 const styles = StyleSheet.create({
   column: {
     paddingHorizontal: 12,
-    paddingBottom: 6,
+    paddingBottom: APP_HEADER_TO_BODY_GAP,
   },
   topBar: {
     flexDirection: 'row',

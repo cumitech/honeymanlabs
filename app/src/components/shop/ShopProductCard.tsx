@@ -1,8 +1,10 @@
 import React from 'react'
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import type { CatalogProduct } from '../../data/catalog'
 import { formatCatalogPriceCfa, formatShopProductTitleLine } from '../../data/catalog'
+import { useAuthLauncher } from '../../context/AuthLauncherContext'
+import { useAppSelector } from '../../store/hooks'
 import { fontFamily, useTheme } from '../../theme'
 import { fireLightImpact } from '../../utils/safe-haptics'
 
@@ -10,6 +12,8 @@ export type ShopProductCardProps = { product: CatalogProduct; width: number }
 
 export function ShopProductCard({ product, width }: ShopProductCardProps) {
   const { theme } = useTheme()
+  const accessToken = useAppSelector(s => s.session.accessToken)
+  const { openSignIn } = useAuthLauncher()
   const cardBg = theme.bg.card
   const shadow = theme.mode === 'light' ? styles.cardShadowLight : styles.cardShadowDark
   const titleLine = formatShopProductTitleLine(product)
@@ -35,7 +39,19 @@ export function ShopProductCard({ product, width }: ShopProductCardProps) {
           </Text>
           <Pressable
             onPressIn={fireLightImpact}
-            onPress={() => {}}
+            onPress={() => {
+              if (!accessToken) {
+                Alert.alert(
+                  'Sign in to shop',
+                  'Create a free account or sign in to add items to your cart and check out.',
+                  [
+                    { text: 'Not now', style: 'cancel' },
+                    { text: 'Sign in', onPress: () => openSignIn() },
+                  ],
+                )
+                return
+              }
+            }}
             style={[styles.addFab, { backgroundColor: theme.palette.primary }]}
             accessibilityRole="button"
             accessibilityLabel={`Add ${product.title} to cart`}
@@ -56,18 +72,18 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   cardShadowLight: {
-    shadowColor: 'rgba(27, 18, 0, 0.35)',
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 4,
+    shadowColor: '#1B1200',
+    shadowOpacity: 0.05,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   cardShadowDark: {
-    shadowColor: 'rgba(0, 0, 0, 0.45)',
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+    shadowColor: '#000000',
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   productImageWell: {
     borderTopLeftRadius: 16,

@@ -95,12 +95,21 @@ export const authProvider: AuthProvider = {
     const email = String(params?.email ?? "");
     const password = String(params?.password ?? "");
 
+    const deviceLabel =
+      typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 255) : undefined;
+
     const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.LOGIN}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Client-Kind": "web",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({
+        email,
+        password,
+        clientKind: "web" as const,
+        ...(deviceLabel ? { deviceLabel } : {}),
+      }),
     });
 
     if (!response.ok) {
@@ -126,12 +135,20 @@ export const authProvider: AuthProvider = {
       return { success: true };
     }
 
+    const deviceLabel =
+      typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 255) : undefined;
+
     const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.REGISTER}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Client-Kind": "web",
       },
-      body: JSON.stringify(params),
+      body: JSON.stringify({
+        ...params,
+        clientKind: "web" as const,
+        ...(deviceLabel ? { deviceLabel } : {}),
+      }),
     });
 
     if (!response.ok) {

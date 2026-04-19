@@ -1,39 +1,55 @@
 import React from 'react'
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import type { HiveFeaturedBeekeeper } from '../../data/hive-feed'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
 
-type Props = {
-  beekeepers: HiveFeaturedBeekeeper[]
+export type RingCaptionRailItem = {
+  id: string
+  caption: string
+  accessibilityLabel: string
+  onPress: () => void
+  /** Inner disc fill; defaults to theme surface muted. */
+  discBackgroundColor?: string
+  renderDiscContent: () => React.ReactNode
 }
 
-export function HiveFeaturedBeekeepersRow({ beekeepers }: Props) {
+export type RingCaptionRailProps = {
+  title: string
+  items: RingCaptionRailItem[]
+  /** Column width — e.g. beekeepers 78, lab batch chips 72. */
+  itemMinWidth?: number
+}
+
+export function RingCaptionRail({ title, items, itemMinWidth = 72 }: RingCaptionRailProps) {
   const { theme } = useTheme()
 
   return (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Featured beekeepers</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>{title}</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {beekeepers.map(b => (
+        {items.map(item => (
           <Pressable
-            key={b.id}
-            onPress={() => fireLightImpact()}
-            style={styles.item}
+            key={item.id}
+            onPress={item.onPress}
+            style={[styles.item, { width: itemMinWidth }]}
             accessibilityRole="button"
-            accessibilityLabel={`${b.name} profile`}
+            accessibilityLabel={item.accessibilityLabel}
           >
             <View style={[styles.ring, { borderColor: theme.palette.primary }]}>
-              <View style={[styles.disc, { backgroundColor: theme.bg.muted }]}>
-                <Image source={b.avatar} style={styles.avatarImg} resizeMode="cover" />
+              <View
+                style={[
+                  styles.disc,
+                  { backgroundColor: item.discBackgroundColor ?? theme.bg.muted },
+                ]}
+              >
+                {item.renderDiscContent()}
               </View>
             </View>
             <Text style={[styles.label, { color: theme.text.muted }]} numberOfLines={1}>
-              {b.name}
+              {item.caption}
             </Text>
           </Pressable>
         ))}
@@ -58,7 +74,6 @@ const styles = StyleSheet.create({
   },
   item: {
     alignItems: 'center',
-    width: 78,
   },
   ring: {
     width: 64,
@@ -76,10 +91,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  avatarImg: {
-    width: '100%',
-    height: '100%',
   },
   label: {
     fontFamily: fontFamily.sansRegular,

@@ -1,6 +1,5 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
 import { fontFamily, useTheme } from '../../theme'
 
 type LabMetricRowProps = {
@@ -10,7 +9,7 @@ type LabMetricRowProps = {
 }
 
 export function LabMetricRow({ label, valueLabel, fill }: LabMetricRowProps) {
-  const { theme, mode } = useTheme()
+  const { theme } = useTheme()
   const pct = Math.max(0, Math.min(1, fill))
 
   return (
@@ -20,15 +19,11 @@ export function LabMetricRow({ label, valueLabel, fill }: LabMetricRowProps) {
         <Text style={[styles.value, { color: theme.text.primary }]}>{valueLabel}</Text>
       </View>
       <View style={[styles.track, { backgroundColor: theme.bg.muted }]}>
-        <LinearGradient
-          colors={
-            mode === 'dark'
-              ? [theme.palette.primary, theme.palette.secondary]
-              : [theme.palette.surfaceContainer, theme.palette.primary]
-          }
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={[styles.fill, { width: `${pct * 100}%` }]}
+        <View
+          style={[
+            styles.fill,
+            { width: `${pct * 100}%`, backgroundColor: theme.palette.primary },
+          ]}
         />
       </View>
     </View>

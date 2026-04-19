@@ -4,4 +4,6 @@ export const AUTH_API_PATH = {
   FORGOT_PASSWORD: '/auth/forgot-password',
   ME: '/auth/me',
   REFRESH: '/auth/refresh',
+  SOCIAL_GOOGLE: '/auth/social/google',
+  SOCIAL_FACEBOOK: '/auth/social/facebook',
 } as const

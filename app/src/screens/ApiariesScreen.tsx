@@ -11,13 +11,15 @@ import {
 import type MapView from 'react-native-maps'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
 import { ASSET_BEE_LOGO } from '../constants'
+import { APP_HEADER_TO_BODY_GAP } from '../constants/layout'
 import { MOCK_APIARIES, regionForApiaries } from '../data/apiaries'
 import type { RootDrawerParamList } from '../types'
 import { fontFamily, useTheme } from '../theme'
 import { fireLightImpact } from '../utils/safe-haptics'
-import { ApiariesFab } from '../components/apiaries/ApiariesFab'
+import { TabPrimaryFab } from '../components/shared'
 import { ApiariesMapBlock } from '../components/apiaries/ApiariesMapBlock'
 import { ApiaryListCard } from '../components/apiaries/ApiaryListCard'
 import { FadeInMount } from '../components/layout/FadeInMount'
@@ -28,6 +30,7 @@ type DrawerNav = DrawerNavigationProp<RootDrawerParamList>
 
 export function ApiariesScreen() {
   const { theme, mode } = useTheme()
+  const insets = useSafeAreaInsets()
   const navigation = useNavigation<DrawerNav>()
   const mapRef = React.useRef<MapView | null>(null)
   const regionRef = React.useRef(regionForApiaries(MOCK_APIARIES))
@@ -49,7 +52,7 @@ export function ApiariesScreen() {
 
   const mapChrome = (
     <>
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { paddingTop: Math.max(insets.top, 10) }]}>
         <Pressable
           onPress={() => {
             fireLightImpact()
@@ -139,6 +142,7 @@ export function ApiariesScreen() {
       <ScreenShell
         scroll={false}
         padded={false}
+        safeAreaEdges={['left', 'right', 'bottom']}
         pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
         pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
         pageHoneycombCenterStyle={tabScreenHoneycomb.center}
@@ -165,7 +169,13 @@ export function ApiariesScreen() {
           </FadeInMount>
         </ScrollView>
       </ScreenShell>
-      <ApiariesFab />
+      <TabPrimaryFab
+        icon="plus"
+        iconSize={30}
+        borderRadius={16}
+        accessibilityLabel="Add apiary"
+        onPress={() => fireLightImpact()}
+      />
     </View>
   )
 }
@@ -183,9 +193,8 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 10,
     paddingHorizontal: 12,
-    paddingBottom: 10,
+    paddingBottom: APP_HEADER_TO_BODY_GAP,
     gap: 8,
     backgroundColor: 'transparent',
   },

@@ -2,11 +2,14 @@ import type { Request, Response } from "express";
 import type { TypedRequestBody } from "zod-express-middleware";
 import { type AuthTokenPayload } from "../../common/utils/jwt";
 import { AuthService } from "./auth.service";
+import { signInAuditFromRequest } from "./sign-in-audit";
 import {
   forgotPasswordSchema,
   loginSchema,
   refreshSchema,
   registerSchema,
+  socialFacebookSchema,
+  socialGoogleSchema,
   updateMeSchema,
 } from "./auth.schema";
 
@@ -18,8 +21,8 @@ export class AuthController {
     res: Response
   ) => {
     try {
-      const userData = req.body;
-      const result = await this.authService.register(userData);
+      const audit = signInAuditFromRequest(req, req.body);
+      const result = await this.authService.register(req.body, audit);
 
       return res.status(201).json(result);
     } catch (error) {
@@ -30,14 +33,41 @@ export class AuthController {
 
   login = async (req: TypedRequestBody<typeof loginSchema>, res: Response) => {
     try {
-      const result = await this.authService.login({
-        email: req.body.email,
-        password: req.body.password,
-      });
+      const audit = signInAuditFromRequest(req, req.body);
+      const result = await this.authService.login(
+        { email: req.body.email, password: req.body.password },
+        audit,
+      );
 
       return res.status(200).json(result);
     } catch {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
+  };
+
+  socialGoogle = async (req: TypedRequestBody<typeof socialGoogleSchema>, res: Response) => {
+    try {
+      const audit = signInAuditFromRequest(req, req.body);
+      const result = await this.authService.loginWithGoogleIdToken(req.body.idToken, audit);
+      return res.status(200).json(result);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Google sign-in failed";
+      const status = msg.includes("not configured") ? 503 : 401;
+      return res.status(status).json({ message: msg });
+    }
+  };
+
+  socialFacebook = async (req: TypedRequestBody<typeof socialFacebookSchema>, res: Response) => {
+    try {
+      const audit = signInAuditFromRequest(req, req.body);
+      const result = await this.authService.loginWithFacebookAccessToken(
+        req.body.accessToken,
+        audit,
+      );
+      return res.status(200).json(result);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Facebook sign-in failed";
+      return res.status(401).json({ message: msg });
     }
   };
 

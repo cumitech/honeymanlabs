@@ -1,15 +1,18 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
 import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
-import { HiveComposeFab } from '../components/hive/HiveComposeFab'
-import { HiveDiscoveryHeader } from '../components/hive/HiveDiscoveryHeader'
-import { HiveFeaturedBeekeepersRow } from '../components/hive/HiveFeaturedBeekeepersRow'
-import { HiveFeedCard } from '../components/hive/HiveFeedCard'
+import {
+  DrawerSearchHeader,
+  HiveStoryCard,
+  RingCaptionRail,
+  TabPrimaryFab,
+} from '../components/shared'
 import { HIVE_FEATURED_BEEKEEPERS, HIVE_FEED_POSTS } from '../data/hive-feed'
 import { fontFamily, useTheme } from '../theme'
+import { fireLightImpact } from '../utils/safe-haptics'
 
 export function EducationScreen() {
   const { theme, mode } = useTheme()
@@ -17,6 +20,20 @@ export function EducationScreen() {
     mode === 'dark'
       ? (['rgba(255, 184, 0, 0.12)', 'rgba(255, 107, 0, 0.06)', theme.bg.surface] as const)
       : (['rgba(255, 220, 170, 0.35)', 'rgba(255, 200, 210, 0.22)', theme.bg.surface] as const)
+
+  const beekeeperRailItems = React.useMemo(
+    () =>
+      HIVE_FEATURED_BEEKEEPERS.map(b => ({
+        id: b.id,
+        caption: b.name,
+        accessibilityLabel: `${b.name} profile`,
+        onPress: () => fireLightImpact(),
+        renderDiscContent: () => (
+          <Image source={b.avatar} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+        ),
+      })),
+    [],
+  )
 
   return (
     <View style={styles.root}>
@@ -37,12 +54,16 @@ export function EducationScreen() {
         >
           <FadeInMount>
             <View style={styles.page}>
-              <HiveDiscoveryHeader />
+              <DrawerSearchHeader searchPlaceholder="Search The Hive…" hapticOnMenuPress={false} />
               <View style={styles.pad}>
-                <HiveFeaturedBeekeepersRow beekeepers={HIVE_FEATURED_BEEKEEPERS} />
+                <RingCaptionRail
+                  title="Featured beekeepers"
+                  itemMinWidth={78}
+                  items={beekeeperRailItems}
+                />
                 <Text style={[styles.feedHeading, { color: theme.text.primary }]}>Community</Text>
                 {HIVE_FEED_POSTS.map(post => (
-                  <HiveFeedCard key={post.id} post={post} />
+                  <HiveStoryCard key={post.id} variant="feed" post={post} />
                 ))}
               </View>
               <View style={styles.scrollEndSpacer} />
@@ -50,7 +71,12 @@ export function EducationScreen() {
           </FadeInMount>
         </LinearGradient>
       </ScreenShell>
-      <HiveComposeFab />
+      <TabPrimaryFab
+        icon="plus"
+        iconSize={30}
+        accessibilityLabel="Create post"
+        onPress={() => fireLightImpact()}
+      />
     </View>
   )
 }
@@ -67,7 +93,7 @@ const styles = StyleSheet.create({
   },
   pad: {
     paddingHorizontal: 18,
-    paddingTop: 8,
+    paddingTop: 0,
   },
   feedHeading: {
     fontFamily: fontFamily.sansBold,

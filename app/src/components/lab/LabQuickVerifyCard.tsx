@@ -1,7 +1,6 @@
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
 import { LAB_QUICK_VERIFY_QR_BOX } from '../../constants'
@@ -19,23 +18,13 @@ export function LabQuickVerifyCard() {
     navigation.navigate('LabQrScanner')
   }
 
-  const glowColors =
-    mode === 'dark'
-      ? (['rgba(255, 184, 0, 0.2)', 'rgba(255, 107, 0, 0.12)'] as const)
-      : (['rgba(255, 210, 140, 0.55)', 'rgba(255, 190, 200, 0.45)'] as const)
-
   return (
     <Pressable
       onPress={openScanner}
       accessibilityRole="button"
       accessibilityLabel="Scan QR code from honey jar"
     >
-      <LinearGradient
-        colors={[...glowColors]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.glowWrap}
-      >
+      <View style={[styles.glowWrap, { borderColor: theme.palette.primary }]}>
         <LabGlassCard emphasis style={styles.inner}>
           <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Quick Verify</Text>
           <View style={styles.scanArea}>
@@ -58,7 +47,7 @@ export function LabQuickVerifyCard() {
             Scan QR Code from Honey Jar
           </Text>
         </LabGlassCard>
-      </LinearGradient>
+      </View>
     </Pressable>
   )
 }
@@ -68,7 +57,7 @@ const QR_BOX = LAB_QUICK_VERIFY_QR_BOX
 const styles = StyleSheet.create({
   glowWrap: {
     borderRadius: 26,
-    padding: 3,
+    borderWidth: 2,
   },
   inner: {
     padding: 18,

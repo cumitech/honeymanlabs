@@ -20,7 +20,8 @@ export function ApiaryListCard({ item }: ApiaryListCardProps) {
         {
           backgroundColor: mode === 'light' ? '#FFFFFF' : theme.bg.card,
           borderColor: theme.border,
-          shadowColor: mode === 'dark' ? 'rgba(0,0,0,0.4)' : 'rgba(27, 18, 0, 0.08)',
+          shadowColor: mode === 'dark' ? '#000000' : '#1B1200',
+          shadowOpacity: mode === 'dark' ? 0.1 : 0.04,
         },
       ]}
     >
@@ -53,10 +54,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     gap: 12,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 16,
+    elevation: 1,
   },
   thumb: {
     width: 88,

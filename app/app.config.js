@@ -8,12 +8,16 @@ const withAsyncStorageMavenRepo = require('./plugins/withAsyncStorageMavenRepo')
 const googleMapsKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
 const basePlugins = appJson.expo.plugins || []
+const pluginsWithoutWebBrowser = basePlugins.filter(
+  p => p !== 'expo-web-browser' && !(Array.isArray(p) && p[0] === 'expo-web-browser'),
+)
 
 module.exports = {
   expo: {
     ...appJson.expo,
     plugins: [
-      ...basePlugins,
+      'expo-web-browser',
+      ...pluginsWithoutWebBrowser,
       withAsyncStorageMavenRepo,
       [
         'react-native-maps',

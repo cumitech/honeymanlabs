@@ -14,22 +14,33 @@ import {
   FEATURED_COLLECTION_CARD_GAP,
   FEATURED_COLLECTION_HORIZONTAL_PADDING,
 } from '../../constants'
-import { getFeaturedCatalogProducts } from '../../data/catalog'
+import type { CatalogProduct } from '../../data/catalog'
 import { fontFamily, useTheme } from '../../theme'
 import { fireLightImpact } from '../../utils/safe-haptics'
 import { ShopProductCard } from '../shop/ShopProductCard'
 import { shopProductCardWidth } from '../shop/shopUtils'
 
-export function HomeFeaturedCollection() {
+export type CatalogProductRailProps = {
+  title: string
+  products: CatalogProduct[]
+  /** Override default horizontal padding (e.g. matches page gutter). */
+  horizontalPadding?: number
+  cardGap?: number
+}
+
+export function CatalogProductRail({
+  title,
+  products,
+  horizontalPadding = FEATURED_COLLECTION_HORIZONTAL_PADDING,
+  cardGap = FEATURED_COLLECTION_CARD_GAP,
+}: CatalogProductRailProps) {
   const { theme } = useTheme()
   const scrollRef = useRef<ScrollView>(null)
   const scrollX = useRef(0)
-  const featured = getFeaturedCatalogProducts()
   const w = Dimensions.get('window').width
   const cardW = shopProductCardWidth(w)
-  const cardGap = FEATURED_COLLECTION_CARD_GAP
   const step = cardW + cardGap
-  const maxX = Math.max(0, (featured.length - 1) * step)
+  const maxX = Math.max(0, (products.length - 1) * step)
 
   const onFeaturedScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     scrollX.current = e.nativeEvent.contentOffset.x
@@ -44,10 +55,8 @@ export function HomeFeaturedCollection() {
 
   return (
     <View style={styles.section}>
-      <View style={styles.sectionHeaderRow}>
-        <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
-          Featured Collection
-        </Text>
+      <View style={[styles.sectionHeaderRow, { paddingHorizontal: horizontalPadding }]}>
+        <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>{title}</Text>
         <View style={styles.sectionArrows}>
           <Pressable
             onPress={() => nudge(-1)}
@@ -74,14 +83,17 @@ export function HomeFeaturedCollection() {
         snapToAlignment="start"
         onScroll={onFeaturedScroll}
         scrollEventThrottle={16}
-        contentContainerStyle={styles.featureScrollContent}
+        contentContainerStyle={[
+          styles.featureScrollContent,
+          { paddingLeft: horizontalPadding, paddingRight: horizontalPadding },
+        ]}
       >
-        {featured.map((p, index) => (
+        {products.map((p, index) => (
           <View
             key={p.id}
             style={[
               styles.cardSlide,
-              { width: cardW, marginRight: index === featured.length - 1 ? 0 : cardGap },
+              { width: cardW, marginRight: index === products.length - 1 ? 0 : cardGap },
             ]}
           >
             <ShopProductCard product={p} width={cardW} />
@@ -94,15 +106,14 @@ export function HomeFeaturedCollection() {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 26,
+    marginTop: 18,
     paddingBottom: 4,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: FEATURED_COLLECTION_HORIZONTAL_PADDING,
-    marginBottom: 14,
+    marginBottom: 12,
   },
   sectionTitle: {
     fontFamily: fontFamily.displaySemiBold,
@@ -116,8 +127,6 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   featureScrollContent: {
-    paddingLeft: FEATURED_COLLECTION_HORIZONTAL_PADDING,
-    paddingRight: FEATURED_COLLECTION_HORIZONTAL_PADDING,
     paddingBottom: 4,
   },
   cardSlide: {

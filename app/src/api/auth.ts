@@ -1,6 +1,7 @@
 import { AUTH_API_PATH } from '../constants/auth'
 import type { UserRole } from '../models/user'
 import type { SessionUser } from '../store/slices/session-slice'
+import { buildAuthClientContextBody } from '../utils/auth-client-context'
 import { apiRequest } from './client'
 
 export type LoginBody = { email: string; password: string }
@@ -11,7 +12,8 @@ export type RegisterBody = {
   lastname: string
   email: string
   password: string
-  phone: string
+  /** Omit or leave empty if the account is created with email only. */
+  phone?: string
 }
 
 export type ForgotPasswordBody = { email: string }
@@ -22,7 +24,7 @@ type MeUserDto = {
   firstname: string
   lastname: string
   email: string
-  phone: string
+  phone: string | null
   location: string | null
   avatar_url: string | null
   role: UserRole
@@ -43,7 +45,7 @@ export function mapMeUserToSessionUser(u: MeUserDto): SessionUser {
     firstname: u.firstname,
     lastname: u.lastname,
     email: u.email,
-    phone: u.phone,
+    phone: u.phone ?? undefined,
     location: u.location,
     avatar_url: u.avatar_url,
     role: u.role,
@@ -53,11 +55,39 @@ export function mapMeUserToSessionUser(u: MeUserDto): SessionUser {
 }
 
 export async function login(body: LoginBody): Promise<AuthTokens> {
-  return apiRequest<AuthTokens>(AUTH_API_PATH.LOGIN, { method: 'POST', json: body })
+  return apiRequest<AuthTokens>(AUTH_API_PATH.LOGIN, {
+    method: 'POST',
+    json: { ...body, ...buildAuthClientContextBody() },
+  })
+}
+
+export async function loginWithGoogleIdToken(idToken: string): Promise<AuthTokens> {
+  return apiRequest<AuthTokens>(AUTH_API_PATH.SOCIAL_GOOGLE, {
+    method: 'POST',
+    json: { idToken, ...buildAuthClientContextBody() },
+  })
+}
+
+export async function loginWithFacebookAccessToken(accessToken: string): Promise<AuthTokens> {
+  return apiRequest<AuthTokens>(AUTH_API_PATH.SOCIAL_FACEBOOK, {
+    method: 'POST',
+    json: { accessToken, ...buildAuthClientContextBody() },
+  })
 }
 
 export async function register(body: RegisterBody): Promise<AuthTokens> {
-  return apiRequest<AuthTokens>(AUTH_API_PATH.REGISTER, { method: 'POST', json: body })
+  const json: Record<string, string> = {
+    firstname: body.firstname,
+    lastname: body.lastname,
+    email: body.email,
+    password: body.password,
+  }
+  const ph = body.phone?.trim()
+  if (ph) json.phone = ph
+  return apiRequest<AuthTokens>(AUTH_API_PATH.REGISTER, {
+    method: 'POST',
+    json: { ...json, ...buildAuthClientContextBody() },
+  })
 }
 
 export async function forgotPassword(body: ForgotPasswordBody): Promise<ForgotPasswordResponse> {

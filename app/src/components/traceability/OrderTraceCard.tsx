@@ -67,7 +67,7 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
   const mutedLine = mode === 'light' ? 'rgba(107, 75, 32, 0.28)' : theme.border
   const cardFill =
     mode === 'light' ? '#FFFFFF' : theme.bg.card
-  const cardBorder = mode === 'light' ? 'rgba(26, 16, 0, 0.08)' : theme.border
+  const cardBorder = mode === 'light' ? 'rgba(26, 16, 0, 0.06)' : theme.border
 
   return (
     <View
@@ -76,7 +76,8 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
         {
           backgroundColor: cardFill,
           borderColor: cardBorder,
-          shadowColor: mode === 'dark' ? 'rgba(0,0,0,0.45)' : 'rgba(0, 0, 0, 0.06)',
+          shadowColor: mode === 'dark' ? '#000000' : '#1B1200',
+          shadowOpacity: mode === 'dark' ? 0.1 : 0.045,
         },
       ]}
     >
@@ -204,10 +205,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     padding: 16,
     marginBottom: 14,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 18,
+    elevation: 2,
   },
   topRow: {
     flexDirection: 'row',

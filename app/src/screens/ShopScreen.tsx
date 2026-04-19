@@ -1,13 +1,14 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { SHOP_GRID_HORIZONTAL_PADDING } from '../constants'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
 import { ScreenShell } from '../components/layout/ScreenShell'
 import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
+import { PromoHeroCard } from '../components/shared'
 import { ShopCategoryChips } from '../components/shop/ShopCategoryChips'
 import { ShopHeaderRight } from '../components/shop/ShopHeaderRight'
-import { ShopHero } from '../components/shop/ShopHero'
 import { ShopProductGrid } from '../components/shop/ShopProductGrid'
 
 export { ShopHeaderRight } from '../components/shop/ShopHeaderRight'
@@ -38,7 +39,15 @@ export function ShopScreen() {
               </View>
             }
           />
-          <ShopHero />
+          <View style={styles.heroPad}>
+            <PromoHeroCard
+              title="Limited Edition: Rose Gold Honey."
+              subtitle="Exclusive harvest from rare blooms."
+              ctaLabel="Start shopping"
+              onCtaPress={() => {}}
+              ctaAccessibilityLabel="Start shopping in the catalog below"
+            />
+          </View>
           <View style={styles.belowHero}>
             <ShopCategoryChips />
             <ShopProductGrid />
@@ -52,5 +61,6 @@ export function ShopScreen() {
 const styles = StyleSheet.create({
   page: { paddingBottom: 28, paddingTop: 0, marginTop: 0 },
   shopHeaderRight: { justifyContent: 'center', paddingRight: 2 },
-  belowHero: { paddingTop: 20, gap: 8 },
+  heroPad: { paddingHorizontal: SHOP_GRID_HORIZONTAL_PADDING },
+  belowHero: { paddingTop: 18, gap: 8 },
 })

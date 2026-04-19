@@ -17,7 +17,8 @@ export function SettingsMenuCard({ children, style, ...rest }: SettingsMenuCardP
         {
           backgroundColor: fill,
           borderColor: theme.border,
-          shadowColor: mode === 'dark' ? 'rgba(0,0,0,0.45)' : 'rgba(27, 18, 0, 0.08)',
+          shadowColor: mode === 'dark' ? '#000000' : '#1B1200',
+          shadowOpacity: mode === 'dark' ? 0.1 : 0.04,
         },
         style,
       ]}
@@ -39,10 +40,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     marginBottom: 14,
     overflow: 'hidden',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 16,
+    elevation: 1,
     padding: 12,
   },
   divider: {

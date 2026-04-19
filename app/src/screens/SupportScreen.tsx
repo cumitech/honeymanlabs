@@ -1,6 +1,5 @@
 import React from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
@@ -33,6 +32,7 @@ export function SupportScreen() {
     <ScreenShell
       scroll={false}
       padded={false}
+      safeAreaEdges={['left', 'right', 'bottom']}
       pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
       pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
       pageHoneycombCenterStyle={tabScreenHoneycomb.center}
@@ -129,14 +129,9 @@ export function SupportScreen() {
               accessibilityRole="button"
               accessibilityLabel="Contact support"
             >
-              <LinearGradient
-                colors={[theme.palette.primary, theme.palette.secondary]}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={styles.ctaGrad}
-              >
+              <View style={[styles.ctaGrad, { backgroundColor: theme.palette.primary }]}>
                 <Text style={[styles.ctaText, { color: theme.text.onPrimary }]}>Contact support</Text>
-              </LinearGradient>
+              </View>
             </Pressable>
 
             <SettingsMenuCard>
@@ -157,7 +152,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 40 },
   searchWrap: {
-    paddingTop: 6,
+    paddingTop: 0,
     paddingBottom: 6,
   },
   searchPill: {
@@ -168,10 +163,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 1,
   },
   searchPlaceholder: {
     fontFamily: fontFamily.sansRegular,

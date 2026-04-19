@@ -22,6 +22,7 @@ import { fontFamily, useTheme } from '../theme'
 import { fireLightImpact } from '../utils/safe-haptics'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { setUserProfile } from '../store/slices/session-slice'
+import { AccountSignedOutGate } from '../components/account/AccountSignedOutGate'
 import { MenuSignOutRow } from '../components/settings/MenuRows'
 import { SettingsMenuCard } from '../components/settings/SettingsMenuCard'
 import { AppCard } from '../components/controls/AppCard'
@@ -45,18 +46,11 @@ function usernameFromEmail(email?: string): string {
   return email.split('@')[0] ?? '—'
 }
 
-function nativeModuleMissingMessage(err: unknown): string | null {
-  const msg = err instanceof Error ? err.message : String(err)
-  if (msg.includes('Cannot find native module') && msg.includes('ImagePicker')) {
-    return 'Photo picking needs a native build. Run: npx expo run:android'
-  }
-  return null
-}
-
 export function AccountProfileScreen() {
   const { theme } = useTheme()
   const navigation = useNavigation<DrawerNav>()
   const dispatch = useAppDispatch()
+  const accessToken = useAppSelector(s => s.session.accessToken)
   const user = useAppSelector(s => s.session.user)
   const [refreshing, setRefreshing] = React.useState(false)
   const [uploadingAvatar, setUploadingAvatar] = React.useState(false)
@@ -69,6 +63,9 @@ export function AccountProfileScreen() {
   }, [])
 
   const loadProfile = React.useCallback(async () => {
+    if (!accessToken) {
+      return
+    }
     setRefreshing(true)
     try {
       const profile = await fetchSessionProfile()
@@ -79,7 +76,7 @@ export function AccountProfileScreen() {
     } finally {
       setRefreshing(false)
     }
-  }, [dispatch])
+  }, [accessToken, dispatch])
 
   useFocusEffect(
     React.useCallback(() => {
@@ -99,7 +96,7 @@ export function AccountProfileScreen() {
   const profileCardBg = isLight ? '#FFFFFF' : theme.bg.card
   const profileFieldBg = isLight ? '#F3F3F2' : theme.bg.muted
   const profileAvatarInnerBg = isLight ? '#F3F3F2' : theme.bg.muted
-  const cardShadow = theme.mode === 'dark' ? 0.22 : 0.06
+  const cardShadow = theme.mode === 'dark' ? 0.11 : 0.045
 
   const displayName =
     user?.firstname || user?.lastname
@@ -143,14 +140,12 @@ export function AccountProfileScreen() {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
     } catch (e) {
       setLocalAvatarUri(null)
-      const hint = nativeModuleMissingMessage(e)
       const msg =
-        hint ??
-        (e instanceof ApiError
+        e instanceof ApiError
           ? e.message
           : e instanceof Error
             ? e.message
-            : 'Could not update photo.')
+            : 'Could not update photo.'
       Alert.alert('Profile photo', msg)
     } finally {
       setUploadingAvatar(false)
@@ -161,6 +156,7 @@ export function AccountProfileScreen() {
     <ScreenShell
       scroll={false}
       padded={false}
+      safeAreaEdges={['left', 'right', 'bottom']}
       pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
       pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
       pageHoneycombOmitCenter
@@ -182,24 +178,36 @@ export function AccountProfileScreen() {
           </Pressable>
         }
       />
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        alwaysBounceVertical={Platform.OS === 'ios'}
-        bounces={Platform.OS === 'ios'}
-      >
-        <FadeInMount>
-          <View style={styles.screenHeader}>
+      {!accessToken ? (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={[styles.scrollContent, styles.signedOutScrollContent]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          alwaysBounceVertical={Platform.OS === 'ios'}
+          bounces={Platform.OS === 'ios'}
+        >
+          <AccountSignedOutGate />
+        </ScrollView>
+      ) : (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          alwaysBounceVertical={Platform.OS === 'ios'}
+          bounces={Platform.OS === 'ios'}
+        >
+          <FadeInMount>
+            <View style={styles.screenHeader}>
             <Text style={[styles.screenTitle, { color: theme.text.primary }]}>Profile</Text>
             <Text style={[styles.screenSubtitle, { color: theme.text.muted }]}>
               Manage how you appear across HoneyMan.
             </Text>
-          </View>
+            </View>
 
-          {/* ── Hero card: avatar + name ── */}
-          <AppCard
+            {/* ── Hero card: avatar + name ── */}
+            <AppCard
             style={[
               styles.card,
               styles.heroCard,
@@ -295,10 +303,10 @@ export function AccountProfileScreen() {
                 </View>
               </View>
             </View>
-          </AppCard>
+            </AppCard>
 
-          {/* ── Contact card ── */}
-          <AppCard
+            {/* ── Contact card ── */}
+            <AppCard
             style={[
               styles.card,
               styles.cardSpacing,
@@ -329,21 +337,22 @@ export function AccountProfileScreen() {
                 </View>
               ))}
             </View>
-          </AppCard>
+            </AppCard>
 
-          {refreshing && (
-            <View style={styles.refreshHint}>
-              <ActivityIndicator size="small" color={gold} />
+            {refreshing && (
+              <View style={styles.refreshHint}>
+                <ActivityIndicator size="small" color={gold} />
+              </View>
+            )}
+
+            <View style={styles.signOutBlock}>
+              <SettingsMenuCard>
+                <MenuSignOutRow onPress={() => signOut()} />
+              </SettingsMenuCard>
             </View>
-          )}
-
-          <View style={styles.signOutBlock}>
-            <SettingsMenuCard>
-              <MenuSignOutRow onPress={() => signOut()} />
-            </SettingsMenuCard>
-          </View>
-        </FadeInMount>
-      </ScrollView>
+          </FadeInMount>
+        </ScrollView>
+      )}
     </ScreenShell>
   )
 }
@@ -355,8 +364,14 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: 18,
-    paddingTop: 12,
+    paddingTop: 0,
     paddingBottom: 40,
+  },
+  signedOutScrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingTop: 0,
+    paddingBottom: 48,
   },
   signOutBlock: {
     marginTop: 18,
@@ -419,11 +434,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    shadowColor: 'rgba(27, 18, 0, 0.2)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowColor: '#1B1200',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    elevation: 2,
   },
   avatarImage: {
     ...StyleSheet.absoluteFillObject,
@@ -453,11 +468,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
+    shadowColor: '#1B1200',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
+    elevation: 2,
   },
 
   profileTextCol: {

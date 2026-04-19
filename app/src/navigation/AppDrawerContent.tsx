@@ -8,9 +8,11 @@ import { CommonActions } from '@react-navigation/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { RootDrawerParamList } from '../types'
 import { drawerHoneyGradientFor } from './DrawerSurface'
-import { ASSET_BEE_LOGO } from '../constants'
+import HoneyManLogoMark from '../assets/logo.svg'
 import { fontFamily, useTheme } from '../theme'
-import { MenuSignOutRow } from '../components/settings/MenuRows'
+import { MenuFooterActionRow, MenuSignOutRow } from '../components/settings/MenuRows'
+import { useAuthLauncher } from '../context/AuthLauncherContext'
+import { useAppSelector } from '../store/hooks'
 import { fireLightImpact, fireSelection } from '../utils/safe-haptics'
 
 type AppDrawerContentProps = DrawerContentComponentProps & {
@@ -35,6 +37,9 @@ const LINKS: DrawerLink[] = [
 export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProps) {
   const { theme, mode } = useTheme()
   const insets = useSafeAreaInsets()
+  const accessToken = useAppSelector(s => s.session.accessToken)
+  const isSignedIn = Boolean(accessToken)
+  const { openSignIn, openSignUp } = useAuthLauncher()
   const honey = drawerHoneyGradientFor(mode)
   const iconTint = theme.palette.primary
   const rowIdleBg = mode === 'dark' ? 'rgba(255, 184, 0, 0.06)' : 'rgba(255, 140, 0, 0.07)'
@@ -95,7 +100,7 @@ export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProp
         <View style={styles.headerRow}>
           <View style={styles.headerTextBlock}>
             <View style={styles.drawerBrandRow}>
-              <Image source={ASSET_BEE_LOGO} style={styles.drawerBee} resizeMode="contain" />
+              <HoneyManLogoMark width={32} height={26} accessibilityLabel="HoneyMan" />
               <Text
                 style={[
                   styles.brand,
@@ -165,12 +170,6 @@ export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProp
                 >
                   {item.label}
                 </Text>
-                <MaterialCommunityIcons
-                  name="chevron-right"
-                  size={22}
-                  color={theme.text.muted}
-                  style={styles.rowChevron}
-                />
               </View>
             </Pressable>
           ))}
@@ -179,12 +178,40 @@ export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProp
         <View style={styles.spacer} />
 
         <View style={[styles.footer, { borderTopColor: theme.border }]}>
-          <MenuSignOutRow
-            onPress={() => {
-              navigation.closeDrawer()
-              void Promise.resolve(onSignOut())
-            }}
-          />
+          {isSignedIn ? (
+            <MenuSignOutRow
+              iconWellBackgroundColor={iconWellBg}
+              onPress={() => {
+                navigation.closeDrawer()
+                void Promise.resolve(onSignOut())
+              }}
+            />
+          ) : (
+            <View style={styles.guestAuth}>
+              <MenuFooterActionRow
+                icon="login"
+                label="Sign in"
+                iconColor={iconTint}
+                labelColor={theme.text.primary}
+                iconWellBackgroundColor={iconWellBg}
+                onPress={() => {
+                  navigation.closeDrawer()
+                  openSignIn()
+                }}
+              />
+              <MenuFooterActionRow
+                icon="account-plus-outline"
+                label="Create account"
+                iconColor={iconTint}
+                labelColor={theme.text.primary}
+                iconWellBackgroundColor={iconWellBg}
+                onPress={() => {
+                  navigation.closeDrawer()
+                  openSignUp()
+                }}
+              />
+            </View>
+          )}
         </View>
       </DrawerContentScrollView>
     </View>
@@ -241,10 +268,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-  },
-  drawerBee: {
-    width: 32,
-    height: 32,
   },
   closeFab: {
     width: 44,
@@ -322,5 +345,9 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     marginHorizontal: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  guestAuth: {
+    paddingBottom: 4,
+    gap: 2,
   },
 })

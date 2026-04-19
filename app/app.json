@@ -36,6 +36,7 @@
       "manifest": "./public/manifest.json"
     },
     "plugins": [
+      "expo-web-browser",
       [
         "expo-camera",
         {

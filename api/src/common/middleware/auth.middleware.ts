@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express"
-import { verifyToken } from "../utils/jwt"
+import { verifyAccessToken } from "../utils/jwt"
 
 export const authenticate = (
     req: any,
@@ -13,7 +13,7 @@ export const authenticate = (
     if (!token) return res.status(401).send("Unauthorized")
 
     try {
-        const decoded = verifyToken(token)
+        const decoded = verifyAccessToken(token)
         req.user = decoded
     } catch {
         return res.status(401).send("Unauthorized")

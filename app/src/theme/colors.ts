@@ -1,0 +1,41 @@
+export const lightTheme = {
+  surface: '#FDF6EA',
+  surfaceContainerLow: '#F7E9C9',
+  surfaceContainer: '#F1DCAD',
+  surfaceContainerHighest: '#EACB8C',
+  foreground: '#1B1200',
+  primary: '#FFA500',
+  primaryForeground: '#1B1200',
+  secondary: '#FF6B00',
+  secondaryForeground: '#1B1200',
+  muted: '#EFE3C8',
+  mutedForeground: '#6B4B20',
+  accent: '#815100',
+  accentForeground: '#FDF6EA',
+  destructive: '#E63000',
+  border: 'rgba(26, 16, 0, 0.12)',
+  input: 'rgba(26, 16, 0, 0.08)',
+  ring: 'rgba(255, 165, 0, 0.35)',
+} as const
+
+export const darkTheme = {
+  surface: '#0B0B0A',
+  surfaceContainerLow: 'rgba(255, 170, 0, 0.10)',
+  surfaceContainer: 'rgba(255, 170, 0, 0.15)',
+  surfaceContainerHighest: 'rgba(255, 170, 0, 0.22)',
+  foreground: '#FDF6EA',
+  primary: '#FFB800',
+  primaryForeground: '#0B0B0A',
+  secondary: '#FF6B00',
+  secondaryForeground: '#0B0B0A',
+  muted: 'rgba(253, 246, 234, 0.08)',
+  mutedForeground: 'rgba(253, 246, 234, 0.68)',
+  accent: '#FFB800',
+  accentForeground: '#0B0B0A',
+  destructive: '#E63000',
+  border: 'rgba(253, 246, 234, 0.12)',
+  input: 'rgba(253, 246, 234, 0.10)',
+  ring: 'rgba(255, 180, 0, 0.35)',
+} as const
+
+export type AppTheme = typeof lightTheme

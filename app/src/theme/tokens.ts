@@ -1,0 +1,61 @@
+export const tokens = {
+  colors: {
+    light: {
+      surface: '#FDF6EA',
+      surfaceContainer: '#F1DCAD',
+      foreground: '#1B1200',
+      primary: '#FFA500',
+      secondary: '#FF6B00',
+      accent: '#815100',
+      muted: '#EFE3C8',
+      mutedForeground: '#6B4B20',
+      border: 'rgba(26, 16, 0, 0.12)',
+      success: '#2D9F5B',
+      warning: '#C97A00',
+      error: '#E63000',
+      info: '#3B82F6',
+    },
+    dark: {
+      surface: '#0B0B0A',
+      surfaceContainer: 'rgba(255, 170, 0, 0.15)',
+      foreground: '#FDF6EA',
+      primary: '#FFB800',
+      secondary: '#FF6B00',
+      accent: '#FFB800',
+      muted: 'rgba(253, 246, 234, 0.08)',
+      mutedForeground: 'rgba(253, 246, 234, 0.68)',
+      border: 'rgba(253, 246, 234, 0.12)',
+      success: '#5AD489',
+      warning: '#FFB347',
+      error: '#FF6B57',
+      info: '#7CB7FF',
+    },
+  },
+  spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 },
+  radius: { sm: 8, md: 12, lg: 16, pill: 999 },
+  shadow: {
+    sm: {
+      shadowColor: '#000',
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 2,
+    },
+    md: {
+      shadowColor: '#000',
+      shadowOpacity: 0.12,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
+    },
+  },
+  typography: {
+    title: 28,
+    heading: 22,
+    body: 16,
+    small: 13,
+    caption: 12,
+  },
+} as const
+
+export type ThemeMode = 'light' | 'dark'

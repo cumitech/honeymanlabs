@@ -35,6 +35,11 @@ local.properties
 !debug.keystore
 .kotlin/
 
+# Local env (override per machine; use .env.example as a template for teammates)
+.env
+.env.local
+.env.*.local
+
 # node.js
 #
 node_modules/

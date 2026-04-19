@@ -10,7 +10,9 @@ import { AuthService } from "./auth.service";
 import {
     forgotPasswordSchema,
     loginSchema,
+    refreshSchema,
     registerSchema,
+    updateMeSchema,
 } from "./auth.schema";
 
 const router = Router();
@@ -31,11 +33,23 @@ router.post(
     controller.login
 );
 router.post(
+    "/refresh",
+    validateRequest({ body: refreshSchema }),
+    controller.refresh
+);
+router.post(
     "/forgot-password",
     validateRequest({ body: forgotPasswordSchema }),
     controller.forgotPassword
 );
 
+router.patch(
+    "/me",
+    authenticate,
+    authorizePermissions(PERMISSIONS.READ),
+    validateRequest({ body: updateMeSchema }),
+    controller.patchMe
+);
 router.get(
     "/me",
     authenticate,

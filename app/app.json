@@ -1,7 +1,53 @@
 {
   "expo": {
-    "name": "Honeyman",
-    "slug": "honeyman",
-    "version": "1.0.0"
+    "name": "HoneyMan",
+    "slug": "honeymanlabs",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "honeymanlabs",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FDF6EA"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.honeymanapp",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.honeymanapp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FDF6EA"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png",
+      "name": "HoneyMan",
+      "shortName": "HoneyMan",
+      "description": "Lab-verified honey, curated shop, and beekeeper community.",
+      "themeColor": "#FFA500",
+      "backgroundColor": "#FDF6EA",
+      "lang": "en",
+      "manifest": "./public/manifest.json"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow HoneyMan to scan batch QR codes on honey jars."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow HoneyMan to choose a profile photo from your library."
+        }
+      ]
+    ]
   }
 }

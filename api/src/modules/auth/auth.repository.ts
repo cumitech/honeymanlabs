@@ -33,5 +33,17 @@ export class AuthRepository {
   async findById(id: string): Promise<User | null> {
     return User.findByPk(id);
   }
+
+  async updateUser(
+    id: string,
+    fields: Partial<
+      Pick<User, "firstname" | "lastname" | "avatar_url" | "phone" | "location">
+    >,
+  ): Promise<User | null> {
+    const user = await User.findByPk(id);
+    if (!user) return null;
+    await user.update(fields);
+    return user.reload();
+  }
 }
 

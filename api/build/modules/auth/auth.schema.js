@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPasswordSchema = exports.loginSchema = exports.registerSchema = void 0;
+exports.updateMeSchema = exports.refreshSchema = exports.forgotPasswordSchema = exports.loginSchema = exports.registerSchema = void 0;
 const zod_1 = require("zod");
 const app_constants_1 = require("../../common/constants/app-constants");
 const validation_1 = require("../../common/validation");
@@ -22,5 +22,19 @@ exports.loginSchema = zod_1.z.object({
 });
 exports.forgotPasswordSchema = zod_1.z.object({
     email: (0, validation_1.emailField)(),
+});
+exports.refreshSchema = zod_1.z.object({
+    refreshToken: zod_1.z.string().min(1, "Refresh token is required"),
+});
+exports.updateMeSchema = zod_1.z
+    .object({
+    firstname: zod_1.z.string().trim().min(1).max(50).optional(),
+    lastname: zod_1.z.string().trim().min(1).max(50).optional(),
+    avatar_url: zod_1.z.union([zod_1.z.string().url(), zod_1.z.null()]).optional(),
+    phone: zod_1.z.string().trim().min(3).max(40).optional(),
+    location: zod_1.z.union([zod_1.z.string().trim().max(200), zod_1.z.null()]).optional(),
+})
+    .refine((body) => Object.values(body).some((v) => v !== undefined), {
+    message: "At least one field is required",
 });
 //# sourceMappingURL=auth.schema.js.map

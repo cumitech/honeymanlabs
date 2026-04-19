@@ -12,6 +12,7 @@ const EnvSchema = z.object({
   DB_PASS: z.string().optional().default(""),
 
   JWT_SECRET: z.string().min(1),
+  JWT_REFRESH_SECRET: z.string().min(1),
 
   // Auth0 configuration (kept in sync with frontend env for auth integrations)
   AUTH0_ISSUER_BASE_URL: z.string().url().optional(),

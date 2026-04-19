@@ -4,6 +4,11 @@ export type AuthTokenPayload = {
     role: USER_ROLES;
     permissions: PERMISSIONS[];
 };
-export declare const signToken: (payload: AuthTokenPayload) => string;
-export declare const verifyToken: (token: string) => AuthTokenPayload;
+export type RefreshTokenPayload = {
+    userId: string;
+};
+export declare const signAccessToken: (payload: AuthTokenPayload) => string;
+export declare const signRefreshToken: (payload: RefreshTokenPayload) => string;
+export declare const verifyAccessToken: (token: string) => AuthTokenPayload;
+export declare const verifyRefreshToken: (token: string) => RefreshTokenPayload;
 //# sourceMappingURL=jwt.d.ts.map

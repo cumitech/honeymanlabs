@@ -19,7 +19,19 @@ export declare const loginSchema: z.ZodObject<{
 export declare const forgotPasswordSchema: z.ZodObject<{
     email: z.ZodString;
 }, z.core.$strip>;
+export declare const refreshSchema: z.ZodObject<{
+    refreshToken: z.ZodString;
+}, z.core.$strip>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type RefreshInput = z.infer<typeof refreshSchema>;
+export declare const updateMeSchema: z.ZodObject<{
+    firstname: z.ZodOptional<z.ZodString>;
+    lastname: z.ZodOptional<z.ZodString>;
+    avatar_url: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNull]>>;
+    phone: z.ZodOptional<z.ZodString>;
+    location: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNull]>>;
+}, z.core.$strip>;
+export type UpdateMeInput = z.infer<typeof updateMeSchema>;
 //# sourceMappingURL=auth.schema.d.ts.map

@@ -2,19 +2,41 @@
 
 import type { AuthProvider } from "@refinedev/core";
 
+import {
+  AUTH_ACCESS_TOKEN_KEY,
+  AUTH_API_PATH,
+  AUTH_REFRESH_TOKEN_KEY,
+  AUTH_TOKEN_LEGACY_KEY,
+  PUBLIC_API_BASE_URL,
+} from "@/constants";
 import { type AuthUser } from "@/lib/auth/access-control";
 
-const AUTH_TOKEN_KEY = "honeymanlabs:auth-token";
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
-
 function isPublicPath(pathname: string): boolean {
-  // Only dashboard surfaces require authentication.
   return !pathname.startsWith("/dashboard");
 }
 
+async function postRefresh(refreshToken: string): Promise<{
+  accessToken: string;
+  refreshToken: string;
+}> {
+  const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.REFRESH}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ refreshToken }),
+  });
+  if (!response.ok) {
+    throw new Error("Refresh failed");
+  }
+  return response.json() as Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }>;
+}
+
 async function getMe(token: string): Promise<AuthUser> {
-  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+  const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.ME}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -29,6 +51,40 @@ async function getMe(token: string): Promise<AuthUser> {
   return payload.user as AuthUser;
 }
 
+async function getMeWithRefresh(): Promise<AuthUser> {
+  let access = localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
+  const refresh = localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
+
+  if (!access && !refresh) {
+    const legacy = localStorage.getItem(AUTH_TOKEN_LEGACY_KEY);
+    if (legacy) {
+      access = legacy;
+    }
+  }
+
+  if (access) {
+    try {
+      return await getMe(access);
+    } catch {}
+  }
+
+  if (!refresh) {
+    throw new Error("Not authenticated");
+  }
+
+  const tokens = await postRefresh(refresh);
+  localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, tokens.accessToken);
+  localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, tokens.refreshToken);
+  localStorage.removeItem(AUTH_TOKEN_LEGACY_KEY);
+  return await getMe(tokens.accessToken);
+}
+
+function clearStoredTokens() {
+  localStorage.removeItem(AUTH_TOKEN_LEGACY_KEY);
+  localStorage.removeItem(AUTH_ACCESS_TOKEN_KEY);
+  localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
+}
+
 export const authProvider: AuthProvider = {
   login: async (params: Record<string, unknown> | undefined) => {
     if (params?.providerName) {
@@ -39,7 +95,7 @@ export const authProvider: AuthProvider = {
     const email = String(params?.email ?? "");
     const password = String(params?.password ?? "");
 
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.LOGIN}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +111,9 @@ export const authProvider: AuthProvider = {
     }
 
     const payload = await response.json();
-    localStorage.setItem(AUTH_TOKEN_KEY, payload.token);
+    localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, payload.accessToken);
+    localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, payload.refreshToken);
+    localStorage.removeItem(AUTH_TOKEN_LEGACY_KEY);
 
     return {
       success: true,
@@ -68,7 +126,7 @@ export const authProvider: AuthProvider = {
       return { success: true };
     }
 
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.REGISTER}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +142,9 @@ export const authProvider: AuthProvider = {
     }
 
     const payload = await response.json();
-    localStorage.setItem(AUTH_TOKEN_KEY, payload.token);
+    localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, payload.accessToken);
+    localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, payload.refreshToken);
+    localStorage.removeItem(AUTH_TOKEN_LEGACY_KEY);
 
     return {
       success: true,
@@ -96,7 +156,7 @@ export const authProvider: AuthProvider = {
   }: {
     email?: string;
   }) => {
-    const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+    const response = await fetch(`${PUBLIC_API_BASE_URL}${AUTH_API_PATH.FORGOT_PASSWORD}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -124,7 +184,7 @@ export const authProvider: AuthProvider = {
     };
   },
   logout: async () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+    clearStoredTokens();
     return {
       success: true,
       redirectTo: "/login",
@@ -139,8 +199,10 @@ export const authProvider: AuthProvider = {
       return { authenticated: true };
     }
 
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (!token) {
+    const access = localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
+    const refresh = localStorage.getItem(AUTH_REFRESH_TOKEN_KEY);
+    const legacy = localStorage.getItem(AUTH_TOKEN_LEGACY_KEY);
+    if (!access && !refresh && !legacy) {
       return {
         authenticated: false,
         redirectTo: "/login",
@@ -148,10 +210,10 @@ export const authProvider: AuthProvider = {
     }
 
     try {
-      await getMe(token);
+      await getMeWithRefresh();
       return { authenticated: true };
     } catch {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
+      clearStoredTokens();
       return {
         authenticated: false,
         redirectTo: "/login",
@@ -159,22 +221,16 @@ export const authProvider: AuthProvider = {
     }
   },
   getPermissions: async () => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (!token) return null;
-
     try {
-      const user = await getMe(token);
+      const user = await getMeWithRefresh();
       return user.permissions;
     } catch {
       return null;
     }
   },
   getIdentity: async () => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (!token) return null;
-
     try {
-      return await getMe(token);
+      return await getMeWithRefresh();
     } catch {
       return null;
     }

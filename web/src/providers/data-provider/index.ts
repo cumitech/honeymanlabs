@@ -2,16 +2,21 @@
 
 import type { DataProvider } from "@refinedev/core";
 import dataProviderSimpleRest from "@refinedev/simple-rest";
+import {
+  AUTH_ACCESS_TOKEN_KEY,
+  AUTH_TOKEN_LEGACY_KEY,
+  PUBLIC_API_BASE_URL,
+} from "@/constants";
 import { getLanguageFromClient } from "@/lib/i18n/language";
 
-const APP_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
-const AUTH_TOKEN_KEY = "honeymanlabs:auth-token";
-
-const appProvider = dataProviderSimpleRest(APP_API_URL);
+const appProvider = dataProviderSimpleRest(PUBLIC_API_BASE_URL);
 
 function withAuthMeta<T extends { meta?: unknown }>(params: T): T {
   const token =
-    typeof window !== "undefined" ? localStorage.getItem(AUTH_TOKEN_KEY) : null;
+    typeof window !== "undefined"
+      ? localStorage.getItem(AUTH_ACCESS_TOKEN_KEY) ??
+        localStorage.getItem(AUTH_TOKEN_LEGACY_KEY)
+      : null;
   const language = getLanguageFromClient();
   const meta = (params.meta ?? {}) as Record<string, unknown>;
   const headers = (meta.headers ?? {}) as Record<string, string>;
@@ -46,7 +51,7 @@ function withLanguagePayload<T extends { variables?: unknown }>(params: T): T {
 }
 
 export const dataProvider: DataProvider = {
-  getApiUrl: () => APP_API_URL,
+  getApiUrl: () => PUBLIC_API_BASE_URL,
   getList: (params) => appProvider.getList(withAuthMeta(params)),
   getMany: (params) => appProvider.getMany(withAuthMeta(params)),
   getOne: (params) => appProvider.getOne(withAuthMeta(params)),

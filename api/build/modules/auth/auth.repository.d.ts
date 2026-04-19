@@ -22,5 +22,6 @@ export declare class AuthRepository {
     findByEmail(email: string): Promise<User | null>;
     createUser(data: CreateUserData): Promise<User>;
     findById(id: string): Promise<User | null>;
+    updateUser(id: string, fields: Partial<Pick<User, "firstname" | "lastname" | "avatar_url" | "phone" | "location">>): Promise<User | null>;
 }
 //# sourceMappingURL=auth.repository.d.ts.map

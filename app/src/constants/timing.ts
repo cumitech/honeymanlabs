@@ -1,0 +1,2 @@
+export const SPLASH_DURATION_MS = 3600
+export const SPLASH_LOGO_PULSE_STEP_MS = 1300

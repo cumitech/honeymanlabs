@@ -14,6 +14,7 @@ const EnvSchema = zod_1.z.object({
     DB_USER: zod_1.z.string().min(1),
     DB_PASS: zod_1.z.string().optional().default(""),
     JWT_SECRET: zod_1.z.string().min(1),
+    JWT_REFRESH_SECRET: zod_1.z.string().min(1),
     // Auth0 configuration (kept in sync with frontend env for auth integrations)
     AUTH0_ISSUER_BASE_URL: zod_1.z.string().url().optional(),
     AUTH0_CLIENT_ID: zod_1.z.string().optional(),

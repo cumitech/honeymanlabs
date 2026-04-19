@@ -5,7 +5,9 @@ import { AuthService } from "./auth.service";
 import {
   forgotPasswordSchema,
   loginSchema,
+  refreshSchema,
   registerSchema,
+  updateMeSchema,
 } from "./auth.schema";
 
 export class AuthController {
@@ -39,6 +41,15 @@ export class AuthController {
     }
   };
 
+  refresh = async (req: TypedRequestBody<typeof refreshSchema>, res: Response) => {
+    try {
+      const result = await this.authService.refresh(req.body.refreshToken);
+      return res.status(200).json(result);
+    } catch {
+      return res.status(401).json({ message: "Invalid or expired refresh token" });
+    }
+  };
+
   forgotPassword = async (
     req: TypedRequestBody<typeof forgotPasswordSchema>,
     res: Response,
@@ -66,6 +77,18 @@ export class AuthController {
       return res.status(200).json({ user });
     } catch {
       return res.status(401).json({ message: "Unauthorized" });
+    }
+  };
+
+  patchMe = async (req: Request & { user?: AuthTokenPayload }, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user = await this.authService.updateMyProfile(req.user, req.body);
+      return res.status(200).json({ user });
+    } catch {
+      return res.status(400).json({ message: "Unable to update profile" });
     }
   };
 

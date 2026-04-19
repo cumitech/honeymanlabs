@@ -7,7 +7,7 @@ const authenticate = (req, res, next) => {
     if (!token)
         return res.status(401).send("Unauthorized");
     try {
-        const decoded = (0, jwt_1.verifyToken)(token);
+        const decoded = (0, jwt_1.verifyAccessToken)(token);
         req.user = decoded;
     }
     catch {

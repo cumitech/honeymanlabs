@@ -5,6 +5,7 @@ export declare const env: {
     DB_USER: string;
     DB_PASS: string;
     JWT_SECRET: string;
+    JWT_REFRESH_SECRET: string;
     DB_SYNC: boolean;
     REQUIRE_DB: boolean;
     AUTH0_ISSUER_BASE_URL?: string | undefined;

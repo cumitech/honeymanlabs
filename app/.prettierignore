@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+.expo
+android/app/build
+android/.gradle
+android/build
+ios/Pods
+coverage
+*.lock

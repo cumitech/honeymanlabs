@@ -27,6 +27,15 @@ class AuthController {
                 return res.status(401).json({ message: "Invalid credentials" });
             }
         };
+        this.refresh = async (req, res) => {
+            try {
+                const result = await this.authService.refresh(req.body.refreshToken);
+                return res.status(200).json(result);
+            }
+            catch {
+                return res.status(401).json({ message: "Invalid or expired refresh token" });
+            }
+        };
         this.forgotPassword = async (req, res) => {
             try {
                 await this.authService.forgotPassword(req.body.email);
@@ -50,6 +59,18 @@ class AuthController {
             }
             catch {
                 return res.status(401).json({ message: "Unauthorized" });
+            }
+        };
+        this.patchMe = async (req, res) => {
+            try {
+                if (!req.user) {
+                    return res.status(401).json({ message: "Unauthorized" });
+                }
+                const user = await this.authService.updateMyProfile(req.user, req.body);
+                return res.status(200).json({ user });
+            }
+            catch {
+                return res.status(400).json({ message: "Unable to update profile" });
             }
         };
         this.adminCapabilities = async (_req, res) => {

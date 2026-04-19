@@ -12,6 +12,13 @@ class AuthRepository {
     async findById(id) {
         return user_model_1.User.findByPk(id);
     }
+    async updateUser(id, fields) {
+        const user = await user_model_1.User.findByPk(id);
+        if (!user)
+            return null;
+        await user.update(fields);
+        return user.reload();
+    }
 }
 exports.AuthRepository = AuthRepository;
 //# sourceMappingURL=auth.repository.js.map

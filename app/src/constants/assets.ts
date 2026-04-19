@@ -1,0 +1,4 @@
+export const ASSET_BEE_LOGO = require('../assets/bee.png')
+export const ASSET_HONEYCOMB_TOP_LEFT = require('../assets/honeycombs-2.png')
+export const ASSET_HONEYCOMB_BOTTOM_RIGHT = require('../assets/honeycombs-3v1.png')
+export const ASSET_HONEYCOMB_CENTER = require('../assets/honeycombs-4.png')

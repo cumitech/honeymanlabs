@@ -122,15 +122,8 @@ export function AppButton({
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled: isDisabled }}
       style={({ pressed }) => [
-        styles.base,
-        dim.container,
-        variant === 'primary' || variant === 'secondary' || variant === 'danger'
-          ? { borderColor: theme.border }
-          : null,
-        variant === 'ghost' ? [styles.ghostBorder, { borderColor: theme.border }] : null,
-        variant === 'onboarding' ? [styles.onboardingBorder, { borderColor: theme.border }] : null,
+        styles.pressableHit,
         {
-          backgroundColor: bg,
           opacity: isCta
             ? ctaOpacity
             : disabled
@@ -139,14 +132,27 @@ export function AppButton({
                 ? 0.86
                 : 1,
         },
-        style,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={spinnerColor} />
-      ) : (
-        <Text style={[styles.label, dim.text, { color }, textStyle]}>{label}</Text>
-      )}
+      <View
+        style={[
+          styles.base,
+          dim.container,
+          variant === 'primary' || variant === 'secondary' || variant === 'danger'
+            ? { borderColor: theme.border }
+            : null,
+          variant === 'ghost' ? [styles.ghostBorder, { borderColor: theme.border }] : null,
+          variant === 'onboarding' ? [styles.onboardingBorder, { borderColor: theme.border }] : null,
+          { backgroundColor: bg },
+          style,
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color={spinnerColor} />
+        ) : (
+          <Text style={[styles.label, dim.text, { color }, textStyle]}>{label}</Text>
+        )}
+      </View>
     </Pressable>
   )
 }
@@ -301,6 +307,10 @@ const DEFAULT_DIM = {
 }
 
 const styles = StyleSheet.create({
+  pressableHit: {
+    alignSelf: 'stretch',
+    width: '100%',
+  },
   base: {
     alignItems: 'center',
     justifyContent: 'center',

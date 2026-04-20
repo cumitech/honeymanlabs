@@ -6,6 +6,7 @@ import { LabBatchDetailScreen } from '../components/lab/LabBatchDetailScreen'
 import { LabHomeScreen } from '../screens/LabHomeScreen'
 import { LabQrScannerScreen } from '../components/lab/LabQrScannerScreen'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
+import { LAB_STACK_HEADER_TO_BODY_GAP } from '../constants/layout'
 import type { LabStackParamList } from '../types'
 import { useTheme } from '../theme'
 
@@ -17,9 +18,9 @@ function LabStackHeader({ options, navigation, back }: NativeStackHeaderProps) {
   return (
     <AppScreenTopBar
       title={title}
-      showBee={false}
       leading={back ? 'back' : 'menu'}
       backgroundColor={theme.bg.surface}
+      contentGap={LAB_STACK_HEADER_TO_BODY_GAP}
       onLeadingPress={() => {
         if (back) navigation.goBack()
         else navigation.dispatch(DrawerActions.openDrawer())

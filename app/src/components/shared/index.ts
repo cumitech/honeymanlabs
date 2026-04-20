@@ -1,5 +1,7 @@
 export { PromoHeroCard } from './PromoHeroCard'
 export type { PromoHeroCardProps } from './PromoHeroCard'
+export { CatalogPromoHeroCard } from './CatalogPromoHeroCard'
+export type { CatalogPromoHeroCardProps } from './CatalogPromoHeroCard'
 export { HiveStoryCard } from './HiveStoryCard'
 export type { HiveStoryCardProps } from './HiveStoryCard'
 export { CatalogProductRail } from './CatalogProductRail'

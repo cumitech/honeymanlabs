@@ -1,14 +1,11 @@
 import React from 'react'
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
-import {
-  AppScreenTopBar,
-  AppScreenTopBarAccountButton,
-} from '../components/layout/AppScreenTopBar'
+import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
 import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
-import { CatalogProductRail, HiveStoryCard, PromoHeroCard } from '../components/shared'
+import { CatalogProductRail, CatalogPromoHeroCard, HiveStoryCard } from '../components/shared'
 import { FEATURED_COLLECTION_HORIZONTAL_PADDING } from '../constants/layout'
 import { getFeaturedCatalogProducts } from '../data/catalog'
 import { HIVE_FEED_POSTS } from '../data/hive-feed'
@@ -30,23 +27,11 @@ export function LandingScreen() {
   })
   const honeyNameColor = theme.palette.primary
 
-  const heroProductSlides = React.useMemo(
-    () => getFeaturedCatalogProducts().map(p => p.image),
-    [],
-  )
-
   const w = Dimensions.get('window').width
   const hiveCardW = Math.min(300, Math.round(w * 0.82))
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer())
-  }
-
-  const openAccount = () => {
-    const parent = navigation.getParent()
-    if (parent) {
-      parent.navigate('Account' as never)
-    }
   }
 
   return (
@@ -63,10 +48,8 @@ export function LandingScreen() {
         <View style={styles.page}>
           <AppScreenTopBar
             title="HoneyMan"
-            showBee
             leading="menu"
             onLeadingPress={openDrawer}
-            right={<AppScreenTopBarAccountButton onPress={openAccount} />}
           />
           {isLoggedIn ? (
             <Text style={[styles.greeting, { color: theme.text.primary }]}>
@@ -75,13 +58,12 @@ export function LandingScreen() {
             </Text>
           ) : null}
           <View style={styles.heroSection}>
-            <PromoHeroCard
+            <CatalogPromoHeroCard
               eyebrow="New Arrivals -"
               title="The Golden Harvest Collection"
               ctaLabel="Shop Now"
               onCtaPress={() => navigation.navigate('Shop' as never)}
               ctaAccessibilityLabel="Shop now"
-              imageSlides={heroProductSlides}
             />
           </View>
           <CatalogProductRail title="Featured Collection" products={getFeaturedCatalogProducts()} />

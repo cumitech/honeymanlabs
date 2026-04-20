@@ -46,6 +46,7 @@ export function LabBatchDetailScreen() {
     <ScreenShell
       scroll={false}
       padded={false}
+      safeAreaEdges={['left', 'right', 'bottom']}
       pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
       pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
       pageHoneycombCenterStyle={tabScreenHoneycomb.center}

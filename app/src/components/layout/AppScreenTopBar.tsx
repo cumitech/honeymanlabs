@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ASSET_BEE_LOGO } from '../../constants'
@@ -9,25 +9,24 @@ import { fireLightImpact } from '../../utils/safe-haptics'
 
 export type AppScreenTopBarProps = {
   title: string
-  /** Landing-style bee + title when true (default: title is HoneyMan). */
   showBee?: boolean
   leading: 'menu' | 'back'
   onLeadingPress: () => void
   right?: React.ReactNode
-  /** Rendered below the title row with the same horizontal inset as the bar. */
   footer?: React.ReactNode
-  /** When set (e.g. stack headers), fills behind the bar; omit for transparent overlays. */
   backgroundColor?: string
+  contentGap?: number
 }
 
 export function AppScreenTopBar({
   title,
-  showBee = title === 'HoneyMan',
+  showBee = true,
   leading,
   onLeadingPress,
   right,
   footer,
   backgroundColor,
+  contentGap,
 }: AppScreenTopBarProps) {
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
@@ -38,8 +37,19 @@ export function AppScreenTopBar({
     onLeadingPress()
   }
 
+  const bodyGap = contentGap ?? APP_HEADER_TO_BODY_GAP
+
   return (
-    <View style={[styles.column, { paddingTop: Math.max(insets.top, 10), backgroundColor: barBg }]}>
+    <View
+      style={[
+        styles.column,
+        {
+          paddingTop: Math.max(insets.top, 10),
+          paddingBottom: bodyGap,
+          backgroundColor: barBg,
+        },
+      ]}
+    >
       <View style={styles.topBar}>
         <Pressable
           onPress={onPressLeading}
@@ -69,63 +79,9 @@ export function AppScreenTopBar({
   )
 }
 
-type AppScreenTopBarAccountButtonProps = {
-  onPress: () => void
-}
-
-/** Default profile control used on Home (icon in ring). */
-export function AppScreenTopBarAccountButton({ onPress }: AppScreenTopBarAccountButtonProps) {
-  const { theme } = useTheme()
-  return (
-    <Pressable
-      onPress={() => {
-        fireLightImpact()
-        onPress()
-      }}
-      style={styles.avatarHit}
-      accessibilityRole="button"
-      accessibilityLabel="Account"
-    >
-      <View style={[styles.avatarRing, { borderColor: theme.palette.primary }]}>
-        <View style={[styles.avatarInner, { backgroundColor: theme.bg.muted }]}>
-          <MaterialCommunityIcons name="account" size={22} color={theme.text.muted} />
-        </View>
-      </View>
-    </Pressable>
-  )
-}
-
-type AppScreenTopBarProfileAvatarProps = {
-  source: ImageSourcePropType
-  onPress?: () => void
-}
-
-/** Profile photo in the same ring size as the home account control. */
-export function AppScreenTopBarProfileAvatar({ source, onPress }: AppScreenTopBarProfileAvatarProps) {
-  const { theme } = useTheme()
-  const ring = `${theme.palette.primary}CC`
-  return (
-    <Pressable
-      onPress={() => {
-        fireLightImpact()
-        onPress?.()
-      }}
-      disabled={!onPress}
-      style={styles.avatarHit}
-      accessibilityRole={onPress ? 'button' : 'image'}
-      accessibilityLabel="Profile"
-    >
-      <View style={[styles.avatarRing, { borderColor: ring }]}>
-        <Image source={source} style={styles.avatarPhoto} resizeMode="cover" />
-      </View>
-    </Pressable>
-  )
-}
-
 const styles = StyleSheet.create({
   column: {
     paddingHorizontal: 12,
-    paddingBottom: APP_HEADER_TO_BODY_GAP,
   },
   topBar: {
     flexDirection: 'row',
@@ -162,31 +118,5 @@ const styles = StyleSheet.create({
   },
   footerSlot: {
     marginTop: 12,
-  },
-  avatarHit: {
-    padding: 4,
-  },
-  avatarRing: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    padding: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  avatarInner: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  avatarPhoto: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 16,
   },
 })

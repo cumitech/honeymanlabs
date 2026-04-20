@@ -1,4 +1,3 @@
-import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SHOP_GRID_HORIZONTAL_PADDING } from '../constants'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
@@ -6,7 +5,7 @@ import { FadeInMount } from '../components/layout/FadeInMount'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
 import { ScreenShell } from '../components/layout/ScreenShell'
 import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
-import { PromoHeroCard } from '../components/shared'
+import { CatalogPromoHeroCard } from '../components/shared'
 import { ShopCategoryChips } from '../components/shop/ShopCategoryChips'
 import { ShopHeaderRight } from '../components/shop/ShopHeaderRight'
 import { ShopProductGrid } from '../components/shop/ShopProductGrid'
@@ -30,7 +29,6 @@ export function ShopScreen() {
         <View style={styles.page}>
           <AppScreenTopBar
             title="HoneyMan"
-            showBee
             leading="menu"
             onLeadingPress={() => navigation.dispatch(DrawerActions.openDrawer())}
             right={
@@ -40,7 +38,7 @@ export function ShopScreen() {
             }
           />
           <View style={styles.heroPad}>
-            <PromoHeroCard
+            <CatalogPromoHeroCard
               title="Limited Edition: Rose Gold Honey."
               subtitle="Exclusive harvest from rare blooms."
               ctaLabel="Start shopping"

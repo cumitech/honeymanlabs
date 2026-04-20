@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pressable, StyleSheet, Switch, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { fontFamily, useTheme } from '../../theme'
 import { fireLightImpact, fireWarningNotification } from '../../utils/safe-haptics'
@@ -69,13 +69,22 @@ export function MenuChevronRow({
         fireLightImpact()
         onPress()
       }}
-      style={({ pressed }) => [styles.row, pressed && { opacity: 0.88 }]}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => [styles.chevronPressable, pressed && { opacity: 0.88 }]}
     >
-      <View style={styles.iconSlot}>
-        <MaterialCommunityIcons name={icon} size={22} color={iconColor} />
+      <View style={styles.row}>
+        <View style={styles.iconSlot}>
+          <MaterialCommunityIcons name={icon} size={22} color={iconColor} />
+        </View>
+        <Text style={[styles.rowLabel, { color: labelColor }]}>{label}</Text>
+        <MaterialCommunityIcons
+          name="chevron-right"
+          size={22}
+          color={theme.text.muted}
+          style={styles.rowChevron}
+        />
       </View>
-      <Text style={[styles.rowLabel, { color: labelColor }]}>{label}</Text>
-      <MaterialCommunityIcons name="chevron-right" size={22} color={theme.text.muted} />
     </Pressable>
   )
 }
@@ -104,41 +113,10 @@ export function MenuSignOutRow({
   )
 }
 
-export function MenuSwitchRow({
-  icon,
-  label,
-  value,
-  onValueChange,
-  iconColor,
-  labelColor,
-}: {
-  icon: IconName
-  label: string
-  value: boolean
-  onValueChange: (v: boolean) => void
-  iconColor: string
-  labelColor: string
-}) {
-  const { theme } = useTheme()
-  return (
-    <View style={styles.row}>
-      <View style={styles.iconSlot}>
-        <MaterialCommunityIcons name={icon} size={22} color={iconColor} />
-      </View>
-      <Text style={[styles.rowLabel, { color: labelColor, flex: 1 }]}>{label}</Text>
-      <Switch
-        value={value}
-        onValueChange={onValueChange}
-        trackColor={{ false: theme.border, true: theme.palette.primary }}
-        thumbColor={theme.bg.surface}
-        ios_backgroundColor={theme.border}
-      />
-    </View>
-  )
-}
-
 const styles = StyleSheet.create({
   signOutPressable: {
+    width: '100%',
+    alignSelf: 'stretch',
     minHeight: 52,
     paddingVertical: 10,
     paddingHorizontal: 14,
@@ -172,9 +150,15 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.sansRegular,
     fontSize: 16,
   },
+  chevronPressable: {
+    width: '100%',
+    alignSelf: 'stretch',
+  },
   row: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'nowrap',
     minHeight: 52,
     paddingVertical: 10,
     paddingHorizontal: 14,
@@ -182,12 +166,18 @@ const styles = StyleSheet.create({
   iconSlot: {
     width: 32,
     marginRight: 10,
+    flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
   },
   rowLabel: {
     flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
     fontFamily: fontFamily.sansMedium,
     fontSize: 16,
+  },
+  rowChevron: {
+    flexShrink: 0,
   },
 })

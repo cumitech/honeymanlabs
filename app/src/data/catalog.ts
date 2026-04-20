@@ -56,6 +56,10 @@ export function getFeaturedCatalogProducts(): CatalogProduct[] {
   )
 }
 
+export function getFeaturedCatalogHeroSlides(): ImageSourcePropType[] {
+  return getFeaturedCatalogProducts().map(p => p.image)
+}
+
 export function formatShopProductTitleLine(product: CatalogProduct): string {
   return product.sizeLabel ? `${product.title}, ${product.sizeLabel}` : product.title
 }
@@ -70,5 +74,3 @@ export function formatCatalogPriceCfa(amountCfa: number): string {
     return `${withSpaces} F CFA`
   }
 }
-
-export const CATALOG_HERO_JAR_IMAGE = require('../assets/15-oz-glass-honey-pot-jars-case-of-12-with-lids-lappesbeesupply__83280-removebg-preview.png')

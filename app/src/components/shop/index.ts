@@ -1,8 +1,6 @@
 export { chunkPairs } from './shopUtils'
 export { SHOP_CATEGORIES } from '../../constants'
 export { ShopHeaderRight } from './ShopHeaderRight'
-export { PromoHeroCard } from '../shared/PromoHeroCard'
-export type { PromoHeroCardProps } from '../shared/PromoHeroCard'
 export { ShopCategoryChips } from './ShopCategoryChips'
 export { ShopProductCard } from './ShopProductCard'
 export type { ShopProductCardProps } from './ShopProductCard'

@@ -63,7 +63,6 @@ export function TraceabilityScreen() {
     >
       <AppScreenTopBar
         title="Orders & traceability"
-        showBee={false}
         leading="back"
         onLeadingPress={() => navigation.navigate('Main')}
         right={

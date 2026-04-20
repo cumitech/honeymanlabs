@@ -25,8 +25,6 @@ export * from './content/Section'
 export * from './content/ListItem'
 export * from './content/StatCard'
 
-export * from './settings/AppearanceThemeSection'
-
 export * from './shop'
 export * from './account'
 export * from './lab'

@@ -163,7 +163,6 @@ export function AccountProfileScreen() {
     >
       <AppScreenTopBar
         title="Account"
-        showBee={false}
         leading="back"
         onLeadingPress={() => navigation.navigate('Main')}
         right={

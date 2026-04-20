@@ -40,7 +40,6 @@ export function DrawerSearchHeader({
   return (
     <AppScreenTopBar
       title="HoneyMan"
-      showBee
       leading="menu"
       onLeadingPress={openDrawer}
       footer={searchPill}

@@ -27,9 +27,9 @@ type DrawerLink = {
 
 const LINKS: DrawerLink[] = [
   { label: 'Home', icon: 'home-variant-outline' },
-  { label: 'Account', icon: 'account-circle-outline', route: 'Account' },
   { label: 'Orders & traceability', icon: 'package-variant-closed', route: 'Traceability' },
   { label: 'Apiaries', icon: 'hexagon-multiple-outline', route: 'Apiaries' },
+  { label: 'Account', icon: 'account-circle-outline', route: 'Account' },
   { label: 'Settings', icon: 'cog-outline', route: 'Settings' },
   { label: 'Help & support', icon: 'lifebuoy', route: 'Support' },
 ]

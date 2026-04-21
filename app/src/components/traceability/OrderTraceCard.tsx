@@ -2,11 +2,10 @@ import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import type { TraceOrder } from '../../data/trace-orders'
-import { TRACE_STEPS } from '../../data/trace-orders'
+import { TRACE_STEPS, type TraceOrder } from '../../models/views/trace-order.model'
 import { ASSET_BEE_LOGO } from '../../constants'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 type OrderTraceCardProps = {
   order: TraceOrder
@@ -50,7 +49,10 @@ function TraceSegment({
     <View
       style={[
         styles.segmentBar,
-        { backgroundColor: kind === 'solid' ? solidColor : mutedColor, opacity: kind === 'muted' ? 0.7 : 1 },
+        {
+          backgroundColor: kind === 'solid' ? solidColor : mutedColor,
+          opacity: kind === 'muted' ? 0.7 : 1,
+        },
       ]}
     />
   )
@@ -65,8 +67,7 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
   const completed = delivered ? stepCount : Math.min(order.completedSteps, stepCount)
 
   const mutedLine = mode === 'light' ? 'rgba(107, 75, 32, 0.28)' : theme.border
-  const cardFill =
-    mode === 'light' ? '#FFFFFF' : theme.bg.card
+  const cardFill = mode === 'light' ? '#FFFFFF' : theme.bg.card
   const cardBorder = mode === 'light' ? 'rgba(26, 16, 0, 0.06)' : theme.border
 
   return (
@@ -129,7 +130,11 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
                   <View style={[styles.nodeRow, { height: NODE_ROW_H }]}>
                     {completed > i ? (
                       <View style={[styles.doneRing, { backgroundColor: theme.palette.primary }]}>
-                        <MaterialCommunityIcons name="check" size={14} color={theme.text.onPrimary} />
+                        <MaterialCommunityIcons
+                          name="check"
+                          size={14}
+                          color={theme.text.onPrimary}
+                        />
                       </View>
                     ) : !delivered && order.completedSteps === i ? (
                       <View
@@ -141,7 +146,11 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
                           },
                         ]}
                       >
-                        <Image source={ASSET_BEE_LOGO} style={styles.beeIcon} resizeMode="contain" />
+                        <Image
+                          source={ASSET_BEE_LOGO}
+                          style={styles.beeIcon}
+                          resizeMode="contain"
+                        />
                       </View>
                     ) : (
                       <View
@@ -159,9 +168,14 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
                     style={[
                       styles.stepLabel,
                       {
-                        color: !delivered && order.completedSteps === i ? theme.text.primary : theme.text.muted,
+                        color:
+                          !delivered && order.completedSteps === i
+                            ? theme.text.primary
+                            : theme.text.muted,
                         fontFamily:
-                          !delivered && order.completedSteps === i ? fontFamily.sansBold : fontFamily.sansMedium,
+                          !delivered && order.completedSteps === i
+                            ? fontFamily.sansBold
+                            : fontFamily.sansMedium,
                       },
                     ]}
                     numberOfLines={2}
@@ -180,7 +194,7 @@ export function OrderTraceCard({ order, onTraceBatch }: OrderTraceCardProps) {
           accessibilityRole="button"
           accessibilityLabel="Trace batch"
           onPress={() => {
-            fireLightImpact()
+            lightHaptic()
             onTraceBatch(order.id)
           }}
           style={({ pressed }) => [styles.ctaPressable, pressed && { opacity: 0.9 }]}

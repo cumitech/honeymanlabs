@@ -1,16 +1,12 @@
 import React from 'react'
-import { Platform, StyleSheet, Text, UIManager, View } from 'react-native'
-import type MapView from 'react-native-maps'
+import { Platform, StyleSheet, UIManager } from 'react-native'
+import MapViewImpl, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { ASSET_BEE_LOGO } from '../../constants'
-import type { ApiaryListItem, ApiaryMapRegion } from '../../data/apiaries'
-import { regionForApiaries } from '../../data/apiaries'
-import { fontFamily, useTheme } from '../../theme'
+import { regionForApiaries } from '../../models/views/apiary-view.model'
+import { MapUnavailableNotice } from './apiaries-map-block.fallback'
+import type { ApiariesMapBlockProps } from './apiaries-map-block.types'
 
-export type ApiariesMapBlockProps = {
-  items: ApiaryListItem[]
-  mapRef: React.RefObject<MapView | null>
-  onRegionSnapshot: (region: ApiaryMapRegion) => void
-}
+export type { ApiariesMapBlockProps } from './apiaries-map-block.types'
 
 function hasNativeViewManager(name: string): boolean {
   if (typeof UIManager.hasViewManagerConfig === 'function') {
@@ -19,20 +15,9 @@ function hasNativeViewManager(name: string): boolean {
   return UIManager.getViewManagerConfig?.(name) != null
 }
 
-/** Matches react-native-maps native names (`AIRMap` / `AIRGoogleMap` on iOS). */
 function canUseReactNativeMaps(useGoogleMaps: boolean): boolean {
-  if (Platform.OS === 'web') return false
   if (Platform.OS === 'android') return hasNativeViewManager('AIRMap')
   return useGoogleMaps ? hasNativeViewManager('AIRGoogleMap') : hasNativeViewManager('AIRMap')
-}
-
-function MapUnavailableNotice({ message }: { message: string }) {
-  const { theme } = useTheme()
-  return (
-    <View style={[styles.fallback, { backgroundColor: theme.bg.muted }]} accessibilityLabel="Map unavailable">
-      <Text style={[styles.fallbackText, { color: theme.text.muted }]}>{message}</Text>
-    </View>
-  )
 }
 
 export function ApiariesMapBlock({ items, mapRef, onRegionSnapshot }: ApiariesMapBlockProps) {
@@ -40,19 +25,9 @@ export function ApiariesMapBlock({ items, mapRef, onRegionSnapshot }: ApiariesMa
   const useGoogleMaps =
     typeof process !== 'undefined' && Boolean(process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY)
 
-  if (Platform.OS === 'web') {
-    return <MapUnavailableNotice message="Map view is only available in the mobile app." />
-  }
-
   if (!canUseReactNativeMaps(useGoogleMaps)) {
     return <MapUnavailableNotice message="Map is unavailable right now." />
   }
-
-  const {
-    default: MapViewImpl,
-    Marker,
-    PROVIDER_GOOGLE,
-  } = require('react-native-maps') as typeof import('react-native-maps')
 
   return (
     <MapViewImpl
@@ -80,18 +55,3 @@ export function ApiariesMapBlock({ items, mapRef, onRegionSnapshot }: ApiariesMa
     </MapViewImpl>
   )
 }
-
-const styles = StyleSheet.create({
-  fallback: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  fallbackText: {
-    fontFamily: fontFamily.sansRegular,
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-})

@@ -3,14 +3,14 @@ import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ApiError, forgotPassword } from '../api'
 import {
-  AppButton,
-  AuthFormFooterLink,
-  AuthHoneyDripBanner,
-  AuthInlineMessages,
-  AuthScreenHeader,
-  AuthUnderlinedTextField,
-} from '../components/shared'
+  FormFooterLink,
+  HoneyDripBanner,
+  InlineMessages,
+  ScreenHeader,
+  UnderlinedTextField,
+} from '../components/auth'
 import { fontFamily, useTheme } from '../theme'
+import { AppButton } from '../components'
 
 type ForgotPasswordScreenProps = {
   onBackToSignIn: () => void
@@ -45,17 +45,17 @@ export function ForgotPasswordScreen({ onBackToSignIn }: ForgotPasswordScreenPro
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: theme.bg.muted }]}>
-      <AuthHoneyDripBanner variant="authHero" />
+      <HoneyDripBanner variant="authHero" />
 
       <View style={styles.content}>
-        <AuthScreenHeader onBack={onBackToSignIn} title="Forgot password" variant="forgot" />
+        <ScreenHeader onBack={onBackToSignIn} title="Forgot password" variant="forgot" />
 
         <Text style={[styles.blurb, { color: theme.text.muted }]}>
           Enter the email for your account. If it exists, we&apos;ll send reset instructions.
         </Text>
 
         <View style={styles.form}>
-          <AuthUnderlinedTextField
+          <UnderlinedTextField
             label="E-Mail"
             value={email}
             onChangeText={setEmail}
@@ -66,7 +66,7 @@ export function ForgotPasswordScreen({ onBackToSignIn }: ForgotPasswordScreenPro
             keyboardType="email-address"
             autoComplete="email"
           />
-          <AuthInlineMessages error={error} success={sentMessage} />
+          <InlineMessages error={error} success={sentMessage} />
         </View>
 
         <View style={styles.ctaWrap}>
@@ -79,7 +79,7 @@ export function ForgotPasswordScreen({ onBackToSignIn }: ForgotPasswordScreenPro
           />
         </View>
 
-        <AuthFormFooterLink
+        <FormFooterLink
           prefixText="Remember your password? "
           linkText="Log In"
           onPressLink={onBackToSignIn}

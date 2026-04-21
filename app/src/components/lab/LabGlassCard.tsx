@@ -16,10 +16,7 @@ export function LabGlassCard({ style, emphasis, children, ...rest }: LabGlassCar
     : theme.border
 
   return (
-    <View
-      style={[styles.card, { backgroundColor: bg, borderColor: border }, style]}
-      {...rest}
-    >
+    <View style={[styles.card, { backgroundColor: bg, borderColor: border }, style]} {...rest}>
       {children}
     </View>
   )

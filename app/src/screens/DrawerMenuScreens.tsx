@@ -1,4 +1,5 @@
 export { ApiariesScreen } from './ApiariesScreen'
+export { CartScreen } from './CartScreen'
 export { SettingsScreen } from './SettingsScreen'
 export { SupportScreen } from './SupportScreen'
 export { TraceabilityScreen } from './TraceabilityScreen'

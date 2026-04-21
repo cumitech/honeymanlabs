@@ -13,6 +13,10 @@ exports.User = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const app_constants_1 = require("../../common/constants/app-constants");
 const custom_id_1 = require("../../common/utils/custom-id");
+const article_comment_model_1 = require("./article-comment.model");
+const article_like_model_1 = require("./article-like.model");
+const cart_item_model_1 = require("./cart-item.model");
+const wishlist_item_model_1 = require("./wishlist-item.model");
 let User = class User extends sequelize_typescript_1.Model {
     static async assignId(instance) {
         if (instance.id)
@@ -62,10 +66,26 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
-        allowNull: false,
+        allowNull: true,
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "password_hash", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(128),
+        allowNull: true,
+        unique: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "google_sub", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(64),
+        allowNull: true,
+        unique: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "facebook_id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.ENUM(app_constants_1.USER_ROLES.ADMIN, app_constants_1.USER_ROLES.CUSTOMER, app_constants_1.USER_ROLES.BEEKEEPER, app_constants_1.USER_ROLES.LAB_STAFF),
@@ -77,9 +97,9 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
-        allowNull: false,
+        allowNull: true,
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "phone", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
@@ -95,6 +115,72 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], User.prototype, "avatar_url", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.DATE,
+        allowNull: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "last_sign_in_at", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(32),
+        allowNull: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "last_sign_in_method", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(16),
+        allowNull: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "last_sign_in_client", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(255),
+        allowNull: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "last_sign_in_device_label", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(512),
+        allowNull: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "last_sign_in_user_agent", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(64),
+        allowNull: true,
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "last_sign_in_ip", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    }),
+    __metadata("design:type", Number)
+], User.prototype, "sign_in_count", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => cart_item_model_1.CartItem),
+    __metadata("design:type", Array)
+], User.prototype, "cart_items", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => wishlist_item_model_1.WishlistItem),
+    __metadata("design:type", Array)
+], User.prototype, "wishlist_items", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => article_comment_model_1.ArticleComment),
+    __metadata("design:type", Array)
+], User.prototype, "article_comments", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => article_like_model_1.ArticleLike),
+    __metadata("design:type", Array)
+], User.prototype, "article_likes", void 0);
 __decorate([
     sequelize_typescript_1.BeforeValidate,
     __metadata("design:type", Function),

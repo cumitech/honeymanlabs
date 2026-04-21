@@ -10,11 +10,23 @@ export declare const registerSchema: z.ZodObject<{
     role: z.ZodOptional<z.ZodEnum<typeof USER_ROLES>>;
     location: z.ZodOptional<z.ZodString>;
     avatar_url: z.ZodOptional<z.ZodString>;
+    clientKind: z.ZodOptional<z.ZodEnum<{
+        web: "web";
+        ios: "ios";
+        android: "android";
+    }>>;
+    deviceLabel: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 /** Auth login body */
 export declare const loginSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;
+    clientKind: z.ZodOptional<z.ZodEnum<{
+        web: "web";
+        ios: "ios";
+        android: "android";
+    }>>;
+    deviceLabel: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export declare const forgotPasswordSchema: z.ZodObject<{
     email: z.ZodString;
@@ -22,10 +34,30 @@ export declare const forgotPasswordSchema: z.ZodObject<{
 export declare const refreshSchema: z.ZodObject<{
     refreshToken: z.ZodString;
 }, z.core.$strip>;
+export declare const socialGoogleSchema: z.ZodObject<{
+    idToken: z.ZodString;
+    clientKind: z.ZodOptional<z.ZodEnum<{
+        web: "web";
+        ios: "ios";
+        android: "android";
+    }>>;
+    deviceLabel: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+export declare const socialFacebookSchema: z.ZodObject<{
+    accessToken: z.ZodString;
+    clientKind: z.ZodOptional<z.ZodEnum<{
+        web: "web";
+        ios: "ios";
+        android: "android";
+    }>>;
+    deviceLabel: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type RefreshInput = z.infer<typeof refreshSchema>;
+export type SocialGoogleInput = z.infer<typeof socialGoogleSchema>;
+export type SocialFacebookInput = z.infer<typeof socialFacebookSchema>;
 export declare const updateMeSchema: z.ZodObject<{
     firstname: z.ZodOptional<z.ZodString>;
     lastname: z.ZodOptional<z.ZodString>;

@@ -2,7 +2,7 @@ import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact, fireWarningNotification } from '../../utils/safe-haptics'
+import { lightHaptic, warningHaptic } from '../../utils'
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name']
 
@@ -27,8 +27,8 @@ export function MenuFooterActionRow({
   return (
     <Pressable
       onPress={() => {
-        if (useWarningHaptic) fireWarningNotification()
-        else fireLightImpact()
+        if (useWarningHaptic) warningHaptic()
+        else lightHaptic()
         void Promise.resolve(onPress())
       }}
       accessibilityRole="button"
@@ -37,7 +37,9 @@ export function MenuFooterActionRow({
     >
       <View style={styles.signOutRow}>
         {iconWellBackgroundColor != null ? (
-          <View style={[styles.signOutIconWell, { backgroundColor: iconWellBackgroundColor }]}>{iconNode}</View>
+          <View style={[styles.signOutIconWell, { backgroundColor: iconWellBackgroundColor }]}>
+            {iconNode}
+          </View>
         ) : (
           <View style={styles.signOutIconSlot}>{iconNode}</View>
         )}
@@ -66,7 +68,7 @@ export function MenuChevronRow({
   return (
     <Pressable
       onPress={() => {
-        fireLightImpact()
+        lightHaptic()
         onPress()
       }}
       accessibilityRole="button"

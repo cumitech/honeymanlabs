@@ -2,7 +2,11 @@ import type { Request, Response } from "express";
 import type { TypedRequestBody } from "zod-express-middleware";
 import type { AuthTokenPayload } from "../../common/utils/jwt";
 import { ArticlesService } from "./articles.service";
-import { createArticleSchema, updateArticleSchema } from "./articles.schema";
+import {
+  createArticleCommentSchema,
+  createArticleSchema,
+  updateArticleSchema,
+} from "./articles.schema";
 
 type AuthenticatedRequest = Request & { user?: AuthTokenPayload };
 
@@ -20,7 +24,13 @@ export class ArticlesController {
       typeof start === "number" && typeof end === "number" ? end - start : undefined;
 
     const language = getLanguage(req);
-    const { rows, count } = await this.service.list(language, start, limit);
+    const statusParam = req.query.status;
+    const status =
+      typeof statusParam === "string" &&
+      (statusParam === "draft" || statusParam === "published" || statusParam === "archived")
+        ? statusParam
+        : undefined;
+    const { rows, count } = await this.service.list(language, start, limit, status);
     res.setHeader("X-Total-Count", String(count));
     return res.status(200).json(rows);
   };
@@ -68,5 +78,30 @@ export class ArticlesController {
       return res.status(404).json({ message: "Article not found" });
     }
     return res.status(204).send();
+  };
+
+  comments = async (req: Request<{ id: string }>, res: Response) => {
+    const language = getLanguage(req);
+    const rows = await this.service.listComments(req.params.id, language);
+    return res.status(200).json(rows);
+  };
+
+  addComment = async (
+    req: TypedRequestBody<typeof createArticleCommentSchema> &
+      AuthenticatedRequest &
+      Request<{ id: string }>,
+    res: Response,
+  ) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const language = getLanguage(req);
+    const data = await this.service.addComment(req.user, req.params.id, language, req.body.content);
+    return res.status(201).json(data);
+  };
+
+  toggleLike = async (req: AuthenticatedRequest & Request<{ id: string }>, res: Response) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const language = getLanguage(req);
+    const data = await this.service.toggleLike(req.user, req.params.id, language);
+    return res.status(200).json(data);
   };
 }

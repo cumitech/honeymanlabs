@@ -1,6 +1,8 @@
 import { Model } from "sequelize-typescript";
 import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
+import { ArticleComment } from "./article-comment.model";
 import { ArticleCategory } from "./article_category.model";
+import { ArticleLike } from "./article-like.model";
 import { User } from "./user.model";
 export declare class Article extends Model {
     id: string;
@@ -15,6 +17,8 @@ export declare class Article extends Model {
     category: ArticleCategory;
     author_id: string;
     author: User;
+    comments: ArticleComment[];
+    likes: ArticleLike[];
     published_at: Date | null;
     static assignId(instance: Article): Promise<void>;
 }

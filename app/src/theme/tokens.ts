@@ -56,6 +56,6 @@ export const tokens = {
     small: 13,
     caption: 12,
   },
-} as const
+}
 
 export type ThemeMode = 'light' | 'dark'

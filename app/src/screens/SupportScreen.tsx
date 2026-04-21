@@ -5,12 +5,12 @@ import { useNavigation } from '@react-navigation/native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
 import { AppButton } from '../components/shared/AppButton'
 import type { RootDrawerParamList } from '../types'
-import { signOut } from '../utils/sign-out'
 import { fontFamily, useTheme } from '../theme'
-import { fireLightImpact } from '../utils/safe-haptics'
+import { lightHaptic } from '../utils'
+import { useAuth } from '../hooks/session/auth.hook'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
-import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
+import { ScreenHoneyCombLayoutStyle } from '../styles/screen-honey-comb-layout.style'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
 import { MenuChevronRow, MenuSignOutRow } from '../components/settings/MenuRows'
 import { SettingsMenuCard, SettingsMenuDivider } from '../components/settings/SettingsMenuCard'
@@ -20,18 +20,19 @@ type DrawerNav = DrawerNavigationProp<RootDrawerParamList>
 export function SupportScreen() {
   const { theme, mode } = useTheme()
   const navigation = useNavigation<DrawerNav>()
+  const { signOut: signOutUser } = useAuth()
   const accent = theme.palette.primary
 
-  const noop = () => fireLightImpact()
+  const noop = () => lightHaptic()
 
   return (
     <ScreenShell
       scroll={false}
       padded={false}
       safeAreaEdges={['left', 'right', 'bottom']}
-      pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
-      pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
-      pageHoneycombCenterStyle={tabScreenHoneycomb.center}
+      screenHoneycombTopLeftStyle={ScreenHoneyCombLayoutStyle.topLeft}
+      screenHoneycombBottomRightStyle={ScreenHoneyCombLayoutStyle.bottomRight}
+      screenHoneycombCenterStyle={ScreenHoneyCombLayoutStyle.center}
     >
       <AppScreenTopBar
         title="Help & Support"
@@ -116,16 +117,14 @@ export function SupportScreen() {
               <AppButton
                 variant="primary"
                 label="Contact support"
-                onPress={() => fireLightImpact()}
+                onPress={() => lightHaptic()}
                 accessibilityLabel="Contact support"
                 style={styles.contactCta}
                 textStyle={styles.contactCtaText}
               />
 
-              {/* <View style={styles.signOutPush} /> */}
-
               <SettingsMenuCard style={styles.signOutCard}>
-                <MenuSignOutRow onPress={() => signOut()} />
+                <MenuSignOutRow onPress={() => void signOutUser()} />
               </SettingsMenuCard>
 
               <Text style={[styles.footerNote, { color: theme.text.muted }]}>

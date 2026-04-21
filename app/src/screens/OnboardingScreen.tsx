@@ -11,44 +11,18 @@ import {
 } from 'react-native'
 import { AppButton } from '../components/shared'
 import { fontFamily, useTheme } from '../theme'
+import { ONBOARDING_PANELS } from '../constants/onboarding-panels'
 
 export type OnboardingScreenProps = {
   onGetStarted: () => void
 }
 
-type OnboardingPanel = {
-  readonly overline: string
-  readonly title: string
-  readonly subtitle: string
-  readonly bullets?: readonly string[]
-}
-
-const PANELS: readonly OnboardingPanel[] = [
-  {
-    overline: 'Welcome to',
-    title: 'HoneyMan',
-    subtitle: 'Trace every batch with confidence from hive harvest to final jar.',
-  },
-  {
-    overline: 'Quality first',
-    title: 'Assured products',
-    subtitle: 'Run quality checks, verify origin, and confidently sell trusted honey products.',
-    bullets: ['Lab and field quality assurance', 'Traceable origin and batch history'],
-  },
-  {
-    overline: 'Built to scale',
-    title: 'Grow smarter',
-    subtitle:
-      'Manage apiaries, teams, and sales with clear insights that keep operations consistent.',
-  },
-]
-
 export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
   const { theme } = useTheme()
   const [index, setIndex] = React.useState(0)
   const transition = React.useRef(new Animated.Value(1)).current
-  const panel = PANELS[index]
-  const isFinal = index === PANELS.length - 1
+  const panel = ONBOARDING_PANELS[index]
+  const isFinal = index === ONBOARDING_PANELS.length - 1
 
   const moveToPanel = React.useCallback(
     (nextIndex: number) => {
@@ -86,7 +60,10 @@ export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
           imageStyle={styles.backgroundImage}
         >
           {!isFinal ? (
-            <Pressable style={styles.skipButton} onPress={() => moveToPanel(PANELS.length - 1)}>
+            <Pressable
+              style={styles.skipButton}
+              onPress={() => moveToPanel(ONBOARDING_PANELS.length - 1)}
+            >
               <Text style={[styles.skipText, { color: theme.text.muted }]}>Skip</Text>
             </Pressable>
           ) : (
@@ -103,9 +80,7 @@ export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
             ]}
           >
             <Text style={[styles.overline, { color: theme.palette.accent }]}>{panel.overline}</Text>
-            <Text style={[styles.title, { color: theme.text.primary }]}>
-              {panel.title}
-            </Text>
+            <Text style={[styles.title, { color: theme.text.primary }]}>{panel.title}</Text>
             {index === 1 ? (
               <Image
                 source={require('../assets/bee.png')}
@@ -141,7 +116,7 @@ export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
         ) : null}
 
         <View style={styles.dots}>
-          {PANELS.map((item, dotIndex) => (
+          {ONBOARDING_PANELS.map((item, dotIndex) => (
             <View
               key={item.title}
               style={[
@@ -158,7 +133,7 @@ export function OnboardingScreen({ onGetStarted }: OnboardingScreenProps) {
           <AppButton
             variant="onboarding"
             label="Next"
-            onPress={() => moveToPanel(Math.min(index + 1, PANELS.length - 1))}
+            onPress={() => moveToPanel(Math.min(index + 1, ONBOARDING_PANELS.length - 1))}
           />
         ) : (
           <AppButton variant="onboarding" label="Get started" onPress={onGetStarted} />

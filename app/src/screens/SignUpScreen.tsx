@@ -4,33 +4,24 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ApiError, register, type AuthTokens } from '../api'
 import { AuthEmailDivider, SocialLoginButtons } from '../components/auth/SocialLoginButtons'
 import {
-  AppButton,
-  AuthFormFooterLink,
-  AuthHoneyDripBanner,
-  AuthInlineMessages,
-  AuthScreenHeader,
-  AuthUnderlinedTextField,
-} from '../components/shared'
-import { useAppDispatch } from '../store/hooks'
+  FormFooterLink,
+  HoneyDripBanner,
+  InlineMessages,
+  ScreenHeader,
+  UnderlinedTextField,
+} from '../components/auth'
+import { AppButton } from '../components/shared'
 import { fontFamily, useTheme } from '../theme'
-import { finalizeAuthSession } from '../utils/finalize-auth-session'
+import { splitDisplayName } from '../utils'
+import { useAuth } from '../hooks/session/auth.hook'
 
 type SignUpScreenProps = {
   onBackToSignIn: () => void
   onSignUpSuccess: () => void
 }
 
-function splitDisplayName(raw: string): { firstname: string; lastname: string } {
-  const t = raw.trim().replace(/\s+/g, ' ')
-  if (!t) return { firstname: '', lastname: '' }
-  const i = t.indexOf(' ')
-  if (i === -1) return { firstname: t, lastname: 'Member' }
-  const rest = t.slice(i + 1).trim()
-  return { firstname: t.slice(0, i), lastname: rest || 'Member' }
-}
-
 export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenProps) {
-  const dispatch = useAppDispatch()
+  const { signIn } = useAuth()
   const { theme } = useTheme()
   const [accepted, setAccepted] = React.useState(true)
   const [displayName, setDisplayName] = React.useState('')
@@ -41,9 +32,9 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
 
   const finalizeSession = React.useCallback(
     async (tokens: AuthTokens) => {
-      await finalizeAuthSession(dispatch, tokens, onSignUpSuccess)
+      await signIn(tokens, onSignUpSuccess)
     },
-    [dispatch, onSignUpSuccess],
+    [signIn, onSignUpSuccess],
   )
 
   const handleSignUp = React.useCallback(async () => {
@@ -85,7 +76,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
       style={[styles.root, { backgroundColor: theme.bg.muted }]}
       edges={['top', 'left', 'right', 'bottom']}
     >
-      <AuthHoneyDripBanner variant="authFormCompact" />
+      <HoneyDripBanner variant="authFormCompact" />
 
       <ScrollView
         style={styles.scroll}
@@ -93,7 +84,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <AuthScreenHeader onBack={onBackToSignIn} title="Create account" variant="signUp" />
+        <ScreenHeader onBack={onBackToSignIn} title="Create account" variant="signUp" />
 
         <View style={styles.socialBlock}>
           <SocialLoginButtons
@@ -106,7 +97,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
         </View>
 
         <View style={styles.form}>
-          <AuthUnderlinedTextField
+          <UnderlinedTextField
             label="Full name"
             value={displayName}
             onChangeText={setDisplayName}
@@ -116,7 +107,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
             autoCapitalize="words"
             placeholder="e.g. Amina Diallo"
           />
-          <AuthUnderlinedTextField
+          <UnderlinedTextField
             label="Email"
             value={email}
             onChangeText={setEmail}
@@ -127,7 +118,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
             keyboardType="email-address"
             autoComplete="email"
           />
-          <AuthUnderlinedTextField
+          <UnderlinedTextField
             label="Password"
             value={password}
             onChangeText={setPassword}
@@ -138,7 +129,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
             autoComplete="new-password"
             placeholder="At least 8 characters"
           />
-          <AuthInlineMessages error={error} />
+          <InlineMessages error={error} />
         </View>
 
         <Pressable style={styles.termsWrap} onPress={() => setAccepted(v => !v)}>
@@ -175,7 +166,7 @@ export function SignUpScreen({ onBackToSignIn, onSignUpSuccess }: SignUpScreenPr
         </View>
 
         <View style={styles.footerWrap}>
-          <AuthFormFooterLink
+          <FormFooterLink
             prefixText="Already have an account? "
             linkText="Log in"
             onPressLink={onBackToSignIn}

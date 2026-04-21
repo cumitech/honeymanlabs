@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import Svg, { Line, Polygon } from 'react-native-svg'
 import { LAB_FLAVOR_RADAR_CENTER_X, LAB_FLAVOR_RADAR_CENTER_Y } from '../../constants'
-import type { FlavorProfile } from '../../data/lab-batches'
+import type { FlavorProfile } from '../../models/views/lab-batch-detail.model'
 import { fontFamily, useTheme } from '../../theme'
 
 const LABELS: (keyof FlavorProfile)[] = ['floral', 'fruity', 'spicy', 'woody', 'earthy']

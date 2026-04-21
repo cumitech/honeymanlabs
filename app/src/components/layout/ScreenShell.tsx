@@ -2,7 +2,7 @@ import React from 'react'
 import { Platform, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context'
 import { useTheme } from '../../theme'
-import { PageHoneycombBackdrop, type PageHoneycombImageStyle } from './PageHoneycombBackdrop'
+import { ScreenHoneycombBackdrop, type ScreenHoneycombImageStyle } from './ScreenHoneycombBackdrop'
 
 type ScreenShellProps = {
   children: React.ReactNode
@@ -10,11 +10,11 @@ type ScreenShellProps = {
   padded?: boolean
   scrollContentInsetAdjustmentIOS?: 'automatic' | 'never' | 'scrollableAxes' | 'always'
   safeAreaEdges?: readonly Edge[]
-  pageHoneycombBackground?: boolean
-  pageHoneycombTopLeftStyle?: PageHoneycombImageStyle
-  pageHoneycombBottomRightStyle?: PageHoneycombImageStyle
-  pageHoneycombCenterStyle?: PageHoneycombImageStyle
-  pageHoneycombOmitCenter?: boolean
+  screenHoneycombBackground?: boolean
+  screenHoneycombTopLeftStyle?: ScreenHoneycombImageStyle
+  screenHoneycombBottomRightStyle?: ScreenHoneycombImageStyle
+  screenHoneycombCenterStyle?: ScreenHoneycombImageStyle
+  screenHoneycombOmitCenter?: boolean
 }
 
 const DEFAULT_SAFE_AREA_EDGES: readonly Edge[] = ['top', 'right', 'left', 'bottom']
@@ -25,11 +25,11 @@ export function ScreenShell({
   padded = true,
   scrollContentInsetAdjustmentIOS,
   safeAreaEdges = DEFAULT_SAFE_AREA_EDGES,
-  pageHoneycombBackground = true,
-  pageHoneycombTopLeftStyle,
-  pageHoneycombBottomRightStyle,
-  pageHoneycombCenterStyle,
-  pageHoneycombOmitCenter = false,
+  screenHoneycombBackground = true,
+  screenHoneycombTopLeftStyle,
+  screenHoneycombBottomRightStyle,
+  screenHoneycombCenterStyle,
+  screenHoneycombOmitCenter = false,
 }: ScreenShellProps) {
   const { theme } = useTheme()
   const iosInsetBehavior = scrollContentInsetAdjustmentIOS ?? 'automatic'
@@ -41,9 +41,7 @@ export function ScreenShell({
       keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
       alwaysBounceVertical={Platform.OS === 'ios'}
       bounces={Platform.OS === 'ios'}
-      {...(Platform.OS === 'ios'
-        ? ({ contentInsetAdjustmentBehavior: iosInsetBehavior } as const)
-        : ({} as const))}
+      {...(Platform.OS === 'ios' ? { contentInsetAdjustmentBehavior: iosInsetBehavior } : {})}
     >
       {children}
     </ScrollView>
@@ -53,13 +51,13 @@ export function ScreenShell({
 
   return (
     <View style={[styles.outer, { backgroundColor: theme.bg.surface }]}>
-      {pageHoneycombBackground ? (
+      {screenHoneycombBackground ? (
         <View style={styles.backdropHost} pointerEvents="none">
-          <PageHoneycombBackdrop
-            topLeftImageStyle={pageHoneycombTopLeftStyle}
-            bottomRightImageStyle={pageHoneycombBottomRightStyle}
-            centerImageStyle={pageHoneycombCenterStyle}
-            omitCenter={pageHoneycombOmitCenter}
+          <ScreenHoneycombBackdrop
+            topLeftImageStyle={screenHoneycombTopLeftStyle}
+            bottomRightImageStyle={screenHoneycombBottomRightStyle}
+            centerImageStyle={screenHoneycombCenterStyle}
+            omitCenter={screenHoneycombOmitCenter}
           />
         </View>
       ) : null}

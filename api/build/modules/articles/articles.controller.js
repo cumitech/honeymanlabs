@@ -12,7 +12,12 @@ class ArticlesController {
             const end = req.query._end ? Number(req.query._end) : undefined;
             const limit = typeof start === "number" && typeof end === "number" ? end - start : undefined;
             const language = getLanguage(req);
-            const { rows, count } = await this.service.list(language, start, limit);
+            const statusParam = req.query.status;
+            const status = typeof statusParam === "string" &&
+                (statusParam === "draft" || statusParam === "published" || statusParam === "archived")
+                ? statusParam
+                : undefined;
+            const { rows, count } = await this.service.list(language, start, limit, status);
             res.setHeader("X-Total-Count", String(count));
             return res.status(200).json(rows);
         };
@@ -51,6 +56,25 @@ class ArticlesController {
                 return res.status(404).json({ message: "Article not found" });
             }
             return res.status(204).send();
+        };
+        this.comments = async (req, res) => {
+            const language = getLanguage(req);
+            const rows = await this.service.listComments(req.params.id, language);
+            return res.status(200).json(rows);
+        };
+        this.addComment = async (req, res) => {
+            if (!req.user)
+                return res.status(401).json({ message: "Unauthorized" });
+            const language = getLanguage(req);
+            const data = await this.service.addComment(req.user, req.params.id, language, req.body.content);
+            return res.status(201).json(data);
+        };
+        this.toggleLike = async (req, res) => {
+            if (!req.user)
+                return res.status(401).json({ message: "Unauthorized" });
+            const language = getLanguage(req);
+            const data = await this.service.toggleLike(req.user, req.params.id, language);
+            return res.status(200).json(data);
         };
     }
 }

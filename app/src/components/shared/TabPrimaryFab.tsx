@@ -10,24 +10,27 @@ export type TabPrimaryFabProps = {
   iconSize?: number
   onPress: () => void
   accessibilityLabel: string
-  /** Outer shape: 29 = circle on 58×58 FAB (default); 16 = rounded square (e.g. Apiaries). */
   borderRadius?: number
 }
 
-export function TabPrimaryFab({
+export const TabPrimaryFab = ({
   icon,
   iconSize = 28,
   onPress,
   accessibilityLabel,
   borderRadius = 29,
-}: TabPrimaryFabProps) {
+}: TabPrimaryFabProps) => {
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
   const bottom = Math.max(insets.bottom, FAB_SAFE_BOTTOM_MIN) + TAB_BAR_CLEARANCE
 
   return (
     <View style={[styles.host, { bottom }]} pointerEvents="box-none">
-      <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+      >
         <View style={[styles.fab, { backgroundColor: theme.palette.primary, borderRadius }]}>
           <MaterialCommunityIcons name={icon} size={iconSize} color={theme.text.onPrimary} />
         </View>

@@ -1,19 +1,19 @@
 import React from 'react'
 import { StatusBar } from 'expo-status-bar'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as WebBrowser from 'expo-web-browser'
 import { Modal, Platform, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Provider } from 'react-redux'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useAppFonts, useTheme } from './src/theme'
 import { ThemeReduxBridge } from './src/context/ThemeReduxBridge'
-import { AuthLauncherProvider } from './src/context/AuthLauncherContext'
+import { AuthFlowProvider } from './src/context/AuthFlowContext'
 import { tokens } from './src/theme/tokens'
 import { store } from './src/store'
-import { setUserProfile } from './src/store/slices/session-slice'
-import { useAppDispatch, useAppSelector } from './src/store/hooks'
 import { fetchSessionProfile, tryRefreshSession } from './src/api'
-import { signOut } from './src/utils/sign-out'
+import { useAuth } from './src/hooks/session/auth.hook'
+import { setSessionUserInStore } from './src/hooks/session/auth-session.store'
 import { SPLASH_DURATION_MS } from './src/constants/timing'
 import { ONBOARDING_COMPLETE_STORAGE_KEY } from './src/constants/storage'
 import { MainNavigator } from './src/navigation/MainNavigator'
@@ -29,15 +29,12 @@ function AppStatusBar() {
 }
 
 function AppContent() {
-  const dispatch = useAppDispatch()
+  const { signOut: signOutUser } = useAuth()
   const fontsLoaded = useAppFonts()
 
   React.useEffect(() => {
     if (Platform.OS !== 'web') return
-    // Popup OAuth on Expo web; no-op on native (native must still rebuild after adding expo-web-browser).
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { maybeCompleteAuthSession } = require('expo-web-browser') as typeof import('expo-web-browser')
-    maybeCompleteAuthSession()
+    void WebBrowser.maybeCompleteAuthSession()
   }, [])
 
   const [showSplash, setShowSplash] = React.useState(true)
@@ -66,9 +63,9 @@ function AppContent() {
       if (store.getState().session.accessToken) {
         try {
           const profile = await fetchSessionProfile()
-          if (!cancelled) dispatch(setUserProfile(profile))
+          if (!cancelled) setSessionUserInStore(profile)
         } catch {
-          /* guest or expired */
+          // Ignore: user may be a guest or token may be expired.
         }
       }
       if (!cancelled) setSessionReady(true)
@@ -76,7 +73,7 @@ function AppContent() {
     return () => {
       cancelled = true
     }
-  }, [dispatch])
+  }, [])
 
   const handleCompleteOnboarding = React.useCallback(async () => {
     await AsyncStorage.setItem(ONBOARDING_COMPLETE_STORAGE_KEY, '1')
@@ -84,12 +81,12 @@ function AppContent() {
   }, [])
 
   const handleSignOut = React.useCallback(async () => {
-    await signOut()
-  }, [])
+    await signOutUser()
+  }, [signOutUser])
 
   const closeAuthOverlay = React.useCallback(() => setAuthOverlay(null), [])
 
-  const authLauncher = React.useMemo(
+  const authFlow = React.useMemo(
     () => ({
       openSignIn: () => setAuthOverlay('signin'),
       openSignUp: () => setAuthOverlay('signup'),
@@ -132,7 +129,7 @@ function AppContent() {
   return (
     <>
       <AppStatusBar />
-      <AuthLauncherProvider value={authLauncher}>
+      <AuthFlowProvider value={authFlow}>
         <View style={{ flex: 1 }}>
           <MainNavigator onSignOut={handleSignOut} />
           <Modal
@@ -162,7 +159,7 @@ function AppContent() {
             </View>
           </Modal>
         </View>
-      </AuthLauncherProvider>
+      </AuthFlowProvider>
     </>
   )
 }

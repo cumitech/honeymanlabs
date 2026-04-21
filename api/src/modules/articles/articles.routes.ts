@@ -5,7 +5,11 @@ import { authenticate } from "../../common/middleware/auth.middleware";
 import { authorizePermissions } from "../../common/middleware/role.middleware";
 import { ArticlesController } from "./articles.controller";
 import { ArticlesRepository } from "./articles.repository";
-import { createArticleSchema, updateArticleSchema } from "./articles.schema";
+import {
+  createArticleCommentSchema,
+  createArticleSchema,
+  updateArticleSchema,
+} from "./articles.schema";
 import { ArticlesService } from "./articles.service";
 
 const router = Router();
@@ -15,6 +19,7 @@ const controller = new ArticlesController(service);
 
 router.get("/", controller.list);
 router.get("/:id", controller.getById);
+router.get("/:id/comments", controller.comments);
 router.post(
   "/",
   authenticate,
@@ -22,6 +27,13 @@ router.post(
   validateRequest({ body: createArticleSchema }),
   controller.create,
 );
+router.post(
+  "/:id/comments",
+  authenticate,
+  validateRequest({ body: createArticleCommentSchema }),
+  controller.addComment,
+);
+router.post("/:id/likes", authenticate, controller.toggleLike);
 router.put(
   "/:id",
   authenticate,

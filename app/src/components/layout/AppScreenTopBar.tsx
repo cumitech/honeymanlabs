@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ASSET_BEE_LOGO } from '../../constants'
 import { APP_HEADER_TO_BODY_GAP } from '../../constants/layout'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 export type AppScreenTopBarProps = {
   title: string
@@ -33,7 +33,7 @@ export function AppScreenTopBar({
   const barBg = backgroundColor ?? 'transparent'
 
   const onPressLeading = () => {
-    fireLightImpact()
+    lightHaptic()
     onLeadingPress()
   }
 

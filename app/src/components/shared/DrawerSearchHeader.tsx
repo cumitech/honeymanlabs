@@ -3,28 +3,23 @@ import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 import { AppScreenTopBar } from '../layout/AppScreenTopBar'
 
 export type DrawerSearchHeaderProps = {
-  /** Placeholder copy inside the decorative search pill. */
   searchPlaceholder: string
-  /**
-   * When true (default), a light haptic runs before the drawer opens.
-   * Set false to match older screens that opened the menu without haptics.
-   */
   hapticOnMenuPress?: boolean
 }
 
-export function DrawerSearchHeader({
+export const DrawerSearchHeader = ({
   searchPlaceholder,
   hapticOnMenuPress = true,
-}: DrawerSearchHeaderProps) {
+}: DrawerSearchHeaderProps) => {
   const { theme } = useTheme()
   const navigation = useNavigation()
 
   const openDrawer = () => {
-    if (hapticOnMenuPress) fireLightImpact()
+    if (hapticOnMenuPress) lightHaptic()
     navigation.dispatch(DrawerActions.openDrawer())
   }
 
@@ -32,7 +27,9 @@ export function DrawerSearchHeader({
     <View
       style={[styles.searchPill, { backgroundColor: theme.bg.muted, borderColor: theme.border }]}
     >
-      <Text style={[styles.searchPlaceholder, { color: theme.text.muted }]}>{searchPlaceholder}</Text>
+      <Text style={[styles.searchPlaceholder, { color: theme.text.muted }]}>
+        {searchPlaceholder}
+      </Text>
       <MaterialCommunityIcons name="magnify" size={22} color={theme.text.muted} />
     </View>
   )

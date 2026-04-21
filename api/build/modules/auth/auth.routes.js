@@ -16,6 +16,8 @@ const service = new auth_service_1.AuthService(repository);
 const controller = new auth_controller_1.AuthController(service);
 router.post("/register", (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.registerSchema }), controller.register);
 router.post("/login", rate_limit_middleware_1.loginLimiter, (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.loginSchema }), controller.login);
+router.post("/social/google", rate_limit_middleware_1.loginLimiter, (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.socialGoogleSchema }), controller.socialGoogle);
+router.post("/social/facebook", rate_limit_middleware_1.loginLimiter, (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.socialFacebookSchema }), controller.socialFacebook);
 router.post("/refresh", (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.refreshSchema }), controller.refresh);
 router.post("/forgot-password", (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.forgotPasswordSchema }), controller.forgotPassword);
 router.patch("/me", auth_middleware_1.authenticate, (0, role_middleware_1.authorizePermissions)(app_constants_1.PERMISSIONS.READ), (0, zod_express_middleware_1.validateRequest)({ body: auth_schema_1.updateMeSchema }), controller.patchMe);

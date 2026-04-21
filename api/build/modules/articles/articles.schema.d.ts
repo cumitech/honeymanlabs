@@ -30,4 +30,7 @@ export declare const updateArticleSchema: z.ZodObject<{
     category_id: z.ZodOptional<z.ZodString>;
     published_at: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 }, z.core.$strip>;
+export declare const createArticleCommentSchema: z.ZodObject<{
+    content: z.ZodString;
+}, z.core.$strip>;
 //# sourceMappingURL=articles.schema.d.ts.map

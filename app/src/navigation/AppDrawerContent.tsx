@@ -11,9 +11,9 @@ import { drawerHoneyGradientFor } from './DrawerSurface'
 import HoneyManLogoMark from '../assets/logo.svg'
 import { fontFamily, useTheme } from '../theme'
 import { MenuFooterActionRow, MenuSignOutRow } from '../components/settings/MenuRows'
-import { useAuthLauncher } from '../context/AuthLauncherContext'
-import { useAppSelector } from '../store/hooks'
-import { fireLightImpact, fireSelection } from '../utils/safe-haptics'
+import { useAuthFlow } from '../context/AuthFlowContext'
+import { useAuth } from '../hooks/session/auth.hook'
+import { lightHaptic, selectionHaptic } from '../utils'
 
 type AppDrawerContentProps = DrawerContentComponentProps & {
   onSignOut: () => void | Promise<void>
@@ -37,9 +37,8 @@ const LINKS: DrawerLink[] = [
 export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProps) {
   const { theme, mode } = useTheme()
   const insets = useSafeAreaInsets()
-  const accessToken = useAppSelector(s => s.session.accessToken)
-  const isSignedIn = Boolean(accessToken)
-  const { openSignIn, openSignUp } = useAuthLauncher()
+  const { isSignedIn } = useAuth()
+  const { openSignIn, openSignUp } = useAuthFlow()
   const honey = drawerHoneyGradientFor(mode)
   const iconTint = theme.palette.primary
   const rowIdleBg = mode === 'dark' ? 'rgba(255, 184, 0, 0.06)' : 'rgba(255, 140, 0, 0.07)'
@@ -56,7 +55,7 @@ export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProp
   }
 
   const closeDrawer = () => {
-    fireLightImpact()
+    lightHaptic()
     navigation.closeDrawer()
   }
 
@@ -144,7 +143,7 @@ export function AppDrawerContent({ navigation, onSignOut }: AppDrawerContentProp
               key={item.label}
               android_ripple={{ color: theme.palette.primary, borderless: false }}
               onPress={() => {
-                fireSelection()
+                selectionHaptic()
                 if (item.route) {
                   navigation.navigate(item.route)
                 } else {

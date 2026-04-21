@@ -13,18 +13,19 @@ import { AppDrawerContent } from './AppDrawerContent'
 import { drawerPanelChromeColor } from './DrawerSurface'
 import type { MainTabParamList, RootDrawerParamList } from '../types'
 import { LandingScreen } from '../screens/LandingScreen'
-import { ShopScreen } from '../screens/ShopScreen'
+import { StoreNavigator } from './StoreNavigator'
 import { EducationScreen } from '../screens/EducationScreen'
 import { LabTestsScreen } from '../screens/LabTestsScreen'
 import { AccountProfileScreen } from '../screens/AccountProfileScreen'
 import {
   ApiariesScreen,
+  CartScreen,
   SettingsScreen,
   SupportScreen,
   TraceabilityScreen,
 } from '../screens/DrawerMenuScreens'
 import { fontFamily, useTheme } from '../theme'
-import { fireSelection } from '../utils/safe-haptics'
+import { selectionHaptic } from '../utils'
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>()
 const Tab = createBottomTabNavigator<MainTabParamList>()
@@ -37,7 +38,7 @@ function MainTabs() {
       id="MainTabs"
       screenListeners={{
         tabPress: () => {
-          fireSelection()
+          selectionHaptic()
         },
       }}
       screenOptions={{
@@ -74,8 +75,8 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="Shop"
-        component={ShopScreen}
+        name="Store"
+        component={StoreNavigator}
         options={{
           tabBarLabel: 'Store',
           tabBarIcon: ({ color, size }) => (
@@ -163,6 +164,7 @@ export function MainNavigator({ onSignOut }: MainNavigatorProps) {
       >
         <Drawer.Screen name="Main" component={MainTabs} />
         <Drawer.Screen name="Account" component={AccountProfileScreen} />
+        <Drawer.Screen name="Cart" component={CartScreen} />
         <Drawer.Screen name="Traceability" component={TraceabilityScreen} />
         <Drawer.Screen name="Apiaries" component={ApiariesScreen} />
         <Drawer.Screen name="Settings" component={SettingsScreen} />

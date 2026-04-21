@@ -14,8 +14,11 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const product_types_1 = require("../../common/constants/product-types");
 const app_constants_1 = require("../../common/constants/app-constants");
 const custom_id_1 = require("../../common/utils/custom-id");
-const article_category_model_1 = require("./article_category.model");
+const cart_item_model_1 = require("./cart-item.model");
+const product_category_model_1 = require("./product-category.model");
 const product_image_model_1 = require("./product_image.model");
+const product_sub_category_model_1 = require("./product-sub-category.model");
+const wishlist_item_model_1 = require("./wishlist-item.model");
 let Product = class Product extends sequelize_typescript_1.Model {
     static async assignId(instance) {
         if (instance.id)
@@ -69,17 +72,31 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "price", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => article_category_model_1.ArticleCategory),
+    (0, sequelize_typescript_1.ForeignKey)(() => product_category_model_1.ProductCategory),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING(32),
-        allowNull: false
+        allowNull: false,
+        field: "category_id",
     }),
     __metadata("design:type", String)
+], Product.prototype, "category_id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => product_category_model_1.ProductCategory),
+    __metadata("design:type", product_category_model_1.ProductCategory)
 ], Product.prototype, "category", void 0);
 __decorate([
-    (0, sequelize_typescript_1.BelongsTo)(() => article_category_model_1.ArticleCategory),
-    __metadata("design:type", article_category_model_1.ArticleCategory)
-], Product.prototype, "categoryModel", void 0);
+    (0, sequelize_typescript_1.ForeignKey)(() => product_sub_category_model_1.ProductSubCategory),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING(32),
+        allowNull: true,
+        field: "sub_category_id",
+    }),
+    __metadata("design:type", Object)
+], Product.prototype, "sub_category_id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => product_sub_category_model_1.ProductSubCategory),
+    __metadata("design:type", Object)
+], Product.prototype, "sub_category", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.INTEGER,
@@ -106,32 +123,58 @@ __decorate([
 ], Product.prototype, "featured_image", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING(32),
+        type: sequelize_typescript_1.DataType.ENUM(...product_types_1.MEASUREMENT_TYPES),
         allowNull: false,
-        defaultValue: product_types_1.DEFAULT_PRODUCT_TYPE,
-        field: "product_type",
+        defaultValue: "MASS",
+        field: "measurement_type",
     }),
     __metadata("design:type", String)
-], Product.prototype, "product_type", void 0);
+], Product.prototype, "measurement_type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.ENUM(...product_types_1.MEASUREMENT_UNITS),
+        allowNull: false,
+        defaultValue: "GRAM",
+        field: "measurement_unit",
+    }),
+    __metadata("design:type", String)
+], Product.prototype, "measurement_unit", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.DECIMAL(12, 2),
-        allowNull: true,
-        field: "weight_grams",
+        allowNull: false,
+        defaultValue: 0,
+        field: "measurement_value",
     }),
-    __metadata("design:type", Object)
-], Product.prototype, "weight_grams", void 0);
+    __metadata("design:type", String)
+], Product.prototype, "measurement_value", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.DECIMAL(12, 4),
+        type: sequelize_typescript_1.DataType.DECIMAL(12, 3),
         allowNull: true,
-        field: "liters",
+        field: "net_grams",
     }),
     __metadata("design:type", Object)
-], Product.prototype, "liters", void 0);
+], Product.prototype, "net_grams", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.STRING(8),
+        type: sequelize_typescript_1.DataType.DECIMAL(12, 3),
+        allowNull: true,
+        field: "net_milliliters",
+    }),
+    __metadata("design:type", Object)
+], Product.prototype, "net_milliliters", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.JSON,
+        allowNull: true,
+        field: "attributes",
+    }),
+    __metadata("design:type", Object)
+], Product.prototype, "attributes", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.ENUM(...product_types_1.APPAREL_SIZES),
         allowNull: true,
         field: "apparel_size",
     }),
@@ -141,6 +184,14 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => product_image_model_1.ProductImage),
     __metadata("design:type", Array)
 ], Product.prototype, "images", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => cart_item_model_1.CartItem),
+    __metadata("design:type", Array)
+], Product.prototype, "cart_items", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => wishlist_item_model_1.WishlistItem),
+    __metadata("design:type", Array)
+], Product.prototype, "wishlist_items", void 0);
 __decorate([
     sequelize_typescript_1.BeforeCreate,
     __metadata("design:type", Function),

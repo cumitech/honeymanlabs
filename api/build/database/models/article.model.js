@@ -13,7 +13,9 @@ exports.Article = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const app_constants_1 = require("../../common/constants/app-constants");
 const custom_id_1 = require("../../common/utils/custom-id");
+const article_comment_model_1 = require("./article-comment.model");
 const article_category_model_1 = require("./article_category.model");
+const article_like_model_1 = require("./article-like.model");
 const user_model_1 = require("./user.model");
 let Article = class Article extends sequelize_typescript_1.Model {
     static async assignId(instance) {
@@ -110,6 +112,14 @@ __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => user_model_1.User),
     __metadata("design:type", user_model_1.User)
 ], Article.prototype, "author", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => article_comment_model_1.ArticleComment),
+    __metadata("design:type", Array)
+], Article.prototype, "comments", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => article_like_model_1.ArticleLike),
+    __metadata("design:type", Array)
+], Article.prototype, "likes", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.DATE,

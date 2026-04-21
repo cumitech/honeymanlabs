@@ -13,7 +13,7 @@ import {
   PRODUCT_TYPE_LABELS,
   type ApparelSize,
   type Product,
-  parseProductType,
+  parseProductCategory,
   showsApparelSizeField,
   showsLitersField,
   showsWeightField,
@@ -26,11 +26,24 @@ export type PurchasePanelProps = {
 };
 
 export function PurchasePanel({ product, className }: PurchasePanelProps) {
-  const productType = parseProductType(product.product_type);
+  const productType = parseProductCategory(product.category_code);
 
   const stock = Math.max(0, Math.floor(Number(product.stock_quantity) || 0));
-  const unitGrams = toNumber(product.weight_grams);
-  const unitLiters = toNumber(product.liters);
+  const measuredValue = toNumber(product.measurement_value);
+  const unitGrams =
+    product.measurement_unit === "GRAM"
+      ? measuredValue
+      : product.measurement_unit === "KILOGRAM" && measuredValue != null
+        ? measuredValue * 1000
+        : toNumber(product.net_grams);
+  const unitLiters =
+    product.measurement_unit === "LITER"
+      ? measuredValue
+      : product.measurement_unit === "MILLILITER" && measuredValue != null
+        ? measuredValue / 1000
+        : toNumber(product.net_milliliters) != null
+          ? (toNumber(product.net_milliliters) as number) / 1000
+          : null;
 
   const [quantity, setQuantity] = useState(1);
   const [apparelSize, setApparelSize] = useState<ApparelSize>(() => {

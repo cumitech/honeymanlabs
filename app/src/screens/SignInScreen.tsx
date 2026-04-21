@@ -4,16 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ApiError, login, type AuthTokens } from '../api'
 import { AuthEmailDivider, SocialLoginButtons } from '../components/auth/SocialLoginButtons'
 import {
-  AppButton,
-  AuthFormFooterLink,
-  AuthHoneyDripBanner,
-  AuthInlineMessages,
-  AuthScreenHeader,
-  AuthUnderlinedTextField,
-} from '../components/shared'
-import { useAppDispatch } from '../store/hooks'
+  FormFooterLink,
+  HoneyDripBanner,
+  InlineMessages,
+  ScreenHeader,
+  UnderlinedTextField,
+} from '../components/auth'
+import { AppButton } from '../components/shared'
 import { fontFamily, useTheme } from '../theme'
-import { finalizeAuthSession } from '../utils/finalize-auth-session'
+import { useAuth } from '../hooks/session/auth.hook'
 
 type SignInScreenProps = {
   onBack: () => void
@@ -28,7 +27,7 @@ export function SignInScreen({
   onOpenForgotPassword,
   onSignInSuccess,
 }: SignInScreenProps) {
-  const dispatch = useAppDispatch()
+  const { signIn } = useAuth()
   const { theme } = useTheme()
   const [rememberMe, setRememberMe] = React.useState(true)
   const [email, setEmail] = React.useState('')
@@ -38,9 +37,9 @@ export function SignInScreen({
 
   const finalizeSession = React.useCallback(
     async (tokens: AuthTokens) => {
-      await finalizeAuthSession(dispatch, tokens, onSignInSuccess)
+      await signIn(tokens, onSignInSuccess)
     },
-    [dispatch, onSignInSuccess],
+    [signIn, onSignInSuccess],
   )
 
   const handleSignIn = React.useCallback(async () => {
@@ -64,10 +63,10 @@ export function SignInScreen({
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: theme.bg.muted }]}>
-      <AuthHoneyDripBanner variant="authHero" />
+      <HoneyDripBanner variant="authHero" />
 
       <View style={styles.content}>
-        <AuthScreenHeader onBack={onBack} title="Log In" variant="signIn" />
+        <ScreenHeader onBack={onBack} title="Log In" variant="signIn" />
 
         <View style={styles.socialBlock}>
           <SocialLoginButtons
@@ -79,7 +78,7 @@ export function SignInScreen({
         </View>
 
         <View style={styles.form}>
-          <AuthUnderlinedTextField
+          <UnderlinedTextField
             label="E-Mail"
             value={email}
             onChangeText={setEmail}
@@ -91,7 +90,7 @@ export function SignInScreen({
             autoComplete="email"
           />
 
-          <AuthUnderlinedTextField
+          <UnderlinedTextField
             label="Password"
             value={password}
             onChangeText={setPassword}
@@ -102,7 +101,7 @@ export function SignInScreen({
             autoComplete="password"
           />
 
-          <AuthInlineMessages error={error} />
+          <InlineMessages error={error} />
 
           <View style={styles.row}>
             <Pressable style={styles.rememberWrap} onPress={() => setRememberMe(v => !v)}>
@@ -122,7 +121,9 @@ export function SignInScreen({
               <Text style={[styles.rememberText, { color: theme.text.primary }]}>Remember Me</Text>
             </Pressable>
             <Pressable onPress={onOpenForgotPassword} hitSlop={8}>
-              <Text style={[styles.forgotText, { color: theme.palette.secondary }]}>Forgot Password?</Text>
+              <Text style={[styles.forgotText, { color: theme.palette.secondary }]}>
+                Forgot Password?
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -137,7 +138,7 @@ export function SignInScreen({
           />
         </View>
 
-        <AuthFormFooterLink
+        <FormFooterLink
           prefixText={"Don't have an account? "}
           linkText="Sign Up"
           onPressLink={onOpenSignUp}

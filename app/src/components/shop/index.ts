@@ -1,7 +1,0 @@
-export { chunkPairs } from './shopUtils'
-export { SHOP_CATEGORIES } from '../../constants'
-export { ShopHeaderRight } from './ShopHeaderRight'
-export { ShopCategoryChips } from './ShopCategoryChips'
-export { ShopProductCard } from './ShopProductCard'
-export type { ShopProductCardProps } from './ShopProductCard'
-export { ShopProductGrid } from './ShopProductGrid'

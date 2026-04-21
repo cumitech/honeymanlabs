@@ -13,7 +13,7 @@ import {
 import type { SemanticTheme } from '../../theme/semantic'
 import type { ThemeMode } from '../../theme/tokens'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 export type AppButtonVariant =
   | 'primary'
@@ -34,7 +34,7 @@ export type AppButtonProps = {
   loading?: boolean
   loadingOpacity?: number
   opacityWhenBusy?: number
-  /** Pill category chip (shop filters). */
+  /** Pill category chip (catalog filters). */
   selected?: boolean
   style?: StyleProp<ViewStyle>
   textStyle?: StyleProp<TextStyle>
@@ -95,8 +95,8 @@ export function AppButton({
     secondary: theme.text.onPrimary,
     ghost: theme.text.primary,
     danger: theme.text.onPrimary,
-    ctaHero: theme.bg.surface,
-    ctaCompact: theme.bg.surface,
+    ctaHero: theme.text.onPrimary,
+    ctaCompact: theme.text.onPrimary,
     onboarding: theme.text.onPrimary,
   }
 
@@ -124,13 +124,7 @@ export function AppButton({
       style={({ pressed }) => [
         styles.pressableHit,
         {
-          opacity: isCta
-            ? ctaOpacity
-            : disabled
-              ? 0.5
-              : pressed
-                ? 0.86
-                : 1,
+          opacity: isCta ? ctaOpacity : disabled ? 0.5 : pressed ? 0.86 : 1,
         },
       ]}
     >
@@ -142,7 +136,9 @@ export function AppButton({
             ? { borderColor: theme.border }
             : null,
           variant === 'ghost' ? [styles.ghostBorder, { borderColor: theme.border }] : null,
-          variant === 'onboarding' ? [styles.onboardingBorder, { borderColor: theme.border }] : null,
+          variant === 'onboarding'
+            ? [styles.onboardingBorder, { borderColor: theme.border }]
+            : null,
           { backgroundColor: bg },
           style,
         ]}
@@ -192,7 +188,7 @@ function CategoryAppButton({
     mode === 'dark' ? 'rgba(255, 184, 0, 0.34)' : 'rgba(255, 165, 0, 0.82)'
 
   const handlePressIn = () => {
-    if (!disabled) fireLightImpact()
+    if (!disabled) lightHaptic()
     Animated.spring(scaleAnim, {
       toValue: 0.95,
       useNativeDriver: true,
@@ -221,14 +217,16 @@ function CategoryAppButton({
         disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? label}
-        accessibilityState={
-          isIcon ? { disabled: !!disabled } : { selected, disabled: !!disabled }
-        }
+        accessibilityState={isIcon ? { disabled: !!disabled } : { selected, disabled: !!disabled }}
         style={({ pressed }) => [
           isIcon ? styles.chipIcon : styles.chip,
           styles.chipLift,
           {
-            borderColor: isIcon ? idleBorderColor : selected ? theme.palette.primary : idleBorderColor,
+            borderColor: isIcon
+              ? idleBorderColor
+              : selected
+                ? theme.palette.primary
+                : idleBorderColor,
             backgroundColor: isIcon
               ? pressed
                 ? chipFillPressed
@@ -268,42 +266,42 @@ function CategoryAppButton({
   )
 }
 
-const CTA_HERO = {
-  container: { minHeight: 64, borderRadius: 999, alignItems: 'center' as const, justifyContent: 'center' as const },
-  text: { fontSize: 38, lineHeight: 42, fontFamily: fontFamily.accent, letterSpacing: 0.3 },
+type ButtonDimParts = { container: ViewStyle; text: TextStyle }
+
+const CTA_HERO: ButtonDimParts = {
+  container: { minHeight: 64, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  text: { fontSize: 20, lineHeight: 24, letterSpacing: 0.2 },
 }
 
-const CTA_COMPACT = {
-  container: { minHeight: 56, borderRadius: 999, alignItems: 'center' as const, justifyContent: 'center' as const },
-  text: { fontSize: 28, lineHeight: 32, fontFamily: fontFamily.accent, letterSpacing: 0.3 },
+const CTA_COMPACT: ButtonDimParts = {
+  container: { minHeight: 56, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  text: { fontSize: 18, lineHeight: 22, letterSpacing: 0.2 },
 }
 
-const ONBOARDING = {
+const ONBOARDING: ButtonDimParts = {
   container: {
     minHeight: 54,
     borderRadius: 999,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 14,
   },
   text: {
-    fontFamily: fontFamily.sansBold,
     fontSize: 18,
     letterSpacing: 0.2,
-    textTransform: 'capitalize' as const,
   },
 }
 
-const DEFAULT_DIM = {
+const DEFAULT_DIM: ButtonDimParts = {
   container: {
     minHeight: 48,
     borderRadius: 12,
     paddingHorizontal: 16,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    overflow: 'hidden' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
-  text: { fontSize: 15, fontWeight: '700' as const, letterSpacing: 0.2 },
+  text: { fontSize: 15, letterSpacing: 0.2 },
 }
 
 const styles = StyleSheet.create({
@@ -321,7 +319,10 @@ const styles = StyleSheet.create({
   onboardingBorder: {
     borderWidth: StyleSheet.hairlineWidth,
   },
-  label: {},
+  label: {
+    fontFamily: fontFamily.sansBold,
+    textTransform: 'capitalize',
+  },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -5,11 +5,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { parseBatchIdFromQr } from '../../data/lab-batches'
+import { parseBatchIdFromQr } from '../../models/views/lab-batch-detail.model'
 import type { LabStackParamList } from '../../types'
 import { fontFamily, useTheme } from '../../theme'
 import { tokens } from '../../theme/tokens'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 export function LabQrScannerCamera() {
   const { theme } = useTheme()
@@ -28,7 +28,7 @@ export function LabQrScannerCamera() {
     (result: BarcodeScanningResult) => {
       if (scannedRef.current) return
       scannedRef.current = true
-      fireLightImpact()
+      lightHaptic()
       const id = parseBatchIdFromQr(result.data) ?? '882'
       navigation.replace('LabBatchDetail', { batchId: id })
     },
@@ -36,7 +36,7 @@ export function LabQrScannerCamera() {
   )
 
   const close = () => {
-    fireLightImpact()
+    lightHaptic()
     navigation.goBack()
   }
 

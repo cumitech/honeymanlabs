@@ -11,6 +11,7 @@ import {
 import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
 import { User } from "./user.model";
+import { OrderItem } from "./order-item.model";
 
 @Table({
   tableName: "orders",
@@ -42,6 +43,9 @@ export class Order extends Model {
 
   @BelongsTo(() => User)
   user!: User;
+
+  @HasMany(() => OrderItem)
+  order_items!: OrderItem[];
 
   @Column({
     type: DataType.STRING(20),

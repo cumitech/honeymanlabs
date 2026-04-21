@@ -2,9 +2,10 @@ import React from 'react'
 import { LayoutAnimation, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
+import type { TraceOrdersTab } from '../../models/views/trace-order.model'
 
-export type OrdersTab = 'active' | 'history'
+export type OrdersTab = TraceOrdersTab
 
 type OrdersSegmentTabsProps = {
   value: OrdersTab
@@ -16,23 +17,22 @@ const TAB_PAD_X = 14
 const TRACK_PAD_V = 4
 const TRACK_PAD_H = 3
 
-const androidTextProps = Platform.OS === 'android' ? ({ includeFontPadding: false } as const) : {}
+const androidTextProps: { includeFontPadding?: boolean } =
+  Platform.OS === 'android' ? { includeFontPadding: false } : {}
 
 export function OrdersSegmentTabs({ value, onChange }: OrdersSegmentTabsProps) {
   const { theme, mode } = useTheme()
 
   const pick = (tab: OrdersTab) => {
     if (tab === value) return
-    fireLightImpact()
+    lightHaptic()
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
     onChange(tab)
   }
 
   const trackBorder = theme.border
-  const trackBg =
-    mode === 'light' ? 'rgba(212, 160, 23, 0.18)' : theme.bg.muted
-  const inactiveLabel =
-    mode === 'light' ? 'rgba(27, 18, 0, 0.58)' : theme.text.muted
+  const trackBg = mode === 'light' ? 'rgba(212, 160, 23, 0.18)' : theme.bg.muted
+  const inactiveLabel = mode === 'light' ? 'rgba(27, 18, 0, 0.58)' : theme.text.muted
   const gradStart = theme.palette.primary
   const gradEnd = theme.palette.secondary
 
@@ -53,7 +53,10 @@ export function OrdersSegmentTabs({ value, onChange }: OrdersSegmentTabsProps) {
                 end={{ x: 1, y: 0.5 }}
                 style={styles.gradFill}
               >
-                <Text style={[styles.labelActive, { color: theme.text.onPrimary }]} {...androidTextProps}>
+                <Text
+                  style={[styles.labelActive, { color: theme.text.onPrimary }]}
+                  {...androidTextProps}
+                >
                   Active
                 </Text>
               </LinearGradient>
@@ -80,7 +83,10 @@ export function OrdersSegmentTabs({ value, onChange }: OrdersSegmentTabsProps) {
                 end={{ x: 1, y: 0.5 }}
                 style={styles.gradFill}
               >
-                <Text style={[styles.labelActive, { color: theme.text.onPrimary }]} {...androidTextProps}>
+                <Text
+                  style={[styles.labelActive, { color: theme.text.onPrimary }]}
+                  {...androidTextProps}
+                >
                   History
                 </Text>
               </LinearGradient>

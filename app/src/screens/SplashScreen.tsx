@@ -2,38 +2,26 @@ import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native'
 import Logo from '../assets/logo.svg'
+import {
+  SPLASH_GRADIENT_DARK,
+  SPLASH_GRADIENT_LIGHT,
+  SPLASH_GRADIENT_LOCATIONS_DARK,
+  SPLASH_GRADIENT_LOCATIONS_LIGHT,
+} from '../constants/splash-gradient'
 import { SPLASH_LOGO_PULSE_STEP_MS } from '../constants'
 import { fontFamily, useTheme } from '../theme'
-
-const SPLASH_GRADIENT_LIGHT = ['#FFF6E8', '#FFECD0', '#F2D2A8', '#E4BC88'] as const
-const SPLASH_GRADIENT_DARK = ['#060504', '#151008', 'rgba(255, 184, 0, 0.16)', '#0A0806'] as const
-const SPLASH_GRADIENT_LOCATIONS_LIGHT = [0, 0.28, 0.56, 1] as const
-const SPLASH_GRADIENT_LOCATIONS_DARK = [0, 0.36, 0.52, 1] as const
 
 export function SplashScreen() {
   const { theme, mode } = useTheme()
   const logoAnim = React.useRef(new Animated.Value(0)).current
 
-  const gradientColors = React.useMemo(
-    () =>
-      (mode === 'dark' ? [...SPLASH_GRADIENT_DARK] : [...SPLASH_GRADIENT_LIGHT]) as [
-        string,
-        string,
-        string,
-        string,
-      ],
-    [mode],
-  )
+  const gradientColors = React.useMemo((): readonly [string, string, string, string] => {
+    return mode === 'dark' ? SPLASH_GRADIENT_DARK : SPLASH_GRADIENT_LIGHT
+  }, [mode])
 
-  const gradientLocations = React.useMemo(
-    () => (mode === 'dark' ? [...SPLASH_GRADIENT_LOCATIONS_DARK] : [...SPLASH_GRADIENT_LOCATIONS_LIGHT]) as [
-      number,
-      number,
-      number,
-      number,
-    ],
-    [mode],
-  )
+  const gradientLocations = React.useMemo((): readonly [number, number, number, number] => {
+    return mode === 'dark' ? SPLASH_GRADIENT_LOCATIONS_DARK : SPLASH_GRADIENT_LOCATIONS_LIGHT
+  }, [mode])
 
   React.useEffect(() => {
     const pulse = Animated.loop(
@@ -97,18 +85,12 @@ export function SplashScreen() {
       >
         <Image
           source={require('../assets/honycomb-layout-right-top.png')}
-          style={[
-            styles.topRightHoneycomb,
-            { opacity: mode === 'dark' ? 0.38 : 0.48 },
-          ]}
+          style={[styles.topRightHoneycomb, { opacity: mode === 'dark' ? 0.38 : 0.48 }]}
           resizeMode="contain"
         />
         <Image
           source={require('../assets/honycomb-layout-left-bottom.png')}
-          style={[
-            styles.bottomLeftHoneycomb,
-            { opacity: mode === 'dark' ? 0.36 : 0.46 },
-          ]}
+          style={[styles.bottomLeftHoneycomb, { opacity: mode === 'dark' ? 0.36 : 0.46 }]}
           resizeMode="contain"
         />
 
@@ -120,9 +102,7 @@ export function SplashScreen() {
                 opacity: haloOpacity,
                 transform: [{ scale: haloScale }],
                 backgroundColor:
-                  theme.mode === 'dark'
-                    ? 'rgba(255, 200, 80, 0.28)'
-                    : 'rgba(255, 185, 70, 0.42)',
+                  theme.mode === 'dark' ? 'rgba(255, 200, 80, 0.28)' : 'rgba(255, 185, 70, 0.42)',
               },
             ]}
           />

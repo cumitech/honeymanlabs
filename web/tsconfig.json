@@ -24,7 +24,7 @@
     ],
     "paths": {
       "@/models/*": [
-        "../app/src/models/*"
+        "./src/models/*"
       ],
       "@*": [
         "./src/*"
@@ -39,8 +39,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../app/src/models/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

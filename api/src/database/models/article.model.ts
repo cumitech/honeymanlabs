@@ -4,12 +4,15 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from "sequelize-typescript";
 import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
+import { ArticleComment } from "./article-comment.model";
 import { ArticleCategory } from "./article_category.model";
+import { ArticleLike } from "./article-like.model";
 import { User } from "./user.model";
 
 @Table({
@@ -92,6 +95,12 @@ export class Article extends Model {
 
   @BelongsTo(() => User)
   declare author: User;
+
+  @HasMany(() => ArticleComment)
+  comments!: ArticleComment[];
+
+  @HasMany(() => ArticleLike)
+  likes!: ArticleLike[];
 
   @Column({
     type: DataType.DATE,

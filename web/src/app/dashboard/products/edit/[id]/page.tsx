@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductTypeFields } from "@/components/dashboard/product-type-fields";
-import { DEFAULT_PRODUCT_TYPE } from "@/models/product";
+import { emptyProductForm } from "@/models/product";
 
 export default function ProductEditPage() {
   const params = useParams();
@@ -28,12 +28,7 @@ export default function ProductEditPage() {
 
   const formMethods = useForm<FieldValues>({
     refineCoreProps: { resource: "products" },
-    defaultValues: {
-      product_type: DEFAULT_PRODUCT_TYPE,
-      weight_grams: "",
-      liters: "",
-      apparel_size: "",
-    },
+    defaultValues: emptyProductForm,
   });
   const {
     refineCore: { onFinish },
@@ -167,11 +162,24 @@ export default function ProductEditPage() {
                 />
                 <FormField
                   control={formMethods.control}
-                  name="category"
+                  name="category_id"
                   rules={{ required: "Category ID is required" }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category ID</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} className="w-full" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={formMethods.control}
+                  name="sub_category_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sub category ID</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value || ""} className="w-full" />
                       </FormControl>

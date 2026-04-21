@@ -3,13 +3,13 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native'
-import { getLabBatchDetail, parseBatchIdFromQr } from '../../data/lab-batches'
+import { getLabBatchDetail, parseBatchIdFromQr } from '../../models/views/lab-batch-detail.model'
 import type { LabStackParamList } from '../../types'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 import { FadeInMount } from '../layout/FadeInMount'
 import { ScreenShell } from '../layout/ScreenShell'
-import { tabScreenHoneycomb } from '../layout/tabScreenHoneycombLayout'
+import { ScreenHoneyCombLayoutStyle } from '../../styles/screen-honey-comb-layout.style'
 import { LabFlavorRadar } from './LabFlavorRadar'
 import { LabMetricRow } from './LabMetricRow'
 
@@ -25,14 +25,14 @@ export function LabBatchDetailScreen() {
   const runSearch = (raw: string) => {
     const id = parseBatchIdFromQr(raw)
     if (id) {
-      fireLightImpact()
+      lightHaptic()
       navigation.navigate('LabBatchDetail', { batchId: id })
       setSearchText('')
     }
   }
 
   const openScanner = () => {
-    fireLightImpact()
+    lightHaptic()
     navigation.navigate('LabQrScanner')
   }
 
@@ -47,9 +47,9 @@ export function LabBatchDetailScreen() {
       scroll={false}
       padded={false}
       safeAreaEdges={['left', 'right', 'bottom']}
-      pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
-      pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
-      pageHoneycombCenterStyle={tabScreenHoneycomb.center}
+      screenHoneycombTopLeftStyle={ScreenHoneyCombLayoutStyle.topLeft}
+      screenHoneycombBottomRightStyle={ScreenHoneyCombLayoutStyle.bottomRight}
+      screenHoneycombCenterStyle={ScreenHoneyCombLayoutStyle.center}
     >
       <ScrollView
         style={styles.scroll}
@@ -125,7 +125,7 @@ export function LabBatchDetailScreen() {
           </View>
 
           <Pressable
-            onPressIn={fireLightImpact}
+            onPressIn={lightHaptic}
             onPress={() => {}}
             style={styles.downloadWrap}
             accessibilityRole="button"

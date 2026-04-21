@@ -1,7 +1,11 @@
 import { Model } from "sequelize-typescript";
+import { type ApparelSizeValue, type MeasurementTypeValue, type MeasurementUnitValue } from "../../common/constants/product-types";
 import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
-import { ArticleCategory } from "./article_category.model";
+import { CartItem } from "./cart-item.model";
+import { ProductCategory } from "./product-category.model";
 import { ProductImage } from "./product_image.model";
+import { ProductSubCategory } from "./product-sub-category.model";
+import { WishlistItem } from "./wishlist-item.model";
 export declare class Product extends Model {
     id: string;
     lang: CONTENT_LANGUAGES;
@@ -9,20 +13,24 @@ export declare class Product extends Model {
     slug: string;
     description: string;
     price: number;
-    category: string;
-    categoryModel: ArticleCategory;
+    category_id: string;
+    category: ProductCategory;
+    sub_category_id: string | null;
+    sub_category: ProductSubCategory | null;
     stock_quantity: number;
     origin_region: string;
     featured_image: string;
-    /** HONEY | HONEY_PRODUCTS | FARM_PRODUCTS | LAB_SUPPLIES | OTHER */
-    product_type: string;
-    /** Net contents — jars, packs (grams). */
-    weight_grams: string | null;
-    /** Liquid honey volume (liters). */
-    liters: string | null;
-    /** For FARM_PRODUCTS apparel / wearables: S–XXL. */
-    apparel_size: string | null;
+    measurement_type: MeasurementTypeValue;
+    measurement_unit: MeasurementUnitValue;
+    /** Package size in the selected measurement unit (e.g., 500 + GRAM, 1 + LITER). */
+    measurement_value: string;
+    net_grams: string | null;
+    net_milliliters: string | null;
+    attributes: Record<string, unknown> | null;
+    apparel_size: ApparelSizeValue | null;
     images: ProductImage[];
+    cart_items: CartItem[];
+    wishlist_items: WishlistItem[];
     static assignId(instance: Product): Promise<void>;
 }
 //# sourceMappingURL=product.model.d.ts.map

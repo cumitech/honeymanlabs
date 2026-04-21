@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
+const sign_in_audit_1 = require("./sign-in-audit");
 class AuthController {
     constructor(authService) {
         this.authService = authService;
         this.register = async (req, res) => {
             try {
-                const userData = req.body;
-                const result = await this.authService.register(userData);
+                const audit = (0, sign_in_audit_1.signInAuditFromRequest)(req, req.body);
+                const result = await this.authService.register(req.body, audit);
                 return res.status(201).json(result);
             }
             catch (error) {
@@ -17,14 +18,35 @@ class AuthController {
         };
         this.login = async (req, res) => {
             try {
-                const result = await this.authService.login({
-                    email: req.body.email,
-                    password: req.body.password,
-                });
+                const audit = (0, sign_in_audit_1.signInAuditFromRequest)(req, req.body);
+                const result = await this.authService.login({ email: req.body.email, password: req.body.password }, audit);
                 return res.status(200).json(result);
             }
             catch {
                 return res.status(401).json({ message: "Invalid credentials" });
+            }
+        };
+        this.socialGoogle = async (req, res) => {
+            try {
+                const audit = (0, sign_in_audit_1.signInAuditFromRequest)(req, req.body);
+                const result = await this.authService.loginWithGoogleIdToken(req.body.idToken, audit);
+                return res.status(200).json(result);
+            }
+            catch (e) {
+                const msg = e instanceof Error ? e.message : "Google sign-in failed";
+                const status = msg.includes("not configured") ? 503 : 401;
+                return res.status(status).json({ message: msg });
+            }
+        };
+        this.socialFacebook = async (req, res) => {
+            try {
+                const audit = (0, sign_in_audit_1.signInAuditFromRequest)(req, req.body);
+                const result = await this.authService.loginWithFacebookAccessToken(req.body.accessToken, audit);
+                return res.status(200).json(result);
+            }
+            catch (e) {
+                const msg = e instanceof Error ? e.message : "Facebook sign-in failed";
+                return res.status(401).json({ message: msg });
             }
         };
         this.refresh = async (req, res) => {

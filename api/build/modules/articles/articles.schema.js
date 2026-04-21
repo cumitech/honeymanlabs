@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateArticleSchema = exports.createArticleSchema = void 0;
+exports.createArticleCommentSchema = exports.updateArticleSchema = exports.createArticleSchema = void 0;
 const zod_1 = require("zod");
 const app_constants_1 = require("../../common/constants/app-constants");
 exports.createArticleSchema = zod_1.z.object({
@@ -15,4 +15,7 @@ exports.createArticleSchema = zod_1.z.object({
     published_at: zod_1.z.string().datetime().optional(),
 });
 exports.updateArticleSchema = exports.createArticleSchema.partial();
+exports.createArticleCommentSchema = zod_1.z.object({
+    content: zod_1.z.string().min(2).max(4000),
+});
 //# sourceMappingURL=articles.schema.js.map

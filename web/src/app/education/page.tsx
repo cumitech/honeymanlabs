@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 
 async function fetchLatestArticles(): Promise<PublicArticleCardData[]> {
   try {
-    const response = await fetch(`${APP_API_URL}/articles`, {
+    const response = await fetch(`${APP_API_URL}/articles?status=published&_start=0&_end=6`, {
       next: { revalidate: 120 },
       headers: { "X-Language": "en" },
     });
@@ -40,10 +40,10 @@ async function fetchLatestArticles(): Promise<PublicArticleCardData[]> {
     return data.slice(0, 3).map((item) => ({
       id: item.id,
       title: item.title,
-      tag: "Education",
+      tag: item.category_name ?? "Education",
       excerpt: item.excerpt ?? "Read the latest field and lab insights from Honeyman.",
-      imageSrc: "/images/honeycombs-5.png",
-      href: "/education",
+      imageSrc: item.cover_image ?? "/images/honeycombs-5.png",
+      href: `/education#${item.slug}`,
     }));
   } catch {
     return [];

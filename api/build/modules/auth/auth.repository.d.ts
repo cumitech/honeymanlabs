@@ -18,10 +18,30 @@ export type RegisterData = {
 export type CreateUserData = Omit<RegisterData, "password"> & {
     password_hash: string;
 };
+export type CreateOAuthUserData = {
+    firstname: string;
+    lastname: string;
+    email: string;
+    password_hash: null;
+    phone: string | null;
+    avatar_url: string | null;
+    google_sub: string | null;
+    facebook_id: string | null;
+};
 export declare class AuthRepository {
     findByEmail(email: string): Promise<User | null>;
+    findByGoogleSub(googleSub: string): Promise<User | null>;
+    findByFacebookId(facebookId: string): Promise<User | null>;
     createUser(data: CreateUserData): Promise<User>;
+    createOAuthUser(data: CreateOAuthUserData): Promise<User>;
     findById(id: string): Promise<User | null>;
-    updateUser(id: string, fields: Partial<Pick<User, "firstname" | "lastname" | "avatar_url" | "phone" | "location">>): Promise<User | null>;
+    updateUser(id: string, fields: Partial<Pick<User, "firstname" | "lastname" | "avatar_url" | "phone" | "location" | "google_sub" | "facebook_id">>): Promise<User | null>;
+    recordSignIn(userId: string, row: {
+        method: string;
+        clientKind: string | null;
+        deviceLabel: string | null;
+        userAgent: string | null;
+        ipAddress: string | null;
+    }): Promise<void>;
 }
 //# sourceMappingURL=auth.repository.d.ts.map

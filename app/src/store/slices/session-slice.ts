@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { sessionClaimsFromAccessToken } from '../../api/token'
-import type { UserRole } from '../../models/user'
+import { sessionClaimsFromAccessToken } from '../../api/core/token'
+import type { UserRole } from '../../models/domain/user.model'
 
 export type SessionUser = {
   id: string

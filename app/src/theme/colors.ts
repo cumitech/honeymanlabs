@@ -16,9 +16,11 @@ export const lightTheme = {
   border: 'rgba(26, 16, 0, 0.08)',
   input: 'rgba(26, 16, 0, 0.06)',
   ring: 'rgba(255, 165, 0, 0.35)',
-} as const
+}
 
-export const darkTheme = {
+export type AppTheme = typeof lightTheme
+
+export const darkTheme: AppTheme = {
   surface: '#0B0B0A',
   surfaceContainerLow: 'rgba(255, 170, 0, 0.10)',
   surfaceContainer: 'rgba(255, 170, 0, 0.15)',
@@ -36,6 +38,4 @@ export const darkTheme = {
   border: 'rgba(253, 246, 234, 0.08)',
   input: 'rgba(253, 246, 234, 0.08)',
   ring: 'rgba(255, 180, 0, 0.35)',
-} as const
-
-export type AppTheme = typeof lightTheme
+}

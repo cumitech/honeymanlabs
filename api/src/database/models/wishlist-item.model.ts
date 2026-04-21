@@ -1,0 +1,66 @@
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  BeforeCreate,
+  ForeignKey,
+  BelongsTo,
+  Unique,
+} from "sequelize-typescript";
+import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
+import { generateCustomIdForModel } from "../../common/utils/custom-id";
+import { Product } from "./product.model";
+import { User } from "./user.model";
+
+@Table({
+  tableName: "wishlist_items",
+  timestamps: true,
+  underscored: true,
+})
+export class WishlistItem extends Model {
+  @Column({
+    type: DataType.STRING(32),
+    primaryKey: true,
+    allowNull: false,
+  })
+  declare id: string;
+
+  @Column({
+    type: DataType.ENUM(CONTENT_LANGUAGES.EN, CONTENT_LANGUAGES.FR),
+    allowNull: false,
+    defaultValue: CONTENT_LANGUAGES.EN,
+  })
+  lang!: CONTENT_LANGUAGES;
+
+  @Unique("uq_wishlist_user_product")
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.STRING(32),
+    allowNull: false,
+    field: "user_id",
+  })
+  user_id!: string;
+
+  @BelongsTo(() => User)
+  user!: User;
+
+  @Unique("uq_wishlist_user_product")
+  @ForeignKey(() => Product)
+  @Column({
+    type: DataType.STRING(32),
+    allowNull: false,
+    field: "product_id",
+  })
+  product_id!: string;
+
+  @BelongsTo(() => Product)
+  product!: Product;
+
+  @BeforeCreate
+  static async assignId(instance: WishlistItem) {
+    if (instance.id) return;
+    instance.id = await generateCustomIdForModel(this);
+  }
+}
+

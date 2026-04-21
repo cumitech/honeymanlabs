@@ -14,6 +14,7 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const app_constants_1 = require("../../common/constants/app-constants");
 const custom_id_1 = require("../../common/utils/custom-id");
 const user_model_1 = require("./user.model");
+const order_item_model_1 = require("./order-item.model");
 let Order = class Order extends sequelize_typescript_1.Model {
     static async assignId(instance) {
         if (instance.id)
@@ -51,6 +52,10 @@ __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => user_model_1.User),
     __metadata("design:type", user_model_1.User)
 ], Order.prototype, "user", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => order_item_model_1.OrderItem),
+    __metadata("design:type", Array)
+], Order.prototype, "order_items", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING(20),

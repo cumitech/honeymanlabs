@@ -14,11 +14,11 @@ import {
   FEATURED_COLLECTION_CARD_GAP,
   FEATURED_COLLECTION_HORIZONTAL_PADDING,
 } from '../../constants'
-import type { CatalogProduct } from '../../data/catalog'
+import type { CatalogProduct } from '../../models/views/catalog.model'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
-import { ShopProductCard } from '../shop/ShopProductCard'
-import { shopProductCardWidth } from '../shop/shopUtils'
+import { lightHaptic } from '../../utils'
+import { ProductCard } from './ProductCard'
+import { productCardWidthForGrid } from '../../utils'
 
 export type CatalogProductRailProps = {
   title: string
@@ -38,7 +38,7 @@ export function CatalogProductRail({
   const scrollRef = useRef<ScrollView>(null)
   const scrollX = useRef(0)
   const w = Dimensions.get('window').width
-  const cardW = shopProductCardWidth(w)
+  const cardW = productCardWidthForGrid(w)
   const step = cardW + cardGap
   const maxX = Math.max(0, (products.length - 1) * step)
 
@@ -47,7 +47,7 @@ export function CatalogProductRail({
   }
 
   const nudge = (dir: -1 | 1) => {
-    fireLightImpact()
+    lightHaptic()
     const next = Math.max(0, Math.min(maxX, scrollX.current + dir * step))
     scrollX.current = next
     scrollRef.current?.scrollTo({ x: next, animated: true })
@@ -96,7 +96,7 @@ export function CatalogProductRail({
               { width: cardW, marginRight: index === products.length - 1 ? 0 : cardGap },
             ]}
           >
-            <ShopProductCard product={p} width={cardW} />
+            <ProductCard product={p} width={cardW} />
           </View>
         ))}
       </ScrollView>

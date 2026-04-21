@@ -1,0 +1,13 @@
+---
+description: Prefer domain vocabulary and shared UI names over redundant feature prefixes (shop-, ShopX, SHOP_).
+alwaysApply: true
+---
+
+# Naming: domain-first, no redundant prefixes
+
+- **API & data**: Name modules, routes, and files after the capability (`checkout`, `order`, `catalog`), not the surface area (`shop-*`). Route paths should read naturally (`POST /checkout`, not `/shop/checkout` unless the domain truly is “shops”).
+- **Hooks**: Use `*.hook.ts` with a verb/noun hook name (`useOrder`, `useCart`). Avoid stacking context twice (`shop-order.hook`).
+- **Client API**: One concern per file (`checkout.ts` with `postCheckout`), types named for the payload/response (`CheckoutRequest`), not `ShopCheckout*`.
+- **UI components**: Prefer reusable building blocks (`HeaderRight`, `ProductCard`, `ProductGrid`) with props for behavior (e.g. `onPress`, `badgeCount`, `iconName`). Do **not** create `ShopHeaderRight`-style wrappers when a generic component plus screen wiring suffices.
+- **Constants**: Use neutral names (`PRODUCT_CATEGORIES`, `PRODUCT_GRID_GAP`) unless the value is literally shop-specific business logic.
+- **Avoid**: Redundant `Shop` / `shop-` / `SHOP_` prefixes on symbols that already live in a catalog/store feature folder (`components/catalog`, `CatalogScreen`, tab `Store`).

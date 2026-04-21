@@ -1,24 +1,23 @@
 import React from 'react'
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
-import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
-import { CatalogProductRail, CatalogPromoHeroCard, HiveStoryCard } from '../components/shared'
+import { ScreenHoneyCombLayoutStyle } from '../styles/screen-honey-comb-layout.style'
+import { CatalogProductRail, CatalogPromoHeroCard } from '../components/shared'
 import { FEATURED_COLLECTION_HORIZONTAL_PADDING } from '../constants/layout'
-import { getFeaturedCatalogProducts } from '../data/catalog'
-import { HIVE_FEED_POSTS } from '../data/hive-feed'
-import { useAppSelector } from '../store/hooks'
+import { useArticles } from '../hooks/articles/articles.hook'
+import { useProducts } from '../hooks/products/products.hook'
+import { useAuth } from '../hooks/session/auth.hook'
 import { fontFamily, useTheme } from '../theme'
-import { homeGreetingDisplayName, homeSalutation } from '../utils/home-greeting'
+import { homeGreetingDisplayName, homeSalutation } from '../utils'
+import { HivePostCarousel } from '../components/hive/HivePostCarousel'
 
 export function LandingScreen() {
   const navigation = useNavigation()
   const { theme } = useTheme()
-  const accessToken = useAppSelector(s => s.session.accessToken)
-  const user = useAppSelector(s => s.session.user)
-  const isLoggedIn = Boolean(accessToken)
+  const { user, isSignedIn: isLoggedIn } = useAuth()
   const salutation = homeSalutation()
   const name = homeGreetingDisplayName({
     firstname: user?.firstname,
@@ -26,9 +25,10 @@ export function LandingScreen() {
     email: user?.email,
   })
   const honeyNameColor = theme.palette.primary
-
-  const w = Dimensions.get('window').width
-  const hiveCardW = Math.min(300, Math.round(w * 0.82))
+  const { products } = useProducts()
+  const { articles } = useArticles()
+  const featuredProducts = React.useMemo(() => products.slice(0, 4), [products])
+  const hivePosts = React.useMemo(() => articles.slice(0, 4), [articles])
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer())
@@ -40,17 +40,13 @@ export function LandingScreen() {
       padded={false}
       scrollContentInsetAdjustmentIOS="never"
       safeAreaEdges={['left', 'right', 'bottom']}
-      pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
-      pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
-      pageHoneycombCenterStyle={tabScreenHoneycomb.center}
+      screenHoneycombTopLeftStyle={ScreenHoneyCombLayoutStyle.topLeft}
+      screenHoneycombBottomRightStyle={ScreenHoneyCombLayoutStyle.bottomRight}
+      screenHoneycombCenterStyle={ScreenHoneyCombLayoutStyle.center}
     >
       <FadeInMount>
         <View style={styles.page}>
-          <AppScreenTopBar
-            title="HoneyMan"
-            leading="menu"
-            onLeadingPress={openDrawer}
-          />
+          <AppScreenTopBar title="HoneyMan" leading="menu" onLeadingPress={openDrawer} />
           {isLoggedIn ? (
             <Text style={[styles.greeting, { color: theme.text.primary }]}>
               {salutation},{' '}
@@ -61,33 +57,13 @@ export function LandingScreen() {
             <CatalogPromoHeroCard
               eyebrow="New Arrivals -"
               title="The Golden Harvest Collection"
-              ctaLabel="Shop Now"
-              onCtaPress={() => navigation.navigate('Shop' as never)}
-              ctaAccessibilityLabel="Shop now"
+              ctaLabel="Open store"
+              onCtaPress={() => navigation.navigate('Store' as never)}
+              ctaAccessibilityLabel="Open store tab"
             />
           </View>
-          <CatalogProductRail title="Featured Collection" products={getFeaturedCatalogProducts()} />
-          <View style={styles.hiveSection}>
-            <Text style={[styles.hiveSectionTitle, { color: theme.text.primary }]}>From The Hive</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.hiveScrollContent}
-            >
-              {HIVE_FEED_POSTS.map((post, index) => (
-                <View key={post.id} style={[styles.hiveCardWrap, { width: hiveCardW }]}>
-                  <HiveStoryCard
-                    variant="feed"
-                    post={post}
-                    wrapStyle={{
-                      marginBottom: 0,
-                      marginRight: index === HIVE_FEED_POSTS.length - 1 ? 0 : 12,
-                    }}
-                  />
-                </View>
-              ))}
-            </ScrollView>
-          </View>
+          <CatalogProductRail title="Featured Collection" products={featuredProducts} />
+          <HivePostCarousel posts={hivePosts} />
           <View style={{ height: 24 }} />
         </View>
       </FadeInMount>
@@ -114,22 +90,5 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     paddingHorizontal: FEATURED_COLLECTION_HORIZONTAL_PADDING,
-  },
-  hiveSection: {
-    marginTop: 26,
-    paddingBottom: 4,
-  },
-  hiveSectionTitle: {
-    fontFamily: fontFamily.displaySemiBold,
-    fontSize: 20,
-    marginBottom: 14,
-    paddingHorizontal: FEATURED_COLLECTION_HORIZONTAL_PADDING,
-  },
-  hiveScrollContent: {
-    paddingLeft: FEATURED_COLLECTION_HORIZONTAL_PADDING,
-    paddingRight: FEATURED_COLLECTION_HORIZONTAL_PADDING - 4,
-  },
-  hiveCardWrap: {
-    alignSelf: 'flex-start',
   },
 })

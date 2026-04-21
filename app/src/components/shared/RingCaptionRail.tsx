@@ -7,7 +7,6 @@ export type RingCaptionRailItem = {
   caption: string
   accessibilityLabel: string
   onPress: () => void
-  /** Inner disc fill; defaults to theme surface muted. */
   discBackgroundColor?: string
   renderDiscContent: () => React.ReactNode
 }
@@ -15,11 +14,10 @@ export type RingCaptionRailItem = {
 export type RingCaptionRailProps = {
   title: string
   items: RingCaptionRailItem[]
-  /** Column width — e.g. beekeepers 78, lab batch chips 72. */
   itemMinWidth?: number
 }
 
-export function RingCaptionRail({ title, items, itemMinWidth = 72 }: RingCaptionRailProps) {
+export const RingCaptionRail = ({ title, items, itemMinWidth = 72 }: RingCaptionRailProps) => {
   const { theme } = useTheme()
 
   return (

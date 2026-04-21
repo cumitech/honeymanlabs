@@ -15,7 +15,7 @@ export const fontFamily = {
   displaySemiBold: 'PlayfairDisplay_600SemiBold',
   displayBold: 'PlayfairDisplay_700Bold',
   accent: 'BebasNeue_400Regular',
-} as const
+}
 
 export function useAppFonts() {
   const [fontsLoaded] = useFonts({

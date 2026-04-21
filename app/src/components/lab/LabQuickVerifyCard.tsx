@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import { LAB_QUICK_VERIFY_QR_BOX } from '../../constants'
 import type { LabStackParamList } from '../../types'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 import { LabGlassCard } from './LabGlassCard'
 
 export function LabQuickVerifyCard() {
@@ -14,7 +14,7 @@ export function LabQuickVerifyCard() {
   const navigation = useNavigation<NativeStackNavigationProp<LabStackParamList>>()
 
   const openScanner = () => {
-    fireLightImpact()
+    lightHaptic()
     navigation.navigate('LabQrScanner')
   }
 

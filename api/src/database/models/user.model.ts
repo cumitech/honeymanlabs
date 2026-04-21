@@ -4,9 +4,14 @@ import {
   Model,
   DataType,
   BeforeValidate,
+  HasMany,
 } from "sequelize-typescript";
 import { CONTENT_LANGUAGES, USER_ROLES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
+import { ArticleComment } from "./article-comment.model";
+import { ArticleLike } from "./article-like.model";
+import { CartItem } from "./cart-item.model";
+import { WishlistItem } from "./wishlist-item.model";
 
 @Table({
   tableName: "users",
@@ -140,6 +145,18 @@ export class User extends Model {
     defaultValue: 0,
   })
   declare sign_in_count: number;
+
+  @HasMany(() => CartItem)
+  cart_items!: CartItem[];
+
+  @HasMany(() => WishlistItem)
+  wishlist_items!: WishlistItem[];
+
+  @HasMany(() => ArticleComment)
+  article_comments!: ArticleComment[];
+
+  @HasMany(() => ArticleLike)
+  article_likes!: ArticleLike[];
 
   @BeforeValidate
   static async assignId(instance: User) {

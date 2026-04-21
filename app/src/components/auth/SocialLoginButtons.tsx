@@ -3,17 +3,25 @@ import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from '
 import * as Google from 'expo-auth-session/providers/google'
 import * as Facebook from 'expo-auth-session/providers/facebook'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { GoogleBrandIcon } from './GoogleBrandIcon'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 import type { AuthTokens } from '../../api/auth'
 import { loginWithFacebookAccessToken, loginWithGoogleIdToken } from '../../api/auth'
-import { ApiError } from '../../api/client'
+import { ApiError } from '../../api/core/client'
 import {
   getFacebookAppId,
   getGoogleOAuthPublicConfig,
   isFacebookOAuthConfigured,
   isGoogleOAuthConfigured,
 } from '../../constants/oauth-public'
+
+const GOOGLE_BTN_BG = '#FFFFFF'
+const GOOGLE_BTN_BORDER = '#dadce0'
+const GOOGLE_BLUE = '#4285F4'
+const FACEBOOK_BLUE = '#1877F2'
+const ICON_SIZE = 26
+const HIT_SIZE = 56
 
 type SocialLoginButtonsProps = {
   heading?: string
@@ -22,7 +30,7 @@ type SocialLoginButtonsProps = {
   onFlowError?: (message: string) => void
 }
 
-function GoogleSignInRow({
+function GoogleSignInButton({
   disabled,
   busy,
   onAuthenticated,
@@ -33,7 +41,6 @@ function GoogleSignInRow({
   onAuthenticated: (tokens: AuthTokens) => Promise<void> | void
   onFlowError?: (message: string) => void
 }) {
-  const { theme } = useTheme()
   const cfg = getGoogleOAuthPublicConfig()
   const [, response, promptAsync] = Google.useIdTokenAuthRequest({
     iosClientId: cfg.iosClientId,
@@ -71,7 +78,7 @@ function GoogleSignInRow({
   }, [response, onAuthenticated, onFlowError])
 
   const run = () => {
-    fireLightImpact()
+    lightHaptic()
     void promptAsync()
   }
 
@@ -80,29 +87,22 @@ function GoogleSignInRow({
       onPress={run}
       disabled={disabled || busy}
       style={({ pressed }) => [
-        styles.socialBtn,
+        styles.socialIconBtn,
         {
-          borderColor: theme.border,
-          backgroundColor: theme.bg.surface,
+          borderColor: GOOGLE_BTN_BORDER,
+          backgroundColor: GOOGLE_BTN_BG,
           opacity: pressed ? 0.92 : disabled || busy ? 0.55 : 1,
         },
       ]}
       accessibilityRole="button"
       accessibilityLabel="Continue with Google"
     >
-      {busy ? (
-        <ActivityIndicator color={theme.text.primary} />
-      ) : (
-        <>
-          <MaterialCommunityIcons name="google" size={22} color={theme.text.primary} />
-          <Text style={[styles.socialLabel, { color: theme.text.primary }]}>Google</Text>
-        </>
-      )}
+      {busy ? <ActivityIndicator color={GOOGLE_BLUE} /> : <GoogleBrandIcon size={ICON_SIZE} />}
     </Pressable>
   )
 }
 
-function FacebookSignInRow({
+function FacebookSignInButton({
   disabled,
   busy,
   onAuthenticated,
@@ -151,21 +151,19 @@ function FacebookSignInRow({
   }, [response, onAuthenticated, onFlowError])
 
   const run = () => {
-    fireLightImpact()
+    lightHaptic()
     void promptAsync()
   }
-
-  const fbBlue = '#1877F2'
 
   return (
     <Pressable
       onPress={run}
       disabled={disabled || busy}
       style={({ pressed }) => [
-        styles.socialBtn,
+        styles.socialIconBtn,
         {
-          borderColor: fbBlue,
-          backgroundColor: fbBlue,
+          borderColor: FACEBOOK_BLUE,
+          backgroundColor: FACEBOOK_BLUE,
           opacity: pressed ? 0.92 : disabled || busy ? 0.55 : 1,
         },
       ]}
@@ -175,33 +173,30 @@ function FacebookSignInRow({
       {busy ? (
         <ActivityIndicator color="#FFFFFF" />
       ) : (
-        <>
-          <MaterialCommunityIcons name="facebook" size={22} color="#FFFFFF" />
-          <Text style={[styles.socialLabel, { color: '#FFFFFF' }]}>Facebook</Text>
-        </>
+        <MaterialCommunityIcons name="facebook" size={ICON_SIZE} color="#FFFFFF" />
       )}
     </Pressable>
   )
 }
 
-function DisabledSocialRow({
-  label,
-  icon,
+function DisabledSocialIconButton({
+  provider,
   onPress,
 }: {
-  label: string
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name']
+  provider: 'google' | 'facebook'
   onPress: () => void
 }) {
   const { theme } = useTheme()
+  const a11y = provider === 'google' ? 'Google (not configured)' : 'Facebook (not configured)'
+
   return (
     <Pressable
       onPress={() => {
-        fireLightImpact()
+        lightHaptic()
         onPress()
       }}
       style={({ pressed }) => [
-        styles.socialBtn,
+        styles.socialIconBtn,
         {
           borderColor: theme.border,
           backgroundColor: theme.bg.muted,
@@ -209,10 +204,13 @@ function DisabledSocialRow({
         },
       ]}
       accessibilityRole="button"
-      accessibilityLabel={`${label} (not configured)`}
+      accessibilityLabel={a11y}
     >
-      <MaterialCommunityIcons name={icon} size={22} color={theme.text.muted} />
-      <Text style={[styles.socialLabel, { color: theme.text.muted }]}>{label}</Text>
+      {provider === 'google' ? (
+        <GoogleBrandIcon size={ICON_SIZE} opacity={0.9} />
+      ) : (
+        <MaterialCommunityIcons name="facebook" size={ICON_SIZE} color={FACEBOOK_BLUE} />
+      )}
     </Pressable>
   )
 }
@@ -244,42 +242,43 @@ export function SocialLoginButtons({
   return (
     <View style={styles.block}>
       <Text style={[styles.heading, { color: theme.text.muted }]}>{heading}</Text>
-      {googleOk ? (
-        <GoogleSignInRow
-          disabled={disabled}
-          busy={busy}
-          onAuthenticated={wrapAuth}
-          onFlowError={onFlowError}
-        />
-      ) : (
-        <DisabledSocialRow
-          label="Google"
-          icon="google"
-          onPress={() =>
-            onFlowError?.(
-              'Google is not configured. Add EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID plus the iOS/Android client IDs to app .env, and GOOGLE_OAUTH_CLIENT_IDS (comma-separated) on the API.',
-            )
-          }
-        />
-      )}
-      {fbOk ? (
-        <FacebookSignInRow
-          disabled={disabled}
-          busy={busy}
-          onAuthenticated={wrapAuth}
-          onFlowError={onFlowError}
-        />
-      ) : (
-        <DisabledSocialRow
-          label="Facebook"
-          icon="facebook"
-          onPress={() =>
-            onFlowError?.(
-              'Facebook is not configured. Add EXPO_PUBLIC_FACEBOOK_APP_ID to app .env and enable Facebook Login for your iOS bundle / Android key hash in Meta for Developers.',
-            )
-          }
-        />
-      )}
+      <View style={styles.socialIconsRow}>
+        {googleOk ? (
+          <GoogleSignInButton
+            disabled={disabled}
+            busy={busy}
+            onAuthenticated={wrapAuth}
+            onFlowError={onFlowError}
+          />
+        ) : (
+          <DisabledSocialIconButton
+            provider="google"
+            onPress={() =>
+              onFlowError?.(
+                'Google is not configured. Add EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID plus the iOS/Android client IDs to app .env, and GOOGLE_OAUTH_CLIENT_IDS (comma-separated) on the API.',
+              )
+            }
+          />
+        )}
+        <View style={styles.socialIconSpacer} />
+        {fbOk ? (
+          <FacebookSignInButton
+            disabled={disabled}
+            busy={busy}
+            onAuthenticated={wrapAuth}
+            onFlowError={onFlowError}
+          />
+        ) : (
+          <DisabledSocialIconButton
+            provider="facebook"
+            onPress={() =>
+              onFlowError?.(
+                'Facebook is not configured. Add EXPO_PUBLIC_FACEBOOK_APP_ID to app .env and enable Facebook Login for your iOS bundle / Android key hash in Meta for Developers.',
+              )
+            }
+          />
+        )}
+      </View>
       {Platform.OS === 'web' ? (
         <Text style={[styles.webHint, { color: theme.text.muted }]}>
           Social login is intended for the iOS and Android builds.
@@ -312,20 +311,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 2,
   },
-  socialBtn: {
+  socialIconsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    minHeight: 52,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 16,
   },
-  socialLabel: {
-    fontFamily: fontFamily.sansBold,
-    fontSize: 16,
-    letterSpacing: 0.2,
+  socialIconSpacer: {
+    width: 20,
+  },
+  socialIconBtn: {
+    width: HIT_SIZE,
+    height: HIT_SIZE,
+    borderRadius: HIT_SIZE / 2,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dividerRow: {
     flexDirection: 'row',

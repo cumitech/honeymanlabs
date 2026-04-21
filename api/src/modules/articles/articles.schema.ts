@@ -14,3 +14,7 @@ export const createArticleSchema = z.object({
 });
 
 export const updateArticleSchema = createArticleSchema.partial();
+
+export const createArticleCommentSchema = z.object({
+  content: z.string().min(2).max(4000),
+});

@@ -1,38 +1,35 @@
 import React from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
-import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
-import {
-  DrawerSearchHeader,
-  HiveStoryCard,
-  RingCaptionRail,
-  TabPrimaryFab,
-} from '../components/shared'
-import { HIVE_FEATURED_BEEKEEPERS, HIVE_FEED_POSTS } from '../data/hive-feed'
-import { fontFamily, useTheme } from '../theme'
-import { fireLightImpact } from '../utils/safe-haptics'
+import { ScreenHoneyCombLayoutStyle } from '../styles/screen-honey-comb-layout.style'
+import { DrawerSearchHeader, TabPrimaryFab } from '../components/shared'
+import { useArticles } from '../hooks/articles/articles.hook'
+import { useBeekeepers } from '../hooks/beekeepers/beekeepers.hook'
+import { useTheme } from '../theme'
+import { lightHaptic } from '../utils'
+import { hiveLabSurfaceWashColors } from '../constants/surface-wash'
+import { HiveExploreView } from '../components/hive/HiveExploreView'
 
 export function EducationScreen() {
   const { theme, mode } = useTheme()
-  const wash =
-    mode === 'dark'
-      ? (['rgba(255, 184, 0, 0.12)', 'rgba(255, 107, 0, 0.06)', theme.bg.surface] as const)
-      : (['rgba(255, 220, 170, 0.35)', 'rgba(255, 200, 210, 0.22)', theme.bg.surface] as const)
+  const { articles: feedPosts } = useArticles()
+  const { beekeepers: featuredBeekeepers } = useBeekeepers()
+  const wash = hiveLabSurfaceWashColors(mode, theme.bg.surface)
 
   const beekeeperRailItems = React.useMemo(
     () =>
-      HIVE_FEATURED_BEEKEEPERS.map(b => ({
+      featuredBeekeepers.map(b => ({
         id: b.id,
         caption: b.name,
         accessibilityLabel: `${b.name} profile`,
-        onPress: () => fireLightImpact(),
+        onPress: () => lightHaptic(),
         renderDiscContent: () => (
           <Image source={b.avatar} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
         ),
       })),
-    [],
+    [featuredBeekeepers],
   )
 
   return (
@@ -42,9 +39,9 @@ export function EducationScreen() {
         padded={false}
         scrollContentInsetAdjustmentIOS="never"
         safeAreaEdges={['left', 'right', 'bottom']}
-        pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
-        pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
-        pageHoneycombCenterStyle={tabScreenHoneycomb.center}
+        screenHoneycombTopLeftStyle={ScreenHoneyCombLayoutStyle.topLeft}
+        screenHoneycombBottomRightStyle={ScreenHoneyCombLayoutStyle.bottomRight}
+        screenHoneycombCenterStyle={ScreenHoneyCombLayoutStyle.center}
       >
         <LinearGradient
           colors={[...wash]}
@@ -53,21 +50,8 @@ export function EducationScreen() {
           style={styles.wash}
         >
           <FadeInMount>
-            <View style={styles.page}>
-              <DrawerSearchHeader searchPlaceholder="Search The Hive…" hapticOnMenuPress={false} />
-              <View style={styles.pad}>
-                <RingCaptionRail
-                  title="Featured beekeepers"
-                  itemMinWidth={78}
-                  items={beekeeperRailItems}
-                />
-                <Text style={[styles.feedHeading, { color: theme.text.primary }]}>Community</Text>
-                {HIVE_FEED_POSTS.map(post => (
-                  <HiveStoryCard key={post.id} variant="feed" post={post} />
-                ))}
-              </View>
-              <View style={styles.scrollEndSpacer} />
-            </View>
+            <DrawerSearchHeader searchPlaceholder="Search The Hive…" hapticOnMenuPress={false} />
+            <HiveExploreView beekeeperRailItems={beekeeperRailItems} feedPosts={feedPosts} />
           </FadeInMount>
         </LinearGradient>
       </ScreenShell>
@@ -75,7 +59,7 @@ export function EducationScreen() {
         icon="plus"
         iconSize={30}
         accessibilityLabel="Create post"
-        onPress={() => fireLightImpact()}
+        onPress={() => lightHaptic()}
       />
     </View>
   )
@@ -87,21 +71,5 @@ const styles = StyleSheet.create({
   },
   wash: {
     flexGrow: 1,
-  },
-  page: {
-    paddingBottom: 24,
-  },
-  pad: {
-    paddingHorizontal: 18,
-    paddingTop: 0,
-  },
-  feedHeading: {
-    fontFamily: fontFamily.sansBold,
-    fontSize: 17,
-    marginTop: 22,
-    marginBottom: 12,
-  },
-  scrollEndSpacer: {
-    height: 100,
   },
 })

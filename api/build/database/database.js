@@ -25,6 +25,8 @@ exports.sequelize = new sequelize_typescript_1.Sequelize({
         models_1.Event,
         models_1.Article,
         models_1.ArticleCategory,
+        models_1.ArticleComment,
+        models_1.ArticleLike,
         models_1.NewsletterSubscriber,
         models_1.BeekeeperApplication,
         models_1.Beekeeper,
@@ -33,9 +35,14 @@ exports.sequelize = new sequelize_typescript_1.Sequelize({
         models_1.LabTest,
         models_1.LabResult,
         models_1.Order,
+        models_1.OrderItem,
         models_1.Product,
+        models_1.ProductCategory,
         models_1.ProductImage,
+        models_1.ProductSubCategory,
         models_1.Session,
+        models_1.CartItem,
+        models_1.WishlistItem,
     ],
 });
 exports.default = exports.sequelize;

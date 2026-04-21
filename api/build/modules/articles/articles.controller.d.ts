@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import type { TypedRequestBody } from "zod-express-middleware";
 import type { AuthTokenPayload } from "../../common/utils/jwt";
 import { ArticlesService } from "./articles.service";
-import { createArticleSchema, updateArticleSchema } from "./articles.schema";
+import { createArticleCommentSchema, createArticleSchema, updateArticleSchema } from "./articles.schema";
 type AuthenticatedRequest = Request & {
     user?: AuthTokenPayload;
 };
@@ -18,6 +18,15 @@ export declare class ArticlesController {
         id: string;
     }>, res: Response) => Promise<Response<any, Record<string, any>>>;
     remove: (req: Request<{
+        id: string;
+    }>, res: Response) => Promise<Response<any, Record<string, any>>>;
+    comments: (req: Request<{
+        id: string;
+    }>, res: Response) => Promise<Response<any, Record<string, any>>>;
+    addComment: (req: TypedRequestBody<typeof createArticleCommentSchema> & AuthenticatedRequest & Request<{
+        id: string;
+    }>, res: Response) => Promise<Response<any, Record<string, any>>>;
+    toggleLike: (req: AuthenticatedRequest & Request<{
         id: string;
     }>, res: Response) => Promise<Response<any, Record<string, any>>>;
 }

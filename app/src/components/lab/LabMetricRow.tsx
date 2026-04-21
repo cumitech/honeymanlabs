@@ -20,10 +20,7 @@ export function LabMetricRow({ label, valueLabel, fill }: LabMetricRowProps) {
       </View>
       <View style={[styles.track, { backgroundColor: theme.bg.muted }]}>
         <View
-          style={[
-            styles.fill,
-            { width: `${pct * 100}%`, backgroundColor: theme.palette.primary },
-          ]}
+          style={[styles.fill, { width: `${pct * 100}%`, backgroundColor: theme.palette.primary }]}
         />
       </View>
     </View>

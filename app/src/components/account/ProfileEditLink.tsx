@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, StyleSheet, Text } from 'react-native'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 type ProfileEditLinkProps = { label?: string; onPress?: () => void }
 
@@ -9,7 +9,7 @@ export function ProfileEditLink({ label = 'Edit', onPress }: ProfileEditLinkProp
   const { theme } = useTheme()
   return (
     <Pressable
-      onPressIn={fireLightImpact}
+      onPressIn={lightHaptic}
       onPress={onPress}
       hitSlop={10}
       style={({ pressed }) => [

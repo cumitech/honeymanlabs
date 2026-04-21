@@ -1,198 +1,54 @@
 import React from 'react'
-import {
-  Image,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
-} from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
-import { useAuthLauncher } from '../context/AuthLauncherContext'
-import { setThemePreference } from '../store/slices/ui-slice'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { useAuthFlow } from '../context/AuthFlowContext'
 import type { RootDrawerParamList } from '../types'
 import { fontFamily, useTheme } from '../theme'
-import { fireLightImpact } from '../utils/safe-haptics'
+import { lightHaptic } from '../utils'
+import { useAuth } from '../hooks/session/auth.hook'
+import { useThemePreferenceActions } from '../hooks/theme/theme-preference.hook'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
-import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
+import { ScreenHoneyCombLayoutStyle } from '../styles/screen-honey-comb-layout.style'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
-import { signOut } from '../utils/sign-out'
+import ChevronRow from '../components/shared/ChevronRow'
+import Divider from '../components/shared/Divider'
+import SettingsCard from '../components/settings/SettingCard'
+import SignOutRow from '../components/settings/SignOutRow'
+import SwitchRow from '../components/settings/SwitchRow'
+import { ASSET_SETTINGS_PLACEHOLDER_AVATAR } from '../constants/assets'
 
 type DrawerNav = DrawerNavigationProp<RootDrawerParamList>
-
-const AVATAR = require('../assets/avatars/avatar.png')
-
-const ROW_PAD_H = 20
-const ICON_WELL = 40
-const ICON_GAP = 14
-const DIVIDER_INSET = ROW_PAD_H + ICON_WELL + ICON_GAP
-
-interface ChevronRowProps {
-  icon: string
-  label: string
-  iconColor: string
-  labelColor: string
-  iconWellBg: string
-  onPress: () => void
-}
-
-function ChevronRow({ icon, label, iconColor, labelColor, iconWellBg, onPress }: ChevronRowProps) {
-  const { theme } = useTheme()
-  return (
-    <Pressable
-      onPressIn={fireLightImpact}
-      onPress={onPress}
-      style={({ pressed }) => [rowStyles.rowPressable, pressed ? { opacity: 0.65 } : null]}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-    >
-      <View style={rowStyles.row}>
-        <View style={[rowStyles.iconWell, { backgroundColor: iconWellBg }]}>
-          <MaterialCommunityIcons name={icon as never} size={22} color={iconColor} />
-        </View>
-        <Text style={[rowStyles.label, { color: labelColor }]}>{label}</Text>
-        <MaterialCommunityIcons
-          name="chevron-right"
-          size={22}
-          color={theme.text.muted}
-          style={rowStyles.chevron}
-        />
-      </View>
-    </Pressable>
-  )
-}
-
-interface SwitchRowProps {
-  icon: string
-  label: string
-  iconColor: string
-  labelColor: string
-  iconWellBg: string
-  value: boolean
-  onValueChange: (v: boolean) => void
-  trackColorOn?: string
-}
-
-function SwitchRow({
-  icon,
-  label,
-  iconColor,
-  labelColor,
-  iconWellBg,
-  value,
-  onValueChange,
-  trackColorOn,
-}: SwitchRowProps) {
-  const { mode } = useTheme()
-  const trackOff = mode === 'dark' ? 'rgba(255,255,255,0.22)' : '#D8D8D6'
-  return (
-    <View style={[rowStyles.row, rowStyles.switchRowOuter]} accessibilityRole="none">
-      <View style={[rowStyles.iconWell, { backgroundColor: iconWellBg }]}>
-        <MaterialCommunityIcons name={icon as never} size={22} color={iconColor} />
-      </View>
-      <Text style={[rowStyles.label, { color: labelColor }]}>{label}</Text>
-      <Switch
-        value={value}
-        onValueChange={onValueChange}
-        trackColor={{ false: trackOff, true: trackColorOn ?? iconColor }}
-        thumbColor="#FFFFFF"
-        ios_backgroundColor={trackOff}
-        style={rowStyles.switch}
-      />
-    </View>
-  )
-}
-
-function SignOutRow({ iconWellBg, onPress }: { iconWellBg: string; onPress: () => void }) {
-  return (
-    <Pressable
-      onPressIn={fireLightImpact}
-      onPress={onPress}
-      style={({ pressed }) => [rowStyles.rowPressable, pressed ? { opacity: 0.65 } : null]}
-      accessibilityRole="button"
-      accessibilityLabel="Sign out"
-    >
-      <View style={rowStyles.row}>
-        <View style={[rowStyles.iconWell, { backgroundColor: iconWellBg }]}>
-          <MaterialCommunityIcons name="logout" size={22} color="#E53935" />
-        </View>
-        <Text style={[rowStyles.label, { color: '#E53935' }]}>Sign out</Text>
-      </View>
-    </Pressable>
-  )
-}
-
-function SettingsCard({ children }: { children: React.ReactNode }) {
-  const { theme, mode } = useTheme()
-  const fill = mode === 'light' ? '#FFFFFF' : theme.bg.card
-  const shadowOpacity = mode === 'dark' ? 0.22 : 0.09
-  return (
-    <View
-      style={[
-        cardStyles.card,
-        {
-          backgroundColor: fill,
-          borderColor: theme.border,
-          shadowOpacity,
-        },
-      ]}
-    >
-      {children}
-    </View>
-  )
-}
-
-function Divider() {
-  const { theme } = useTheme()
-  return (
-    <View
-      style={[
-        cardStyles.divider,
-        {
-          backgroundColor: theme.border,
-          marginLeft: DIVIDER_INSET,
-          marginRight: ROW_PAD_H,
-        },
-      ]}
-    />
-  )
-}
 
 export function SettingsScreen() {
   const { theme, mode } = useTheme()
   const navigation = useNavigation<DrawerNav>()
-  const dispatch = useAppDispatch()
-  const accessToken = useAppSelector(s => s.session.accessToken)
-  const { openSignIn } = useAuthLauncher()
+  const { accessToken, signOut: signOutUser } = useAuth()
+  const { setDarkMode } = useThemePreferenceActions()
+  const { openSignIn } = useAuthFlow()
   const [notificationsOn, setNotificationsOn] = React.useState(true)
 
   const accent = theme.palette.primary
   const secondary = theme.palette.secondary
   const darkOn = mode === 'dark'
-  const iconWellBg =
-    mode === 'light' ? 'rgba(255, 165, 0, 0.14)' : 'rgba(255, 184, 0, 0.12)'
+  const iconWellBg = mode === 'light' ? 'rgba(255, 165, 0, 0.14)' : 'rgba(255, 184, 0, 0.12)'
 
   const setDark = (on: boolean) => {
-    fireLightImpact()
-    dispatch(setThemePreference(on ? 'dark' : 'light'))
+    lightHaptic()
+    setDarkMode(on)
   }
 
-  const noop = () => fireLightImpact()
+  const noop = () => lightHaptic()
 
   return (
     <ScreenShell
       scroll={false}
       padded={false}
       safeAreaEdges={['left', 'right', 'bottom']}
-      pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
-      pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
-      pageHoneycombCenterStyle={tabScreenHoneycomb.center}
+      screenHoneycombTopLeftStyle={ScreenHoneyCombLayoutStyle.topLeft}
+      screenHoneycombBottomRightStyle={ScreenHoneyCombLayoutStyle.bottomRight}
+      screenHoneycombCenterStyle={ScreenHoneyCombLayoutStyle.center}
     >
       <AppScreenTopBar
         title="Settings"
@@ -210,11 +66,18 @@ export function SettingsScreen() {
           <SettingsCard>
             <View style={styles.profileInner}>
               <View style={[styles.avatarRing, { borderColor: accent }]}>
-                <Image source={AVATAR} style={styles.profileAvatar} resizeMode="cover" />
+                <Image
+                  source={ASSET_SETTINGS_PLACEHOLDER_AVATAR}
+                  style={styles.profileAvatar}
+                  resizeMode="cover"
+                />
               </View>
               <Text style={[styles.profileName, { color: theme.text.primary }]}>John Doe</Text>
               <Pressable
-                onPress={() => { fireLightImpact(); navigation.navigate('Account') }}
+                onPress={() => {
+                  lightHaptic()
+                  navigation.navigate('Account')
+                }}
                 accessibilityRole="link"
                 accessibilityLabel="View profile"
               >
@@ -293,7 +156,10 @@ export function SettingsScreen() {
               labelColor={theme.text.primary}
               iconWellBg={iconWellBg}
               value={notificationsOn}
-              onValueChange={v => { fireLightImpact(); setNotificationsOn(v) }}
+              onValueChange={v => {
+                lightHaptic()
+                setNotificationsOn(v)
+              }}
               trackColorOn={secondary}
             />
           </SettingsCard>
@@ -311,7 +177,7 @@ export function SettingsScreen() {
 
           <SettingsCard>
             {accessToken ? (
-              <SignOutRow iconWellBg={iconWellBg} onPress={() => signOut()} />
+              <SignOutRow iconWellBg={iconWellBg} onPress={() => void signOutUser()} />
             ) : (
               <ChevronRow
                 icon="login"
@@ -319,7 +185,10 @@ export function SettingsScreen() {
                 iconColor={accent}
                 labelColor={theme.text.primary}
                 iconWellBg={iconWellBg}
-                onPress={() => { fireLightImpact(); openSignIn() }}
+                onPress={() => {
+                  lightHaptic()
+                  openSignIn()
+                }}
               />
             )}
           </SettingsCard>
@@ -327,74 +196,11 @@ export function SettingsScreen() {
           <Text style={[styles.footerNote, { color: theme.text.muted }]}>
             Units, locales, and integrations will appear here as we expand HoneyMan.
           </Text>
-
         </FadeInMount>
       </ScrollView>
     </ScreenShell>
   )
 }
-
-const rowStyles = StyleSheet.create({
-  rowPressable: {
-    width: '100%',
-    alignSelf: 'stretch',
-  },
-  switchRowOuter: {
-    alignSelf: 'stretch',
-  },
-  row: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'nowrap',
-    paddingHorizontal: ROW_PAD_H,
-    paddingVertical: 16,
-    minHeight: 56,
-  },
-  iconWell: {
-    width: ICON_WELL,
-    height: ICON_WELL,
-    borderRadius: ICON_WELL / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: ICON_GAP,
-    flexShrink: 0,
-  },
-  label: {
-    flex: 1,
-    flexShrink: 1,
-    minWidth: 0,
-    fontFamily: fontFamily.sansMedium,
-    fontSize: 16,
-    letterSpacing: 0.15,
-  },
-  chevron: {
-    marginLeft: 8,
-    flexShrink: 0,
-  },
-  switch: {
-    marginLeft: 8,
-    transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }],
-  },
-})
-
-const cardStyles = StyleSheet.create({
-  card: {
-    borderRadius: 18,
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
-    marginHorizontal: 18,
-    marginBottom: 14,
-    shadowColor: '#1B1200',
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 18,
-    elevation: 4,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    opacity: 0.85,
-  },
-})
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },

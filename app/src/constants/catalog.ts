@@ -1,1 +1,1 @@
-export const HOME_FEATURED_CATALOG_IDS = ['2', '1', '3'] as const
+export const HOME_FEATURED_CATALOG_IDS: readonly string[] = ['2', '1', '3']

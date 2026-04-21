@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import type { ApiaryListItem } from '../../data/apiaries'
+import type { ApiaryListItem } from '../../models/views/apiary-view.model'
 import { fontFamily, useTheme } from '../../theme'
 
 type ApiaryListCardProps = {
@@ -10,8 +10,7 @@ type ApiaryListCardProps = {
 
 export function ApiaryListCard({ item }: ApiaryListCardProps) {
   const { theme, mode } = useTheme()
-  const statusColor =
-    item.status === 'At risk' ? theme.status.warning : theme.palette.primary
+  const statusColor = item.status === 'At risk' ? theme.status.warning : theme.palette.primary
 
   return (
     <View

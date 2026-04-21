@@ -14,9 +14,9 @@ import {
   type ViewStyle,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { CATALOG_HERO_JAR_IMAGE } from '../../data/catalog'
+import { CONTENT_IMAGE_HONEY_JAR } from '../../constants'
 import { fontFamily, useTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 export type PromoHeroCardProps = {
   title: string
@@ -25,27 +25,22 @@ export type PromoHeroCardProps = {
   ctaLabel: string
   onCtaPress: () => void
   ctaAccessibilityLabel?: string
-  /** Single hero image (used when `imageSlides` is not set or has one item). */
   imageSource?: ImageSourcePropType
-  /**
-   * Product (or catalog) images for the hero carousel. When more than one entry,
-   * the image area becomes a horizontal slider with dots under the image.
-   */
   imageSlides?: ImageSourcePropType[]
   style?: StyleProp<ViewStyle>
 }
 
-export function PromoHeroCard({
+export const PromoHeroCard = ({
   title,
   eyebrow,
   subtitle,
   ctaLabel,
   onCtaPress,
   ctaAccessibilityLabel,
-  imageSource = CATALOG_HERO_JAR_IMAGE,
+  imageSource = CONTENT_IMAGE_HONEY_JAR,
   imageSlides,
   style,
-}: PromoHeroCardProps) {
+}: PromoHeroCardProps) => {
   const { theme } = useTheme()
   const { palette, mode } = theme
 
@@ -73,13 +68,13 @@ export function PromoHeroCard({
     [slides.length],
   )
 
-  const heroColors =
+  const heroColors: readonly [string, string, string] =
     mode === 'dark'
-      ? (['rgba(255, 184, 0, 0.38)', 'rgba(255, 107, 0, 0.28)', 'rgba(129, 81, 0, 0.55)'] as const)
-      : ([palette.surfaceContainer, 'rgba(255, 165, 0, 0.42)', palette.muted] as const)
+      ? ['rgba(255, 184, 0, 0.38)', 'rgba(255, 107, 0, 0.28)', 'rgba(129, 81, 0, 0.55)']
+      : [palette.surfaceContainer, 'rgba(255, 165, 0, 0.42)', palette.muted]
 
   const onPress = () => {
-    fireLightImpact()
+    lightHaptic()
     onCtaPress()
   }
 

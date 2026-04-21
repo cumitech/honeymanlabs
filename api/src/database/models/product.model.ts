@@ -8,11 +8,21 @@ import {
   BelongsTo,
   HasMany,
 } from "sequelize-typescript";
-import { DEFAULT_PRODUCT_TYPE } from "../../common/constants/product-types";
+import {
+  APPAREL_SIZES,
+  MEASUREMENT_TYPES,
+  MEASUREMENT_UNITS,
+  type ApparelSizeValue,
+  type MeasurementTypeValue,
+  type MeasurementUnitValue,
+} from "../../common/constants/product-types";
 import { CONTENT_LANGUAGES } from "../../common/constants/app-constants";
 import { generateCustomIdForModel } from "../../common/utils/custom-id";
-import { ArticleCategory } from "./article_category.model";
+import { CartItem } from "./cart-item.model";
+import { ProductCategory } from "./product-category.model";
 import { ProductImage } from "./product_image.model";
+import { ProductSubCategory } from "./product-sub-category.model";
+import { WishlistItem } from "./wishlist-item.model";
 
 @Table({
   tableName: "products",
@@ -58,16 +68,27 @@ export class Product extends Model {
   })
   price!: number;
 
-  // relationships
-  @ForeignKey(() => ArticleCategory)
+  @ForeignKey(() => ProductCategory)
   @Column({
     type: DataType.STRING(32),
-    allowNull: false
+    allowNull: false,
+    field: "category_id",
   })
-  category!: string;
+  category_id!: string;
 
-  @BelongsTo(() => ArticleCategory)
-  categoryModel!: ArticleCategory;
+  @BelongsTo(() => ProductCategory)
+  category!: ProductCategory;
+
+  @ForeignKey(() => ProductSubCategory)
+  @Column({
+    type: DataType.STRING(32),
+    allowNull: true,
+    field: "sub_category_id",
+  })
+  sub_category_id!: string | null;
+
+  @BelongsTo(() => ProductSubCategory)
+  sub_category!: ProductSubCategory | null;
 
   @Column({
     type: DataType.INTEGER,
@@ -90,41 +111,67 @@ export class Product extends Model {
   })
   featured_image!: string;
 
-  /** HONEY | HONEY_PRODUCTS | FARM_PRODUCTS | LAB_SUPPLIES | OTHER */
   @Column({
-    type: DataType.STRING(32),
+    type: DataType.ENUM(...MEASUREMENT_TYPES),
     allowNull: false,
-    defaultValue: DEFAULT_PRODUCT_TYPE,
-    field: "product_type",
+    defaultValue: "MASS",
+    field: "measurement_type",
   })
-  product_type!: string;
+  measurement_type!: MeasurementTypeValue;
 
-  /** Net contents — jars, packs (grams). */
+  @Column({
+    type: DataType.ENUM(...MEASUREMENT_UNITS),
+    allowNull: false,
+    defaultValue: "GRAM",
+    field: "measurement_unit",
+  })
+  measurement_unit!: MeasurementUnitValue;
+
+  /** Package size in the selected measurement unit (e.g., 500 + GRAM, 1 + LITER). */
   @Column({
     type: DataType.DECIMAL(12, 2),
-    allowNull: true,
-    field: "weight_grams",
+    allowNull: false,
+    defaultValue: 0,
+    field: "measurement_value",
   })
-  weight_grams!: string | null;
+  measurement_value!: string;
 
-  /** Liquid honey volume (liters). */
   @Column({
-    type: DataType.DECIMAL(12, 4),
+    type: DataType.DECIMAL(12, 3),
     allowNull: true,
-    field: "liters",
+    field: "net_grams",
   })
-  liters!: string | null;
+  net_grams!: string | null;
 
-  /** For FARM_PRODUCTS apparel / wearables: S–XXL. */
   @Column({
-    type: DataType.STRING(8),
+    type: DataType.DECIMAL(12, 3),
+    allowNull: true,
+    field: "net_milliliters",
+  })
+  net_milliliters!: string | null;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+    field: "attributes",
+  })
+  attributes!: Record<string, unknown> | null;
+
+  @Column({
+    type: DataType.ENUM(...APPAREL_SIZES),
     allowNull: true,
     field: "apparel_size",
   })
-  apparel_size!: string | null;
+  apparel_size!: ApparelSizeValue | null;
 
   @HasMany(() => ProductImage)
   images!: ProductImage[];
+
+  @HasMany(() => CartItem)
+  cart_items!: CartItem[];
+
+  @HasMany(() => WishlistItem)
+  wishlist_items!: WishlistItem[];
 
   @BeforeCreate
   static async assignId(instance: Product) {

@@ -1,8 +1,8 @@
 import { AUTH_API_PATH } from '../constants/auth'
-import type { UserRole } from '../models/user'
+import type { UserRole } from '../models/domain/user.model'
 import type { SessionUser } from '../store/slices/session-slice'
-import { buildAuthClientContextBody } from '../utils/auth-client-context'
-import { apiRequest } from './client'
+import { buildAuthClientContextBody } from '../utils'
+import { apiRequest } from './core/client'
 
 export type LoginBody = { email: string; password: string }
 export type AuthTokens = { accessToken: string; refreshToken: string }
@@ -91,7 +91,10 @@ export async function register(body: RegisterBody): Promise<AuthTokens> {
 }
 
 export async function forgotPassword(body: ForgotPasswordBody): Promise<ForgotPasswordResponse> {
-  return apiRequest<ForgotPasswordResponse>(AUTH_API_PATH.FORGOT_PASSWORD, { method: 'POST', json: body })
+  return apiRequest<ForgotPasswordResponse>(AUTH_API_PATH.FORGOT_PASSWORD, {
+    method: 'POST',
+    json: body,
+  })
 }
 
 export async function fetchSessionProfile(): Promise<SessionUser> {

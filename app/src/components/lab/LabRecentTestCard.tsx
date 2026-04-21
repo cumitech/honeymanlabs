@@ -4,10 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
-import type { LabFeedHeroVariant, LabRecentTest } from '../../data/lab-batches'
+import type { LabFeedHeroVariant, LabRecentTest } from '../../models/views/lab-feed.model'
 import type { LabStackParamList } from '../../types'
 import { fontFamily, useTheme, type SemanticTheme } from '../../theme'
-import { fireLightImpact } from '../../utils/safe-haptics'
+import { lightHaptic } from '../../utils'
 
 type LabRecentTestCardProps = { test: LabRecentTest }
 
@@ -18,15 +18,17 @@ function heroColors(
 ): readonly [string, string, string] {
   const v = variant ?? 'amber'
   if (mode === 'dark') {
-    if (v === 'sunrise')
-      return ['rgba(75, 48, 28, 0.95)', 'rgba(95, 58, 32, 0.92)', 'rgba(40, 26, 16, 0.98)'] as const
-    if (v === 'meadow')
-      return ['rgba(42, 52, 36, 0.95)', 'rgba(52, 62, 44, 0.92)', 'rgba(28, 34, 26, 0.98)'] as const
-    return ['rgba(72, 52, 28, 0.95)', 'rgba(92, 64, 24, 0.9)', 'rgba(38, 28, 16, 0.98)'] as const
+    if (v === 'sunrise') {
+      return ['rgba(75, 48, 28, 0.95)', 'rgba(95, 58, 32, 0.92)', 'rgba(40, 26, 16, 0.98)']
+    }
+    if (v === 'meadow') {
+      return ['rgba(42, 52, 36, 0.95)', 'rgba(52, 62, 44, 0.92)', 'rgba(28, 34, 26, 0.98)']
+    }
+    return ['rgba(72, 52, 28, 0.95)', 'rgba(92, 64, 24, 0.9)', 'rgba(38, 28, 16, 0.98)']
   }
-  if (v === 'sunrise') return [p.surfaceContainer, 'rgba(255, 165, 0, 0.55)', p.muted] as const
-  if (v === 'meadow') return [p.muted, 'rgba(45, 159, 91, 0.22)', p.surfaceContainer] as const
-  return [p.surfaceContainer, p.primary, p.muted] as const
+  if (v === 'sunrise') return [p.surfaceContainer, 'rgba(255, 165, 0, 0.55)', p.muted]
+  if (v === 'meadow') return [p.muted, 'rgba(45, 159, 91, 0.22)', p.surfaceContainer]
+  return [p.surfaceContainer, p.primary, p.muted]
 }
 
 export function LabRecentTestCard({ test }: LabRecentTestCardProps) {
@@ -40,7 +42,7 @@ export function LabRecentTestCard({ test }: LabRecentTestCardProps) {
   const initial = test.variety.charAt(0).toUpperCase()
 
   const viewResults = () => {
-    fireLightImpact()
+    lightHaptic()
     navigation.navigate('LabBatchDetail', { batchId: test.batchCode })
   }
 

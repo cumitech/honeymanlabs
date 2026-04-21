@@ -1,27 +1,25 @@
 import React from 'react'
-import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Platform, ScrollView, StyleSheet, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
 import { AppInput } from '../components/controls/AppInput'
 import { EmptyState } from '../components/feedback/EmptyState'
 import { AppScreenTopBar } from '../components/layout/AppScreenTopBar'
+import { DrawerMenuButton } from '../components/layout/DrawerMenuButton'
 import { FadeInMount } from '../components/layout/FadeInMount'
 import { ScreenShell } from '../components/layout/ScreenShell'
-import { tabScreenHoneycomb } from '../components/layout/tabScreenHoneycombLayout'
+import { ScreenHoneyCombLayoutStyle } from '../styles/screen-honey-comb-layout.style'
 import { OrdersSegmentTabs, type OrdersTab } from '../components/traceability/OrdersSegmentTabs'
 import { OrderTraceCard } from '../components/traceability/OrderTraceCard'
-import { MOCK_TRACE_ORDERS } from '../data/trace-orders'
+import { useOrders } from '../hooks/orders/orders.hook'
 import type { RootDrawerParamList } from '../types'
-import { useTheme } from '../theme'
-import { normalizeOrderLookup, orderMatchesLookup } from '../utils/order-search'
-import { fireLightImpact } from '../utils/safe-haptics'
+import { filterTraceOrdersForTab } from '../models/views/trace-order.model'
 
 type DrawerNav = DrawerNavigationProp<RootDrawerParamList>
 
 export function TraceabilityScreen() {
-  const { theme } = useTheme()
   const navigation = useNavigation<DrawerNav>()
+  const { orders } = useOrders()
   const [tab, setTab] = React.useState<OrdersTab>('active')
   const [historyQuery, setHistoryQuery] = React.useState('')
 
@@ -32,21 +30,10 @@ export function TraceabilityScreen() {
     }
   }, [])
 
-  const rows = React.useMemo(() => {
-    if (tab === 'active') {
-      return MOCK_TRACE_ORDERS.filter(o => o.status === 'active' || o.showInActiveTab)
-    }
-    const delivered = MOCK_TRACE_ORDERS.filter(o => o.status === 'delivered')
-    const q = historyQuery.trim()
-    if (!q) return delivered
-    const needle = normalizeOrderLookup(q)
-    return delivered.filter(
-      o =>
-        orderMatchesLookup(o.orderCode, q) ||
-        normalizeOrderLookup(o.productName).includes(needle) ||
-        normalizeOrderLookup(o.id).includes(needle),
-    )
-  }, [tab, historyQuery])
+  const rows = React.useMemo(
+    () => filterTraceOrdersForTab(orders, tab, historyQuery),
+    [tab, historyQuery, orders],
+  )
 
   const onTraceBatch = React.useCallback((orderId: string) => {
     void orderId
@@ -57,25 +44,15 @@ export function TraceabilityScreen() {
       scroll={false}
       padded={false}
       safeAreaEdges={['left', 'right', 'bottom']}
-      pageHoneycombTopLeftStyle={tabScreenHoneycomb.topLeft}
-      pageHoneycombBottomRightStyle={tabScreenHoneycomb.bottomRight}
-      pageHoneycombCenterStyle={tabScreenHoneycomb.center}
+      screenHoneycombTopLeftStyle={ScreenHoneyCombLayoutStyle.topLeft}
+      screenHoneycombBottomRightStyle={ScreenHoneyCombLayoutStyle.bottomRight}
+      screenHoneycombCenterStyle={ScreenHoneyCombLayoutStyle.center}
     >
       <AppScreenTopBar
         title="Orders & traceability"
         leading="back"
         onLeadingPress={() => navigation.navigate('Main')}
-        right={
-          <Pressable
-            onPressIn={fireLightImpact}
-            onPress={() => navigation.openDrawer()}
-            hitSlop={10}
-            accessibilityLabel="Open menu"
-            style={({ pressed }) => [{ opacity: pressed ? 0.55 : 1, padding: 4 }]}
-          >
-            <MaterialCommunityIcons name="menu" size={22} color={theme.text.primary} />
-          </Pressable>
-        }
+        right={<DrawerMenuButton onOpenDrawer={() => navigation.openDrawer()} />}
       />
       <ScrollView
         style={styles.scroll}

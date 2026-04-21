@@ -1,0 +1,36 @@
+---
+description: Enforce backend layering and repository-only data access
+alwaysApply: true
+---
+
+# Backend Layering (Feature-Driven)
+
+- For backend features, use this flow: `routes -> handler/controller -> service -> repository -> models/db`.
+- Keep handlers/controllers transport-only:
+  - parse request input
+  - call service
+  - map service errors to HTTP responses
+- Keep services business-only:
+  - orchestrate use-case logic
+  - call repositories
+  - no direct ORM/model/database access
+- Keep repositories data-only:
+  - all `Model.find*`, `create`, `update`, `destroy`, `bulkCreate`, `increment/decrement`
+  - all transaction boundaries (`sequelize.transaction`)
+
+# Non-negotiable Rule
+
+- Never execute direct database operations outside repositories.
+- Forbidden outside repositories:
+  - `sequelize.transaction(...)`
+  - `Model.find*`, `Model.create`, `Model.update`, `Model.destroy`
+  - `instance.update`, `instance.destroy`, `Model.bulkCreate`, `Model.increment/decrement`
+
+# Structure
+
+- Place feature code under `api/src/modules/<feature>/`.
+- Keep one concern per file:
+  - `<feature>.routes.ts`
+  - `<feature>.handler.ts` (or `<feature>.controller.ts`)
+  - `<feature>.service.ts`
+  - `<feature>.repository.ts`

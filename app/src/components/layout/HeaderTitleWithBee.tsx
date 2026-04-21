@@ -5,7 +5,6 @@ import { fontFamily, useTheme } from '../../theme'
 
 export type HeaderTitleWithBeeProps = {
   title: string
-  /** `brand` matches home / shop wordmark; `nav` fits stack tab headers */
   variant?: 'brand' | 'nav'
 }
 
@@ -23,10 +22,7 @@ export function HeaderTitleWithBee({ title, variant = 'nav' }: HeaderTitleWithBe
       />
       <Text
         numberOfLines={1}
-        style={[
-          brand ? styles.titleBrand : styles.titleNav,
-          { color: theme.text.primary },
-        ]}
+        style={[brand ? styles.titleBrand : styles.titleNav, { color: theme.text.primary }]}
       >
         {title}
       </Text>

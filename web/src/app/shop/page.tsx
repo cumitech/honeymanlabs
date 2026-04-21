@@ -3,13 +3,15 @@ import Link from "next/link";
 import { ArrowRight, ShieldCheck, Sparkles, TestTube2 } from "lucide-react";
 
 import { PageHero } from "@/components/public/layout/page-hero";
-import { ShopCatalog } from "@/components/public/shop/shop-catalog";
+import { CatalogBrowser } from "@/components/public/catalog-browser";
 import { Button } from "@/components/ui/button";
 import { homeMarketingBand } from "@/config/home-marketing-band";
 import { marketingPillBadge } from "@/lib/app-ui";
 import { publicImages } from "@/config/public-media";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/models/product";
+import type { ProductCategoryRow } from "@/models/product-category";
+import type { ProductSubCategoryRow } from "@/models/product-sub-category";
 
 const APP_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
 
@@ -27,25 +29,38 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/shop",
   },
-}; 
+};
 
-async function fetchProducts(): Promise<Product[]> {
+async function fetchJson<T>(path: string): Promise<T> {
   try {
-    const response = await fetch(`${APP_API_URL}/products`, {
+    const response = await fetch(`${APP_API_URL}${path}`, {
       next: { revalidate: 120 },
       headers: {
         "X-Language": "en",
       },
     });
-    if (!response.ok) return [];
-    return (await response.json()) as Product[];
+    if (!response.ok) return [] as unknown as T;
+    return (await response.json()) as T;
   } catch {
-    return [];
+    return [] as unknown as T;
   }
 }
 
+async function fetchShopCatalog(): Promise<{
+  products: Product[];
+  categories: ProductCategoryRow[];
+  subCategories: ProductSubCategoryRow[];
+}> {
+  const [products, categories, subCategories] = await Promise.all([
+    fetchJson<Product[]>("/products?_start=0&_end=500"),
+    fetchJson<ProductCategoryRow[]>("/product_categories?_start=0&_end=200"),
+    fetchJson<ProductSubCategoryRow[]>("/product_sub_categories?_start=0&_end=500"),
+  ]);
+  return { products, categories, subCategories };
+}
+
 export default async function ShopPage() {
-  const products = await fetchProducts();
+  const { products, categories, subCategories } = await fetchShopCatalog();
   const warmCard =
     "rounded-2xl border border-[#4B2E1E]/[0.1] bg-[#fffdf8]/90 shadow-sm backdrop-blur-[2px] dark:border-stone-600/30 dark:bg-stone-900/45";
 
@@ -62,7 +77,7 @@ export default async function ShopPage() {
       />
       <PageHero
         eyebrow="The artisan's reserve"
-        headingId="shop-hero-heading"
+        headingId="catalog-hero-heading"
         className="border-b-0 pb-2 md:pb-3"
         title={
           <>
@@ -75,7 +90,7 @@ export default async function ShopPage() {
         imageAlt={publicImages.honeyJarCutout.alt}
         imagePriority
         imageObjectFit="contain"
-        cta={{ href: "#shop-catalog", label: "Order now" }}
+        cta={{ href: "#product-catalog", label: "Order now" }}
         ctaSecondary={{ href: "/honey-testing-lab", label: "Lab testing" }}
       />
 
@@ -94,8 +109,12 @@ export default async function ShopPage() {
         </div>
       </section>
 
-      <div id="shop-catalog">
-        <ShopCatalog products={products} />
+      <div id="product-catalog">
+        <CatalogBrowser
+          products={products}
+          categories={categories}
+          subCategories={subCategories}
+        />
       </div>
 
       <section className="border-y border-[#4B2E1E]/10 bg-[#f5ebd4]/65 py-8 dark:border-stone-700/40 dark:bg-stone-900/40">
@@ -156,4 +175,3 @@ export default async function ShopPage() {
     </main>
   );
 }
-
